@@ -1616,6 +1616,69 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   10" TABLET LANDSCAPE — STAFF VISIBILITY
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      120px !important;
+  }
+
+  .staff{
+    height:120px !important;
+    min-height:120px !important;
+    padding:3px !important;
+    gap:3px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  }
+
+  .staff-card{
+    height:114px !important;
+    min-height:114px !important;
+    display:grid !important;
+    grid-template-rows:56px 56px !important;
+    overflow:hidden !important;
+  }
+
+  /* A/B/C/D/E is the only touch button. */
+  .staff-label{
+    width:100% !important;
+    height:56px !important;
+    min-height:56px !important;
+    font-size:16px !important;
+    line-height:56px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* Sanction area: always visible under the letter. */
+  .staff-status{
+    width:100% !important;
+    height:56px !important;
+    min-height:56px !important;
+    line-height:56px !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
@@ -1625,7 +1688,7 @@ function closePenalty(){
   <section class="top">
     <div class="score-row">
       <div class="header-side left">
-        <button class="btn gray top-match-btn" onclick="resetMatch()">RESET GARA</button>
+        <button id="resetBtn" class="btn gray top-match-btn" onclick="resetMatch()">RESET GARA</button>
         <div id="teamAHeader" class="team-title a">CASA</div>
       </div>
       <div id="score" class="score">00 - 00</div>
@@ -1682,7 +1745,6 @@ function closePenalty(){
         <div class="log-title">REGISTRO GARA</div>
         <div class="log-actions">
           <button class="btn orange small" onclick="undo()">↩ UNDO</button>
-          <button class="btn gray small" onclick="clearLog()">CLR</button>
         </div>
       </div>
       <div class="log-columns">
@@ -1879,6 +1941,15 @@ function render(){
 
   el('halfBtn').style.display=atEnd?'block':'none';
   el('halfBtn').textContent=state.phase===1?'FINE 1° TEMPO':'FINE GARA';
+
+  // RESET GARA disappears as soon as the match starts.
+  const resetBtn=el('resetBtn');
+  if(resetBtn) resetBtn.style.display=state.running?'none':'block';
+
+  // FINE GARA / FINE 1° TEMPO is shown only with the clock stopped
+  // and only at the end of the relevant half.
+  const endTop=el('endMatchTop');
+  if(endTop) endTop.style.display=(!state.running && state.timer>0)?'block':'none';
 
   el('startBtn').textContent=state.running?'⏸ PAUSA':'▶ START';
   el('startBtn').className='btn '+(state.running?'orange':'green');
