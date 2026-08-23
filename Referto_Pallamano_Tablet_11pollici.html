@@ -4298,41 +4298,62 @@ function closePenalty(){
 }
 
 
-/* V22 — DIRIGENTI: stessa riga informativa dei giocatori,
-   ma senza il contatore dei goal e senza /3 sui 2'. */
+/* V25 — DIRIGENTI: identica composizione grafica ai dati del giocatore.
+   Sotto A/B/C/D/E compaiono gli stessi due riquadri di .player-stats:
+   A (ammonizione) e 2'. Nessun goal e nessun /3. */
 .staff-stats{
+  flex:0 0 29px !important;
+  width:100% !important;
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+
   display:grid !important;
   grid-template-columns:1fr 1fr !important;
-  gap:10px !important;
-  padding:2px !important;
+  gap:4px !important;
+
+  padding:3px 4px !important;
   box-sizing:border-box !important;
+
   background:transparent !important;
-  height:auto !important;
-  min-height:0 !important;
-  color:#475569 !important;
+  color:inherit !important;
+
+  font-size:clamp(10px,1.1vw,13px) !important;
+  font-weight:900 !important;
+  text-align:center !important;
 }
 
 .staff-stats span{
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
+
   min-width:0 !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+
   border-radius:4px !important;
+
   font-weight:900 !important;
   line-height:1 !important;
+
   overflow:hidden !important;
   white-space:nowrap !important;
 }
 
 .staff-yellow{
+  border-radius:4px !important;
   background:#e2e8f0 !important;
   color:#64748b !important;
 }
 .staff-yellow.active{
   background:#facc15 !important;
-  color:#111827 !important;
+  color:#111 !important;
 }
+
 .staff-two{
+  border-radius:4px !important;
   background:#ffedd5 !important;
   color:#9a3412 !important;
 }
@@ -4341,13 +4362,50 @@ function closePenalty(){
   color:#9a3412 !important;
 }
 
-/* Se espulso, la stessa zona informativa mostra E. */
-.staff-stats:has(.staff-yellow) + *{}
-
-
 .staff-red{
+  border-radius:4px !important;
   background:#dc2626 !important;
   color:#fff !important;
+}
+
+/* Il contenitore del dirigente resta alto quanto necessario per il tablet,
+   ma la riga A / 2' mantiene esattamente la stessa altezza grafica
+   della riga sotto il numero del giocatore. */
+.staff-card{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+}
+
+.staff-card > .staff-label{
+  flex:0 0 auto !important;
+}
+
+/* La riga disciplinare deve stare subito sotto il tasto dirigente. */
+.staff-card > .staff-stats{
+  flex:0 0 29px !important;
+}
+
+
+/* FINAL V25 OVERRIDE */
+.staff-card > .staff-stats{
+  flex:0 0 29px !important;
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:4px !important;
+  padding:3px 4px !important;
+  box-sizing:border-box !important;
+}
+.staff-card > .staff-stats > span{
+  border-radius:4px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:0 !important;
+  height:auto !important;
 }
 
 </style>
