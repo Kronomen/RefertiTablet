@@ -913,6 +913,99 @@ function closePenalty(){
   }
 }
 
+
+@media (orientation:portrait) and (max-width:900px){
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    grid-template-rows:
+      23px
+      10px
+      18px
+      9px
+      minmax(0,1fr)
+      10px
+      96px;
+  }
+
+  /* Player cards become shorter because the staff area gets the recovered
+     vertical space. */
+  .players{
+    min-height:0!important;
+    overflow:hidden!important;
+    padding:2px!important;
+    gap:2px!important;
+  }
+
+  .player-top{
+    height:20px!important;
+    min-height:20px!important;
+    flex-basis:20px!important;
+  }
+  .player-number{
+    height:20px!important;
+    min-height:20px!important;
+    width:54px!important;
+    min-width:54px!important;
+    line-height:20px!important;
+    font-size:16px!important;
+  }
+  .player-goals{
+    line-height:20px!important;
+    font-size:7px!important;
+  }
+  .player-stats{
+    height:12px!important;
+    min-height:12px!important;
+    flex-basis:12px!important;
+    padding:1px!important;
+    font-size:7px!important;
+  }
+  .player-expelled{
+    height:9px!important;
+    min-height:9px!important;
+    flex-basis:9px!important;
+    line-height:9px!important;
+    font-size:6px!important;
+  }
+
+  /* Staff: enough vertical room for both the clickable letter and the
+     disciplinary status. There is NO second letter button. */
+  .staff-title{
+    height:10px!important;
+    min-height:10px!important;
+    line-height:10px!important;
+  }
+  .staff{
+    height:96px!important;
+    min-height:96px!important;
+    padding:3px 3px!important;
+    gap:3px!important;
+    box-sizing:border-box!important;
+  }
+  .staff-card{
+    height:90px!important;
+    min-height:90px!important;
+    grid-template-rows:48px 40px!important;
+    box-sizing:border-box!important;
+  }
+  .staff-label{
+    height:48px!important;
+    min-height:48px!important;
+    line-height:48px!important;
+    font-size:15px!important;
+  }
+  .staff-status{
+    height:40px!important;
+    min-height:40px!important;
+    line-height:40px!important;
+    font-size:11px!important;
+  }
+  .staff-actions,
+  .staff-letter{
+    display:none!important;
+  }
+}
+
 </style>
 </head>
 
