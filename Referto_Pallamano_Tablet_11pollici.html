@@ -3980,6 +3980,323 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   V21 — BLOCCO VERTICALE REALE DEI GIOCATORI
+   Qui NON usiamo più 1fr per il contenitore giocatori:
+   gli assegniamo un'altezza fisica più corta.
+   Lo spazio recuperato va interamente ai dirigenti.
+   ========================================================= */
+
+/* TABLET 10" — layout orizzontale */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1600px){
+
+  /* Torniamo alla struttura flex del pannello:
+     così l'altezza di .players è realmente controllata. */
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:0 !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+
+  /* PARTE SUPERIORE: NON TOCCATA */
+  .panel-head{
+    flex:0 0 auto !important;
+  }
+  .suspensions-title{
+    flex:0 0 auto !important;
+  }
+  .suspensions{
+    flex:0 0 auto !important;
+    max-height:25px !important;
+    overflow:hidden !important;
+  }
+  .players-caption{
+    flex:0 0 auto !important;
+  }
+
+  /* =====================================================
+     QUESTO È IL CAMBIAMENTO IMPORTANTE:
+     il blocco dei 16 giocatori è fisicamente più corto.
+     4 righe entrano in circa 320px, quindi ogni scheda
+     diventa molto più bassa rispetto alla versione attuale.
+     ===================================================== */
+  .players{
+    flex:0 0 320px !important;
+    width:100% !important;
+    height:320px !important;
+    min-height:320px !important;
+    max-height:320px !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* Il tasto numero rimane leggibile: non riduciamo il pulsante. */
+  .player-top{
+    flex:0 0 26px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    line-height:26px !important;
+  }
+
+  .player-stats{
+    flex:0 0 14px !important;
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+  }
+
+  .player-expelled{
+    flex:0 0 9px !important;
+    height:9px !important;
+    min-height:9px !important;
+    max-height:9px !important;
+    line-height:9px !important;
+  }
+
+  /* =====================================================
+     DIRIGENTI:
+     ricevono tutto lo spazio verticale che abbiamo tolto
+     alle 4 righe dei giocatori.
+     ===================================================== */
+  .staff-title{
+    flex:0 0 14px !important;
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    line-height:14px !important;
+  }
+
+  .staff{
+    flex:0 0 130px !important;
+    width:100% !important;
+    height:130px !important;
+    min-height:130px !important;
+    max-height:130px !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+
+    overflow:hidden !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    height:126px !important;
+    min-height:126px !important;
+    max-height:126px !important;
+
+    display:grid !important;
+    grid-template-rows:26px minmax(0,1fr) !important;
+    gap:2px !important;
+
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* Pulsante dirigente corto: NON cresce con lo spazio recuperato. */
+  .staff-label{
+    width:51px !important;
+    min-width:51px !important;
+    max-width:51px !important;
+
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+
+    background:#2563eb !important;
+    background-color:#2563eb !important;
+    background-image:none !important;
+    color:#fff !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+    padding:0 !important;
+    margin:0 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:26px !important;
+  }
+
+  /* Spazio grande sotto A/B/C/D/E per il provvedimento. */
+  .staff-status{
+    width:100% !important;
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+    border:0 !important;
+    border-radius:4px !important;
+
+    font-size:14px !important;
+    font-weight:900 !important;
+    line-height:normal !important;
+
+    overflow:hidden !important;
+  }
+}
+
+/* TABLET 10" — verticale:
+   stesso principio, con un blocco giocatori ancora più compatto. */
+@media screen and (orientation:portrait) and (min-width:500px) and (max-width:1200px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:0 !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+
+  .players{
+    flex:0 0 285px !important;
+    width:100% !important;
+    height:285px !important;
+    min-height:285px !important;
+    max-height:285px !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+
+  .player-top{
+    flex:0 0 24px !important;
+    height:24px !important;
+    min-height:24px !important;
+  }
+
+  .player-number{
+    width:58px !important;
+    min-width:58px !important;
+    max-width:58px !important;
+    height:24px !important;
+    min-height:24px !important;
+    max-height:24px !important;
+    line-height:24px !important;
+    font-size:17px !important;
+  }
+
+  .player-stats{
+    flex:0 0 13px !important;
+    height:13px !important;
+    min-height:13px !important;
+  }
+
+  .staff-title{
+    flex:0 0 12px !important;
+    height:12px !important;
+    min-height:12px !important;
+    line-height:12px !important;
+  }
+
+  .staff{
+    flex:0 0 125px !important;
+    width:100% !important;
+    height:125px !important;
+    min-height:125px !important;
+    max-height:125px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    height:121px !important;
+    min-height:121px !important;
+    max-height:121px !important;
+    display:grid !important;
+    grid-template-rows:24px minmax(0,1fr) !important;
+    gap:2px !important;
+    overflow:hidden !important;
+  }
+
+  .staff-label{
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+    height:24px !important;
+    min-height:24px !important;
+    max-height:24px !important;
+    background:#2563eb !important;
+    background-color:#2563eb !important;
+    color:#fff !important;
+    border:0 !important;
+    border-radius:4px !important;
+    font-size:17px !important;
+    line-height:24px !important;
+  }
+
+  .staff-status{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+  }
+}
+
 </style>
 </head>
 
