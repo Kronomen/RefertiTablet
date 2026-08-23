@@ -2905,6 +2905,210 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   10" TABLET — REAL COMPACT STAFF LAYOUT
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1300px){
+
+  /* The player block gets less vertical space.
+     This is what moves the staff section upward. */
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:grid !important;
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      105px !important;
+  }
+
+  /* 16 players: compact 4x4 block, no fixed card height. */
+  .players{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    flex:none !important;
+    padding:2px !important;
+    gap:2px !important;
+    box-sizing:border-box !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+  }
+
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    flex:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* Keep the player's actual blue number button unchanged. */
+  .player-top{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    flex:0 0 26px !important;
+    padding:0 2px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    padding:0 !important;
+    line-height:26px !important;
+    font-size:18px !important;
+    border-radius:4px !important;
+  }
+
+  .player-stats{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    flex:0 0 14px !important;
+    padding:1px 2px !important;
+    font-size:8px !important;
+  }
+
+  .player-expelled{
+    height:9px !important;
+    min-height:9px !important;
+    max-height:9px !important;
+    flex:0 0 9px !important;
+    line-height:9px !important;
+    font-size:7px !important;
+  }
+
+  /* STAFF TITLE */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    line-height:14px !important;
+    font-size:8px !important;
+  }
+
+  /* Five staff cards on one line. */
+  .staff{
+    height:105px !important;
+    min-height:105px !important;
+    max-height:105px !important;
+    padding:2px !important;
+    gap:2px !important;
+    box-sizing:border-box !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    align-items:start !important;
+  }
+
+  /* SHORT CARD: no oversized vertical button. */
+  .staff-card{
+    width:100% !important;
+    height:101px !important;
+    min-height:101px !important;
+    max-height:101px !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+
+    display:grid !important;
+    grid-template-rows:26px 73px !important;
+    gap:2px !important;
+
+    border:1px solid #cbd5e1 !important;
+    border-radius:5px !important;
+    background:#f8fafc !important;
+  }
+
+  /* SHORT BLUE BUTTON — same height and shape as PLAYER NUMBER. */
+  .staff-label{
+    width:100% !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    box-sizing:border-box !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#2563eb !important;
+    background-color:#2563eb !important;
+    color:#ffffff !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-family:inherit !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:26px !important;
+
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    touch-action:manipulation !important;
+  }
+
+  /* The majority of the card is NOW BELOW the button,
+     reserved for the manager's sanction. */
+  .staff-status{
+    width:100% !important;
+    height:73px !important;
+    min-height:73px !important;
+    max-height:73px !important;
+    box-sizing:border-box !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-family:inherit !important;
+    font-size:14px !important;
+    font-weight:900 !important;
+    line-height:73px !important;
+
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
