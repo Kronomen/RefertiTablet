@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Referto Pallamano</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#041937;
+}
+
+body{
+    background:
+        linear-gradient(90deg,rgba(4,25,55,.62),rgba(4,25,55,.12),rgba(4,25,55,.62)),
+        url("referto-pallamano-home-clean(9).png") center center / cover no-repeat;
+}
+
+.page{
+    width:100vw;
+    height:100vh;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:
+        max(18px,env(safe-area-inset-top))
+        max(22px,env(safe-area-inset-right))
+        max(18px,env(safe-area-inset-bottom))
+        max(22px,env(safe-area-inset-left));
+}
+
+/* TESTATA */
+.top{
+    width:min(900px,88vw);
+    text-align:center;
+    color:white;
+    text-shadow:0 3px 12px rgba(0,0,0,.6);
+    margin-top:-4vh;
+}
+
+.top h1{
+    margin:0;
+    font-size:clamp(38px,6vw,76px);
+    font-weight:900;
+    letter-spacing:clamp(1px,.35vw,5px);
+    line-height:1;
+}
+
+.top p{
+    margin:10px 0 0;
+    font-size:clamp(12px,1.7vw,20px);
+    font-weight:700;
+    letter-spacing:clamp(1px,.28vw,4px);
+}
+
+.line{
+    width:min(600px,72vw);
+    height:4px;
+    margin:16px auto 0;
+    background:linear-gradient(
+        90deg,
+        #008c45 0 33%,
+        white 33% 66%,
+        #ce2b37 66% 100%
+    );
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+
+/* PANNELLO CENTRALE */
+.card{
+    width:min(620px,76vw);
+    margin-top:clamp(34px,6vh,70px);
+    padding:clamp(18px,2.6vw,30px) clamp(20px,3vw,38px);
+    border-radius:20px;
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(255,255,255,.96);
+    box-shadow:0 18px 50px rgba(0,0,0,.32);
+    text-align:center;
+}
+
+.card h2{
+    margin:0 0 8px;
+    color:#102d56;
+    font-size:clamp(22px,3vw,36px);
+    font-weight:900;
+}
+
+.card p{
+    margin:0 auto 18px;
+    max-width:520px;
+    color:#334155;
+    font-size:clamp(12px,1.45vw,17px);
+    line-height:1.4;
+}
+
+.open-button{
+    border:0;
+    width:100%;
+    min-height:clamp(58px,8vh,78px);
+    border-radius:15px;
+    background:#1557a6;
+    color:white;
+    font-size:clamp(16px,2vw,23px);
+    font-weight:900;
+    letter-spacing:.5px;
+    cursor:pointer;
+    box-shadow:0 9px 22px rgba(21,87,166,.38);
+}
+
+.open-button:active{
+    transform:scale(.985);
+    background:#0d468b;
+}
+
+/* PIEDE */
+.bottom{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    min-height:44px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:clamp(18px,5vw,60px);
+    padding:7px 18px;
+    background:rgba(4,30,65,.90);
+    color:white;
+    font-size:clamp(9px,1.1vw,13px);
+    font-weight:700;
+}
+
+.bottom span{
+    opacity:.96;
+}
+
+/* VERSIONE */
+.creator{
+    position:fixed;
+    right:12px;
+    bottom:52px;
+    z-index:20;
+    color:rgba(255,255,255,.9);
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:.4px;
+    text-shadow:0 2px 6px rgba(0,0,0,.8);
+}
+
+/* PICCOLO TASTO CHIUDI */
+.close-browser{
+    position:fixed;
+    top:max(7px,env(safe-area-inset-top));
+    right:max(8px,env(safe-area-inset-right));
+    z-index:9999;
+    height:25px;
+    padding:0 9px;
+    border:1px solid #991b1b;
+    border-radius:5px;
+    background:#ef4444;
+    color:#000;
+    font-size:10px;
+    font-weight:900;
+    cursor:pointer;
+    opacity:.88;
+}
+
+.close-browser:active{
+    background:#dc2626;
+    opacity:1;
+}
+
+/* TABLET 11" IN ORIZZONTALE */
+@media (min-width:900px) and (max-height:900px){
+    .top{
+        margin-top:-2vh;
+    }
+
+    .card{
+        margin-top:clamp(24px,4vh,42px);
+        width:min(590px,72vw);
+    }
+
+    .bottom{
+        min-height:40px;
+    }
+
+    .creator{
+        bottom:47px;
+    }
+}
+
+/* TABLET IN VERTICALE */
+@media (orientation:portrait){
+    .top{
+        width:90vw;
+        margin-top:-3vh;
+    }
+
+    .top h1{
+        font-size:clamp(30px,8vw,52px);
+    }
+
+    .card{
+        width:88vw;
+        margin-top:5vh;
+    }
+
+    .bottom{
+        gap:12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <section class="top">
+        <h1>REFERTO PALLAMANO</h1>
+        <p>FEDERAZIONE ITALIANA GIUOCO HANDBALL</p>
+        <div class="line"></div>
+    </section>
+
+    <section class="card">
+        <h2>Benvenuto</h2>
+
+        <p>
+            Sistema digitale per la gestione della gara,
+            del cronometro, degli eventi e delle squadre.
+        </p>
+
+        <button class="open-button" onclick="apriReferto()">
+            🏐 &nbsp; APRI GESTIONE GARA
+        </button>
+    </section>
+
+</main>
+
+<footer class="bottom">
+    <span>🛡️ REFERTO DIGITALE</span>
+    <span>⏱️ GESTIONE GARA</span>
+    <span>🏐 PALLAMANO</span>
+</footer>
+
+<div class="creator">
+    Kronoman V. 2.01 08/26
+</div>
+
+<button class="close-browser"
+        type="button"
+        onclick="chiudiBrowser()"
+        title="Chiudi">
+    CHIUDI
+</button>
+
+<script>
+function apriReferto(){
+    window.location.href = "Referto_Pallamano_Tablet_11pollici.html";
+}
+
+function chiudiBrowser(){
+    window.close();
+
+    setTimeout(function(){
+        if(!window.closed){
+            window.location.href = "about:blank";
+        }
+    },300);
+}
+</script>
+
+</body>
+</html>
