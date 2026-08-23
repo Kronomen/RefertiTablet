@@ -2273,6 +2273,168 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   10" iPad LANDSCAPE — REAL CSS VIEWPORT
+   iPad CSS width can be around 1112-1194px even though the
+   screenshot pixel width is much larger. Therefore this rule
+   deliberately targets the real tablet viewport, not image pixels.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:900px) and (max-width:1300px) and (max-height:1000px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:grid !important;
+
+    /* This is the actual vertical budget. */
+    grid-template-rows:
+      31px       /* team header */
+      13px       /* exclusion title */
+      25px       /* exclusion list */
+      12px       /* players caption */
+      minmax(0,1fr) /* PLAYER CONTAINER - reduced automatically */
+      14px       /* staff title */
+      125px !important; /* STAFF CONTAINER */
+  }
+
+  /* PLAYER CONTAINER: unlock its vertical size. */
+  .players{
+    flex:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    align-self:stretch !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+  }
+
+  /* EACH PLAYER CARD: no fixed vertical block. */
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    flex:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  .player-top{
+    height:27px !important;
+    min-height:27px !important;
+    max-height:27px !important;
+    flex:0 0 27px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    line-height:26px !important;
+    font-size:18px !important;
+  }
+
+  .player-goals{
+    line-height:26px !important;
+    font-size:9px !important;
+  }
+
+  .player-stats{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    flex:0 0 14px !important;
+    padding:1px 2px !important;
+    font-size:8px !important;
+  }
+
+  .player-expelled{
+    height:9px !important;
+    min-height:9px !important;
+    max-height:9px !important;
+    flex:0 0 9px !important;
+    line-height:9px !important;
+  }
+
+  /* STAFF: now physically inside the visible tablet area. */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    line-height:14px !important;
+    font-size:8px !important;
+  }
+
+  .staff{
+    width:100% !important;
+    height:125px !important;
+    min-height:125px !important;
+    max-height:125px !important;
+    padding:3px !important;
+    gap:3px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    height:119px !important;
+    min-height:119px !important;
+    max-height:119px !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-rows:58px 57px !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-label{
+    width:100% !important;
+    height:58px !important;
+    min-height:58px !important;
+    max-height:58px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    font-size:17px !important;
+    font-weight:900 !important;
+    line-height:58px !important;
+    touch-action:manipulation !important;
+  }
+
+  .staff-status{
+    width:100% !important;
+    height:57px !important;
+    min-height:57px !important;
+    max-height:57px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:57px !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
