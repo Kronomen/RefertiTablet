@@ -1679,6 +1679,139 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   10" TABLET PORTRAIT - STAFF LIKE PLAYERS
+   ========================================================= */
+@media screen and (orientation:portrait) and (max-width:900px){
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    /* Staff gets a real, fixed visible area. */
+    grid-template-rows:
+      23px
+      10px
+      18px
+      9px
+      minmax(0,1fr)
+      10px
+      118px !important;
+  }
+
+  /* Players: remove only vertical excess, never narrow the number. */
+  .players{
+    min-height:0 !important;
+    overflow:hidden !important;
+    padding:2px !important;
+    gap:2px !important;
+  }
+
+  .player-card{
+    min-height:0 !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+
+  .player-top{
+    height:24px !important;
+    min-height:24px !important;
+    flex:0 0 24px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    height:23px !important;
+    min-height:23px !important;
+    line-height:23px !important;
+    font-size:18px !important;
+  }
+
+  .player-goals{
+    line-height:23px !important;
+  }
+
+  .player-stats{
+    height:13px !important;
+    min-height:13px !important;
+    flex:0 0 13px !important;
+  }
+
+  .player-expelled{
+    height:9px !important;
+    min-height:9px !important;
+    flex:0 0 9px !important;
+    line-height:9px !important;
+  }
+
+  /* Staff is deliberately shaped like a player card:
+     top = clickable A/B/C/D/E, bottom = visible sanction. */
+  .staff-title{
+    height:10px !important;
+    min-height:10px !important;
+    line-height:10px !important;
+    font-size:7px !important;
+  }
+
+  .staff{
+    width:100% !important;
+    height:118px !important;
+    min-height:118px !important;
+    padding:3px !important;
+    gap:3px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    height:112px !important;
+    min-height:112px !important;
+    display:grid !important;
+    grid-template-rows:58px 50px !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* ONE button only: the letter itself. */
+  .staff-label{
+    width:100% !important;
+    height:58px !important;
+    min-height:58px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:58px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* This is the area that MUST show A / 2' / E. */
+  .staff-status{
+    width:100% !important;
+    height:50px !important;
+    min-height:50px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:50px !important;
+    font-size:14px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    background:#f8fafc !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
