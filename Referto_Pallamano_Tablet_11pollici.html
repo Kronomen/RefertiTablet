@@ -4297,6 +4297,59 @@ function closePenalty(){
   }
 }
 
+
+/* V22 — DIRIGENTI: stessa riga informativa dei giocatori,
+   ma senza il contatore dei goal e senza /3 sui 2'. */
+.staff-stats{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:2px !important;
+  padding:2px !important;
+  box-sizing:border-box !important;
+  background:transparent !important;
+  height:auto !important;
+  min-height:0 !important;
+  color:#475569 !important;
+}
+
+.staff-stats span{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:0 !important;
+  border-radius:4px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
+
+.staff-yellow{
+  background:#e2e8f0 !important;
+  color:#64748b !important;
+}
+.staff-yellow.active{
+  background:#facc15 !important;
+  color:#111827 !important;
+}
+.staff-two{
+  background:#ffedd5 !important;
+  color:#9a3412 !important;
+}
+.staff-two.active{
+  background:#ffedd5 !important;
+  color:#9a3412 !important;
+}
+
+/* Se espulso, la stessa zona informativa mostra E. */
+.staff-stats:has(.staff-yellow) + *{}
+
+
+.staff-red{
+  background:#dc2626 !important;
+  color:#fff !important;
+}
+
 </style>
 </head>
 
@@ -4618,17 +4671,17 @@ function renderStaff(team){
     const card=document.createElement('div');
     card.className='staff-card';
 
-    const staffBadges=[];
-    if(d.yellow)staffBadges.push('A');
-    if(d.two)staffBadges.push("2'");
-    if(d.red)staffBadges.push('E');
-
     card.innerHTML=`
       <button class="staff-label staff-touch" type="button"
         onclick="openEventMenu('STAFF','${team}',${i})" ${d.red?'disabled':''}>
         ${letter}
       </button>
-      <div class="staff-status">${staffBadges.length ? staffBadges.join(' · ') : '—'}</div>
+      <div class="staff-status staff-stats">
+        <span class="staff-yellow ${d.yellow ? 'active' : ''}">A${d.yellow ? ' ✓' : ''}</span>
+        ${d.red
+          ? '<span class="staff-red active">E</span>'
+          : `<span class="staff-two ${d.two ? 'active' : ''}">2'${d.two ? ' ✓' : ''}</span>`}
+      </div>
     `;
     box.appendChild(card);
   });
@@ -4853,10 +4906,18 @@ function staffAction(team,index,type){
   }
 
   if(type==='TWO'){
-    d.two++;
-    addEvent(team,letter,'TWO',`2'`);
-    startSuspension(team,letter);
-    stopForDisciplinary(team,letter,`2'`);
+    /* Un dirigente non può ricevere un secondo 2': dopo il primo 2'
+       il successivo provvedimento è direttamente l'espulsione. */
+    if(d.two >= 1){
+      d.red=true;
+      addEvent(team,letter,'RED',`ESPULSIONE`);
+      stopForDisciplinary(team,letter,`ESPULSIONE`);
+    }else{
+      d.two=1;
+      addEvent(team,letter,'TWO',`2'`);
+      startSuspension(team,letter);
+      stopForDisciplinary(team,letter,`2'`);
+    }
   }
 
   if(type==='RED'){
