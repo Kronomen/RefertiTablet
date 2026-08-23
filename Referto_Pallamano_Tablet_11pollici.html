@@ -14,215 +14,132 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 button,input{font:inherit}
 button{touch-action:manipulation;cursor:pointer}
-#app{width:100vw;height:100vh;padding:6px;display:flex;flex-direction:column;gap:6px}
+#app{width:100vw;height:100vh;padding:4px;display:flex;flex-direction:column;gap:4px}
 
 /* TESTATA */
 .top{
-  flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:8px;
-  padding:2px 6px;box-shadow:0 2px 6px #0001;
+  flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:6px;
+  padding:2px 4px;box-shadow:0 2px 6px #0001;
 }
-.score-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:7px}
-.header-side{display:flex;align-items:center;gap:5px;min-width:0}
+.score-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px}
+.header-side{display:flex;align-items:center;gap:4px;min-width:0}
 .header-side.left{justify-content:flex-end}
 .header-side.right{justify-content:flex-start}
-.team-title{font-size:clamp(15px,2vw,26px);font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-match-btn{min-height:30px!important;padding:3px 7px!important;font-size:clamp(8px,.95vw,11px)!important;white-space:nowrap}
+.team-title{font-size:clamp(14px,1.8vw,22px);font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-match-btn{min-height:26px!important;padding:2px 6px!important;font-size:clamp(8px,.85vw,10px)!important;white-space:nowrap}
 .team-title.a{text-align:right;color:var(--a)}
 .team-title.b{text-align:left;color:var(--b)}
-.score{background:#050505;color:white;border:2px solid #22c55e;border-radius:7px;
-  padding:1px 13px;font:900 clamp(27px,4.1vw,49px)/1 monospace;white-space:nowrap}
+.score{background:#050505;color:white;border:2px solid #22c55e;border-radius:6px;
+  padding:1px 10px;font:900 clamp(22px,3.5vw,40px)/1 monospace;white-space:nowrap}
 .phase{text-align:center;margin-top:1px}
-.phase span{display:inline-block;background:#eef2f7;border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:10px;font-weight:900;letter-spacing:1.2px}
-.clock-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;margin-top:2px}
-.clock-side{display:flex;gap:5px;align-items:center}
+.phase span{display:inline-block;background:#eef2f7;border:1px solid var(--line);border-radius:99px;padding:1px 8px;font-size:9px;font-weight:900;letter-spacing:1px}
+.clock-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:4px;margin-top:1px}
+.clock-side{display:flex;gap:4px;align-items:center}
 .clock-side.right{justify-content:flex-start}.clock-side.left{justify-content:flex-end}
-.btn{border:0;border-radius:7px;min-height:35px;padding:4px 11px;font-weight:900;font-size:clamp(10px,1.25vw,14px)}
+.btn{border:0;border-radius:6px;min-height:30px;padding:3px 9px;font-weight:900;font-size:clamp(10px,1.1vw,13px)}
 .green{background:var(--green);color:#fff}.orange{background:var(--orange);color:#fff}.blue{background:#2563eb;color:#fff}
 .gray{background:#475569;color:#fff}.light{background:#e2e8f0;color:#1e293b;border:1px solid #cbd5e1}.red{background:var(--red);color:#fff}
-.timer{background:#050505;color:#fde047;border:2px solid #eab308;border-radius:7px;
-  min-width:clamp(120px,17vw,195px);padding:1px 9px;text-align:center;font:900 clamp(25px,4vw,47px)/1 monospace}
+.timer{background:#050505;color:#fde047;border:2px solid #eab308;border-radius:6px;
+  min-width:clamp(110px,15vw,170px);padding:1px 7px;text-align:center;font:900 clamp(22px,3.5vw,40px)/1 monospace}
 .timer.blink{color:#ef4444;animation:flash .65s infinite}
 .touch-start{touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .touch-start:active{transform:scale(.97)}
 @keyframes flash{50%{opacity:.25}}
 
-
 .suspensions-title{
   flex:0 0 auto;text-align:center;background:#fff7ed;color:#9a3412;
-  border-bottom:1px solid #fed7aa;font-size:8px;font-weight:900;padding:2px 0;
+  border-bottom:1px solid #fed7aa;font-size:7px;font-weight:900;padding:1px 0;
 }
 .suspensions{
-  flex:0 0 34px;min-height:34px;padding:3px 5px;display:flex;gap:4px;
+  flex:0 0 28px;min-height:28px;padding:2px 4px;display:flex;gap:3px;
   overflow-x:auto;background:#fff7ed;
 }
 .suspension-empty{
   flex:1;display:flex;align-items:center;justify-content:center;
-  color:#94a3b8;font-size:9px;font-weight:800;
+  color:#94a3b8;font-size:8px;font-weight:800;
 }
 .suspension-item{
-  min-width:78px;border-radius:6px;background:#ea580c;color:white;
-  display:grid;grid-template-columns:25px 1fr;align-items:center;
-  padding:2px 4px;font-weight:900;
+  min-width:70px;border-radius:5px;background:#ea580c;color:white;
+  display:grid;grid-template-columns:22px 1fr;align-items:center;
+  padding:1px 3px;font-weight:900;
 }
-.suspension-num{font-size:14px;text-align:center}
-.suspension-time{font:900 13px monospace;text-align:center}
+.suspension-num{font-size:12px;text-align:center}
+.suspension-time{font:900 11px monospace;text-align:center}
 #suspensionsB .suspension-item{background:#7c3aed}
 
 /* CORPO */
-.main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(175px,0.72fr) minmax(0,1.12fr);gap:6px}
-.panel{background:#fff;border:1px solid var(--line);border-radius:10px;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-.panel-head{flex:0 0 auto;padding:4px 6px;border-bottom:1px solid var(--line)}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(175px,0.72fr) minmax(0,1.12fr);gap:4px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.panel-head{flex:0 0 auto;padding:3px 5px;border-bottom:1px solid var(--line)}
 .panel-head.a{background:#eff6ff}.panel-head.b{background:#f5f3ff}
-.team-line{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center}
-.name-input{width:100%;border:1px solid var(--line);border-radius:6px;background:#fff;padding:3px 6px;text-align:center;text-transform:uppercase;font-size:clamp(13px,1.6vw,19px);font-weight:900}
+.team-line{display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center}
+.name-input{width:100%;border:1px solid var(--line);border-radius:5px;background:#fff;padding:2px 5px;text-align:center;text-transform:uppercase;font-size:clamp(12px,1.4vw,17px);font-weight:900}
 .team-panel.b .timeout-btn{background:#7c3aed}
-.timeout-btn{min-height:35px;border:0;border-radius:7px;background:var(--cyan);color:#fff;padding:4px 12px;font-size:clamp(10px,1.2vw,13px);font-weight:900}
+.timeout-btn{min-height:30px;border:0;border-radius:6px;background:var(--cyan);color:#fff;padding:3px 10px;font-size:clamp(9px,1.1vw,12px);font-weight:900}
 .timeout-btn:disabled{background:#94a3b8}
-.team-counters{display:flex;justify-content:center;gap:10px;margin-top:3px;font-size:10px;font-weight:900}
-
-
-function openEventMenu(kind,team,index){
-  selected={kind,team,index};
-  const isPlayer=kind==='PLAYER';
-  const label=isPlayer
-    ? `N° ${state.numbers[team][index]}`
-    : `DIRIGENTE ${STAFF[index]}`;
-
-  el('eventTitle').textContent='SELEZIONA EVENTO';
-  el('eventSubtitle').textContent=`${state.teams[team]} · ${label}`;
-  el('eventPlayerActions').style.display=isPlayer?'grid':'none';
-  el('eventStaffActions').style.display=isPlayer?'none':'grid';
-  el('eventModal').style.display='flex';
-}
-
-function closeEventModal(){
-  selected=null;
-  el('eventModal').style.display='none';
-}
-
-function eventAction(type){
-  if(!selected)return;
-  const s=selected;
-  closeEventModal();
-
-  if(s.kind==='PLAYER'){
-    playerAction(s.team,s.index,type);
-  }else{
-    staffAction(s.team,s.index,type);
-  }
-}
+.team-counters{display:flex;justify-content:center;gap:8px;margin-top:2px;font-size:9px;font-weight:900}
 
 /* GIOCATORI */
-.players-caption{flex:0 0 auto;text-align:center;font-size:8px;font-weight:900;color:#64748b;padding:1px 0}
-.players{flex:1;min-height:0;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:6px}
-.player-card{min-width:0;min-height:0;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 2px #0001}
+.players-caption{flex:0 0 auto;text-align:center;font-size:7px;font-weight:900;color:#64748b;padding:1px 0}
+.players{flex:1;min-height:0;padding:4px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:3px}
+.player-card{min-width:0;min-height:0;border:1px solid #cbd5e1;border-radius:5px;background:#f8fafc;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 2px #0001}
 .player-card.yellow{background:#fefce8;border-color:#eab308}
 .player-card.suspended{background:#fff7ed;border-color:#f97316}
 .player-card.expelled{background:#fef2f2;border-color:#dc2626}
-.player-top{height:32px;flex:0 0 32px;display:flex;align-items:center;justify-content:space-between;padding:0 3px;gap:2px;font-weight:900}
+.player-top{height:24px;flex:0 0 24px;display:flex;align-items:center;justify-content:space-between;padding:0 2px;gap:1px;font-weight:900}
 .player-number{
-  width:58px;height:29px;border:0;border-radius:6px;background:#2563eb;color:#fff;
-  text-align:center;font-size:clamp(17px,2.1vw,26px);font-weight:900;
+  width:100%;height:22px;border:0;border-radius:4px;background:#2563eb;color:#fff;
+  text-align:center;font-size:clamp(14px,1.8vw,21px);font-weight:900;
   padding:0;outline:none;touch-action:manipulation;
 }
-.player-goals{font-size:clamp(11px,1.25vw,15px);font-weight:900;white-space:nowrap}
 .player-stats{
-  flex:0 0 29px;display:grid;grid-template-columns:1fr 1fr;gap:4px;
-  padding:3px 4px;font-size:clamp(10px,1.1vw,13px);font-weight:900;text-align:center;
+  flex:0 0 18px;display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  padding:1px 2px;font-size:clamp(8px,0.9vw,11px);font-weight:900;text-align:center;
 }
-.stat-yellow{border-radius:4px;background:#e2e8f0;color:#64748b}
+.stat-yellow{border-radius:3px;background:#e2e8f0;color:#64748b}
 .stat-yellow.active{background:#facc15;color:#111}
-.stat-two{border-radius:4px;background:#ffedd5;color:#9a3412}
+.stat-two{border-radius:3px;background:#ffedd5;color:#9a3412}
 .player-expelled{
-  flex:0 0 20px;text-align:center;background:#dc2626;color:white;
-  font-size:10px;font-weight:900;line-height:20px;
+  flex:0 0 16px;text-align:center;background:#dc2626;color:white;
+  font-size:8px;font-weight:900;line-height:16px;
 }
-.player-event-btn:disabled{background:#94a3b8;color:#e2e8f0;cursor:not-allowed}
-.player-actions{flex:1;display:flex;gap:3px;padding:3px}
-.player-event-btn{
-  width:100%;height:100%;min-height:48px;border:0;border-radius:7px;
-  background:#2563eb;color:#fff;font-size:clamp(11px,1.25vw,14px);
-  font-weight:900;touch-action:manipulation;
-}
-.player-event-btn:active{transform:scale(.97)}
-.team-panel.b .player-event-btn{background:#7c3aed}
-.team-panel.b .staff-event-btn{background:#7c3aed}
-
-
-
-function penaltyResult(scored){
-  if(!selectedPenalty)return;
-
-  const {team,num}=selectedPenalty;
-  snapshot();
-
-  state.penalty[team]++;
-  if(scored){
-    state.penaltyScored[team]++;
-    const idx=selectedPenalty.index;
-    state.discipline[team][idx].goals++;
-    if(team==='A')state.scoreA++;
-    else state.scoreB++;
-    addEvent(team,num,'PENALTY','RIGORE REALIZZATO',`${state.scoreA}-${state.scoreB}`);
-  }else{
-    addEvent(team,num,'PENALTY','RIGORE ERRATO');
-  }
-
-  closePenalty();
-  render();
-}
-
-function closePenalty(){
-  selectedPenalty=null;
-  el('penaltyModal').style.display='none';
-}
+.team-panel.b .player-number{background:#7c3aed}
 
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  text-align:center;font-size:10px;font-weight:900;padding:3px}
-.staff{flex:0 0 72px;padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.staff-card{border:1px solid #cbd5e1;border-radius:6px;background:#fafafa;display:grid;grid-template-rows:19px 15px 1fr}
-.staff-label{text-align:center;font-size:12px;font-weight:900;line-height:19px;background:#e2e8f0}
+  text-align:center;font-size:8px;font-weight:900;padding:2px}
+.staff{flex:0 0 54px;padding:3px 4px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.staff-card{border:1px solid #cbd5e1;border-radius:5px;background:#fafafa;display:grid;grid-template-rows:22px 1fr;overflow:hidden}
+.staff-label{text-align:center;font-size:11px;font-weight:900;line-height:22px;background:#e2e8f0;border:0;width:100%}
+.staff-label:disabled{background:#cbd5e1;color:#64748b}
 .staff-status{
-  text-align:center;font-size:9px;font-weight:900;
-  line-height:15px;background:#f8fafc;color:#334155;
+  text-align:center;font-size:8px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#334155;
 }
-.staff-actions{display:flex;padding:2px}
-.staff-event-btn{
-  width:100%;height:100%;border:0;border-radius:5px;background:#2563eb;
-  color:#fff;font-size:9px;font-weight:900;touch-action:manipulation;
-}
-.sact.am{background:#eab308;color:#111}.sact.two{background:#ea580c}.sact.exp{background:#dc2626}
 
 /* REGISTRO */
-.log-head{height:35px;flex:0 0 35px;display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-bottom:1px solid var(--line)}
+.log-head{height:30px;flex:0 0 30px;display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-bottom:1px solid var(--line)}
 .log-columns{
-  display:grid;grid-template-columns:38px 22px 30px minmax(0,1fr) 36px;
-  gap:2px;padding:3px 4px;background:#1e293b;color:#cbd5e1;
+  display:grid;grid-template-columns:36px 20px 28px minmax(0,1fr) 34px;
+  gap:2px;padding:2px 3px;background:#1e293b;color:#cbd5e1;
   font:900 8px monospace;letter-spacing:.3px;border-bottom:1px solid #475569;
 }
-.log-columns div{text-align:center}.log-columns .event-head{text-align:center}
-.log-title{font-size:clamp(10px,1.2vw,14px);font-weight:900;letter-spacing:.7px;text-align:center}
-.log-actions{display:flex;gap:3px}
-.small{min-height:28px!important;padding:3px 7px!important;font-size:9px!important}
+.log-columns div{text-align:center}
+.log-title{font-size:clamp(9px,1.1vw,13px);font-weight:900;letter-spacing:.5px;text-align:center}
+.log-actions{display:flex;gap:2px}
+.small{min-height:24px!important;padding:2px 6px!important;font-size:8px!important}
 .log{flex:1;min-height:0;overflow:auto;background:#0f172a;color:#fff}
-.log-row{display:grid;grid-template-columns:38px 22px 30px minmax(0,1fr) 36px;gap:2px;padding:4px 3px;border-bottom:1px solid #334155;font-size:clamp(8px,.95vw,11px);align-items:center}
+.log-row{display:grid;grid-template-columns:36px 20px 28px minmax(0,1fr) 34px;gap:2px;padding:3px 2px;border-bottom:1px solid #334155;font-size:clamp(8px,.9vw,10px);align-items:center}
 .log-row.goal{background:#052e16}.log-row.disc{background:#3f2500}.log-row.exp{background:#450a0a}.log-row.to{background:#083344}
 .log-time,.log-team,.log-num,.log-res{text-align:center;font-family:monospace;font-weight:900}
 .log-event{font-weight:800;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.05;text-align:left;min-width:0}
-.log-time,.log-team,.log-num,.log-res{text-align:center;min-width:0}
-.empty{height:100%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;text-align:center;padding:12px}
-
-/* BARRA INFERIORE */
-.bottom{flex:0 0 35px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px}
-.bottom .left{text-align:left}.bottom .center{text-align:center}.bottom .right{text-align:right}
+.empty{height:100%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px;text-align:center;padding:10px}
 
 /* POPUP */
-
-.event-modal{width:min(430px,92vw)}
-.event-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.event-modal{width:min(400px,90vw)}
+.event-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .event-actions button{
-  min-height:54px;border:0;border-radius:9px;font-weight:900;font-size:13px;
+  min-height:48px;border:0;border-radius:8px;font-weight:900;font-size:12px;
   color:#fff;touch-action:manipulation;
 }
 .event-actions .goal-btn{background:#16a34a}
@@ -231,1876 +148,27 @@ function closePenalty(){
 .event-actions .two-btn{background:#ea580c}
 .event-actions .red-btn{background:#dc2626;grid-column:1/3}
 
-.modal-back{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:100;padding:12px}
-.modal{width:min(390px,92vw);background:#fff;border-radius:12px;padding:14px;box-shadow:0 15px 45px #0007;text-align:center}
-.modal h3{margin:0 0 7px;font-size:20px}.modal p{margin:5px 0 12px;color:#475569;font-size:12px}
-.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.modal-actions button{min-height:48px;border:0;border-radius:8px;font-weight:900}
-#toast{position:fixed;left:50%;bottom:45px;transform:translateX(-50%);z-index:200;background:#111827;color:#fff;padding:8px 13px;border-radius:8px;font-size:12px;font-weight:900;display:none;box-shadow:0 5px 18px #0005}
+.modal-back{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:100;padding:10px}
+.modal{width:min(380px,90vw);background:#fff;border-radius:10px;padding:12px;box-shadow:0 15px 40px #0007;text-align:center}
+.modal h3{margin:0 0 6px;font-size:18px}.modal p{margin:4px 0 10px;color:#475569;font-size:11px}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.modal-actions button{min-height:42px;border:0;border-radius:7px;font-weight:900}
+#toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);z-index:200;background:#111827;color:#fff;padding:6px 11px;border-radius:7px;font-size:11px;font-weight:900;display:none;box-shadow:0 4px 15px #0005}
 
-/* 11" landscape: niente scroll della pagina */
-@media (min-width:900px) and (max-height:900px){
-  #app{padding:5px;gap:5px}
-  .main{gap:5px}
-  .players{gap:3px;padding:4px}
-  .staff{flex-basis:104px}
-}
-
-/* tablet più stretto */
-@media(max-width:900px){
-  .main{grid-template-columns:minmax(0,1fr) minmax(205px,1.05fr) minmax(0,1fr)}
-  .players{grid-template-columns:repeat(4,1fr)}
-  .staff{flex-basis:66px}
-}
-
-/* =========================================================
-   TABLET 11" PORTRAIT — layout reale, senza deformazioni
-   ========================================================= */
-@media (orientation:portrait) and (max-width:900px){
-
-  html,body{
-    width:100%;
-    height:100%;
-    margin:0;
-    overflow:hidden;
-  }
-
-  .app{
-    width:100%;
-    height:100dvh;
-    min-height:0;
-    box-sizing:border-box;
-    padding:1px;
-    gap:2px;
-  }
-
-  /* TESTATA: manteniamo le informazioni, riduciamo solo i margini. */
-  .top{
-    flex:0 0 auto;
-    padding:1px 3px;
-  }
-  .score-row{gap:2px}
-  .team-title{font-size:13px}
-  .top-match-btn{
-    min-height:22px!important;
-    padding:1px 4px!important;
-    font-size:7px!important;
-  }
-  .score{
-    font-size:23px;
-    padding:1px 7px;
-  }
-  .phase span{
-    font-size:7px;
-    padding:0 5px;
-  }
-  .clock-row{
-    gap:2px;
-    margin-top:0;
-  }
-  .clock-row .btn{
-    min-height:22px!important;
-    padding:1px 4px!important;
-    font-size:8px!important;
-  }
-  .timer{
-    min-width:102px;
-    font-size:23px;
-    padding:1px 5px;
-  }
-
-  /* TRE COLONNE REALI: CASA / REGISTRO / OSPITI. */
-  .main{
-    flex:1 1 auto;
-    min-height:0;
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(145px,.48fr) minmax(0,1fr);
-    grid-template-rows:minmax(0,1fr);
-    gap:2px;
-  }
-
-  .main > .panel{
-    min-width:0;
-    min-height:0;
-    overflow:hidden;
-  }
-
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    display:flex;
-    flex-direction:column;
-  }
-
-  .main > .panel:nth-child(2){
-    display:flex;
-    flex-direction:column;
-  }
-
-  /* TESTATA SQUADRA */
-  .panel-head{
-    flex:0 0 23px;
-    min-height:23px;
-    padding:1px 2px;
-  }
-  .team-line{min-height:21px}
-  .name-input{font-size:12px}
-  .timeout-btn{
-    min-height:21px!important;
-    padding:1px 4px!important;
-    font-size:7px!important;
-  }
-  .team-counters{
-    height:10px;
-    line-height:10px;
-    font-size:7px;
-    gap:2px;
-  }
-
-  /* ESCLUSIONI */
-  .suspensions-title{
-    flex:0 0 10px;
-    height:10px;
-    min-height:10px;
-    padding:0;
-    line-height:10px;
-    font-size:6px;
-  }
-  .suspensions{
-    flex:0 0 18px;
-    height:18px;
-    min-height:18px;
-    padding:1px 2px;
-    gap:2px;
-  }
-  .suspension-empty{font-size:7px}
-  .suspension-item{min-width:48px}
-  .suspension-num,.suspension-time{font-size:8px}
-
-  /* DICITURA SOPRA I GIOCATORI */
-  .players-caption{
-    flex:0 0 9px;
-    height:9px;
-    min-height:9px;
-    padding:0;
-    line-height:9px;
-    font-size:6px;
-  }
-
-  /* 16 GIOCATORI: nessun grande spazio vuoto.
-     Le card occupano solo l'altezza necessaria. */
+/* Adattamenti specifici per orientamento verticale su tablet 10" */
+@media (orientation:portrait) and (max-width:1000px){
   .players{
-    flex:0 0 auto;
-    height:calc(100% - 46px - 63px);
-    min-height:0;
-    padding:2px;
-    gap:2px;
-    grid-template-columns:repeat(4,minmax(0,1fr));
     grid-template-rows:repeat(4,minmax(0,1fr));
-  }
-
-  .player-card{
-    min-height:0;
-    height:100%;
-    border-radius:4px;
-  }
-
-  /* Numero più grande e meno tagliato, ma contenitore molto più basso. */
-  .player-top{
-    flex:0 0 25px;
-    height:25px;
-    min-height:25px;
-    padding:0 2px;
-    gap:1px;
-  }
-  .player-number{
-    width:55px;
-    min-width:55px;
-    height:24px;
-    min-height:24px;
-    padding:0;
-    border-radius:4px;
-    font-size:17px;
-    line-height:24px;
-  }
-  .player-goals{
-    font-size:8px;
-    line-height:24px;
-  }
-  .player-stats{
-    flex:0 0 14px;
-    height:14px;
-    min-height:14px;
-    gap:1px;
-    padding:1px;
-    font-size:7px;
-  }
-  .player-expelled{
-    flex:0 0 10px;
-    height:10px;
-    min-height:10px;
-    line-height:10px;
-    font-size:6px;
-  }
-
-  /* DIRIGENTI: spazio fisso e immediatamente sotto i giocatori. */
-  .staff-title{
-    flex:0 0 10px;
-    height:10px;
-    min-height:10px;
-    padding:0;
-    line-height:10px;
-    font-size:6px;
-  }
-
-  .staff{
-    flex:0 0 51px;
-    height:51px;
-    min-height:51px;
-    padding:1px 2px;
     gap:2px;
-    display:grid;
-    grid-template-columns:repeat(5,minmax(0,1fr));
-  }
-
-  .staff-card{
-    min-width:0;
-    min-height:0;
-    height:49px;
-    border:1px solid #cbd5e1;
-    border-radius:4px;
-    overflow:hidden;
-    display:grid;
-    grid-template-rows:29px 18px;
-  }
-
-  /* UNA SOLA A/B/C/D/E: è il pulsante. */
-  .staff-label{
-    width:100%;
-    height:29px;
-    min-height:29px;
-    padding:0;
-    border:0;
-    border-radius:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#e2e8f0;
-    color:#111827;
-    font-size:12px;
-    font-weight:900;
-    line-height:29px;
-    touch-action:manipulation;
-  }
-  .staff-label:disabled{
-    background:#cbd5e1;
-    color:#64748b;
-  }
-  .staff-status{
-    height:18px;
-    min-height:18px;
-    line-height:18px;
-    font-size:8px;
-    font-weight:900;
-    text-align:center;
-    background:#f8fafc;
-    color:#334155;
-  }
-  .staff-actions,
-  .staff-letter{
-    display:none!important;
-  }
-
-  /* REGISTRO: piccolo e compatto, ma EVENTO prende il residuo. */
-  .log-head{
-    flex:0 0 18px;
-    height:18px;
-    padding:1px 3px;
-  }
-  .log-title{font-size:8px}
-  .small{
-    min-height:16px!important;
-    padding:1px 3px!important;
-    font-size:7px!important;
-  }
-  .log-columns{
-    padding:1px;
-    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
-    font-size:6px;
-  }
-  .log-row{
-    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
-    padding:1px;
-    font-size:7px;
-  }
-}
-
-
-@media (orientation:portrait) and (max-width:900px){
-  html,body{height:100%;overflow:hidden}
-  .app{height:100dvh;min-height:0;padding:1px;gap:2px}
-
-  .main{
-    flex:1 1 auto;
-    min-height:0;
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(140px,.46fr) minmax(0,1fr);
-    grid-template-rows:minmax(0,1fr);
-    gap:2px;
-  }
-
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    min-height:0;
-    display:grid;
-    grid-template-rows:
-      23px       /* testata squadra */
-      10px       /* titolo esclusioni */
-      18px       /* esclusioni */
-      9px        /* caption giocatori */
-      minmax(0,1fr) /* SOLO spazio giocatori */
-      11px       /* titolo dirigenti */
-      64px;      /* DIRIGENTI + provvedimenti */
-    overflow:hidden;
-  }
-
-  .main > .panel:nth-child(2){
-    min-height:0;overflow:hidden;display:flex;flex-direction:column;
-  }
-
-  .panel-head{padding:1px 2px}
-  .team-line{min-height:21px}
-  .name-input{font-size:12px}
-  .timeout-btn{min-height:21px!important;padding:1px 4px!important;font-size:7px!important}
-  .team-counters{height:10px;line-height:10px;font-size:7px;margin-top:0}
-
-  .suspensions-title{height:10px;line-height:10px;padding:0;font-size:6px}
-  .suspensions{height:18px;min-height:18px;padding:1px 2px}
-  .suspension-empty{font-size:7px}
-  .suspension-item{min-width:48px}
-  .suspension-num,.suspension-time{font-size:8px}
-
-  .players-caption{height:9px;line-height:9px;padding:0;font-size:6px}
-
-  /* 16 cards: the grid gets the reduced vertical budget, removing the
-     empty lower part visible in the previous screenshot. */
-  .players{
-    height:auto!important;
-    min-height:0;
     padding:2px;
-    gap:2px;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    grid-template-rows:repeat(4,minmax(0,1fr));
-    overflow:hidden;
   }
-  .player-card{min-height:0;height:100%;border-radius:4px}
-  .player-top{height:25px;min-height:25px;flex:0 0 25px;padding:0 2px}
-  .player-number{
-    width:55px;min-width:55px;
-    height:24px;min-height:24px;
-    font-size:17px;line-height:24px;
-    border-radius:4px;
-  }
-  .player-goals{font-size:8px;line-height:24px}
-  .player-stats{
-    height:14px;min-height:14px;flex:0 0 14px;
-    padding:1px;gap:1px;font-size:7px;
-  }
-  .player-expelled{
-    height:10px;min-height:10px;flex:0 0 10px;
-    line-height:10px;font-size:6px;
-  }
-
-  /* Dirigenti: 5 cards, one A/B/C/D/E touch target each, with the
-     disciplinary state directly below it. */
-  .staff-title{
-    height:11px;min-height:11px;line-height:11px;
-    padding:0;font-size:6px;
-  }
-  .staff{
-    height:64px;min-height:64px;
-    padding:2px 2px 1px;gap:2px;
-    display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
-  }
-  .staff-card{
-    height:61px;min-height:61px;
-    display:grid;grid-template-rows:38px 21px;
-    overflow:hidden;border-radius:4px;
-  }
-  .staff-label{
-    width:100%;height:38px;min-height:38px;
-    display:flex;align-items:center;justify-content:center;
-    padding:0;border:0;border-radius:0;
-    background:#e2e8f0;color:#111827;
-    font-size:14px;font-weight:900;line-height:38px;
-    touch-action:manipulation;
-  }
-  .staff-label:disabled{background:#cbd5e1;color:#64748b}
-  .staff-status{
-    height:21px;min-height:21px;line-height:21px;
-    font-size:9px;font-weight:900;text-align:center;
-    background:#f8fafc;color:#334155;
-  }
-  .staff-actions,.staff-letter{display:none!important}
-
-  .log-head{height:18px;flex-basis:18px;padding:1px 3px}
-  .log-title{font-size:8px}
-  .small{min-height:16px!important;padding:1px 3px!important;font-size:7px!important}
-  .log-columns{padding:1px;grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;font-size:6px}
-  .log-row{grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;padding:1px;font-size:7px}
+  .player-top{height:20px;flex:0 0 20px}
+  .player-number{height:19px;font-size:14px;line-height:19px}
+  .player-stats{flex:0 0 14px;font-size:7px;padding:0 1px}
+  .staff{flex:0 0 46px;padding:2px;gap:2px}
+  .staff-card{grid-template-rows:18px 1fr}
+  .staff-label{font-size:10px;line-height:18px}
+  .staff-status{font-size:7px}
 }
-
-
-@media (orientation:portrait) and (max-width:900px){
-  html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-  }
-
-  .app{
-    width:100%;
-    height:100dvh;
-    min-height:0;
-    box-sizing:border-box;
-    padding:1px;
-    gap:2px;
-  }
-
-  .main{
-    flex:1 1 auto;
-    min-height:0;
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(145px,.48fr) minmax(0,1fr);
-    grid-template-rows:minmax(0,1fr);
-    gap:2px;
-  }
-
-  /* IMPORTANT:
-     The team panel is now a fixed vertical grid.
-     This prevents the player flex block from pushing the staff block
-     outside the tablet viewport. */
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    min-width:0;
-    min-height:0;
-    overflow:hidden;
-    display:grid;
-    grid-template-rows:
-      23px      /* team header */
-      10px      /* suspension title */
-      18px      /* suspension list */
-      9px       /* players caption */
-      minmax(0,1fr) /* PLAYERS: takes only remaining space */
-      10px      /* staff title */
-      74px;     /* STAFF: deliberately enlarged */
-  }
-
-  .main > .panel:nth-child(2){
-    min-width:0;
-    min-height:0;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-  }
-
-  /* Team header */
-  .panel-head{
-    min-height:23px;
-    padding:1px 2px;
-  }
-  .team-line{min-height:21px}
-  .name-input{font-size:12px}
-  .timeout-btn{
-    min-height:21px!important;
-    padding:1px 4px!important;
-    font-size:7px!important;
-  }
-  .team-counters{
-    height:10px;
-    line-height:10px;
-    font-size:7px;
-    gap:2px;
-  }
-
-  /* Suspensions */
-  .suspensions-title{
-    height:10px;
-    min-height:10px;
-    padding:0;
-    line-height:10px;
-    font-size:6px;
-  }
-  .suspensions{
-    height:18px;
-    min-height:18px;
-    padding:1px 2px;
-    gap:2px;
-  }
-  .suspension-empty{font-size:7px}
-  .suspension-item{min-width:48px}
-  .suspension-num,.suspension-time{font-size:8px}
-
-  .players-caption{
-    height:9px;
-    min-height:9px;
-    padding:0;
-    line-height:9px;
-    font-size:6px;
-  }
-
-  /* PLAYERS:
-     Much shorter vertically. The cards no longer contain a large blank
-     body, and the saved height is transferred to STAFF. */
-  .players{
-    width:100%;
-    height:auto;
-    min-height:0;
-    overflow:hidden;
-    box-sizing:border-box;
-    padding:2px;
-    gap:2px;
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    grid-template-rows:repeat(4,minmax(0,1fr));
-  }
-
-  .player-card{
-    min-width:0;
-    min-height:0;
-    height:100%;
-    overflow:hidden;
-    border-radius:4px;
-  }
-
-  .player-top{
-    height:21px;
-    min-height:21px;
-    flex:0 0 21px;
-    padding:0 2px;
-    gap:1px;
-  }
-
-  .player-number{
-    width:52px;
-    min-width:52px;
-    height:21px;
-    min-height:21px;
-    padding:0;
-    border-radius:4px;
-    font-size:16px;
-    line-height:21px;
-  }
-
-  .player-goals{
-    font-size:7px;
-    line-height:21px;
-  }
-
-  .player-stats{
-    height:13px;
-    min-height:13px;
-    flex:0 0 13px;
-    gap:1px;
-    padding:1px;
-    font-size:7px;
-  }
-
-  .player-expelled{
-    height:10px;
-    min-height:10px;
-    flex:0 0 10px;
-    line-height:10px;
-    font-size:6px;
-  }
-
-  /* STAFF:
-     Now 74px for the whole cards, enough to show the letter AND the
-     disciplinary status clearly. No duplicate A/B/C/D/E button. */
-  .staff-title{
-    height:10px;
-    min-height:10px;
-    padding:0;
-    line-height:10px;
-    font-size:6px;
-  }
-
-  .staff{
-    width:100%;
-    height:74px;
-    min-height:74px;
-    padding:2px 3px;
-    gap:3px;
-    box-sizing:border-box;
-    display:grid;
-    grid-template-columns:repeat(5,minmax(0,1fr));
-  }
-
-  .staff-card{
-    width:100%;
-    height:70px;
-    min-height:70px;
-    min-width:0;
-    box-sizing:border-box;
-    border:1px solid #cbd5e1;
-    border-radius:5px;
-    overflow:hidden;
-    display:grid;
-    grid-template-rows:39px 29px;
-  }
-
-  /* The letter itself is the ONLY button. */
-  .staff-label{
-    width:100%;
-    height:39px;
-    min-height:39px;
-    padding:0;
-    border:0;
-    border-radius:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#e2e8f0;
-    color:#111827;
-    font-size:13px;
-    font-weight:900;
-    line-height:39px;
-    touch-action:manipulation;
-  }
-
-  .staff-label:disabled{
-    background:#cbd5e1;
-    color:#64748b;
-  }
-
-  .staff-status{
-    width:100%;
-    height:29px;
-    min-height:29px;
-    line-height:29px;
-    font-size:10px;
-    font-weight:900;
-    text-align:center;
-    background:#f8fafc;
-    color:#334155;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none!important;
-  }
-
-  /* Register stays compact and gives no height back to the player cards. */
-  .log-head{
-    height:18px;
-    min-height:18px;
-    flex:0 0 18px;
-    padding:1px 3px;
-  }
-  .log-title{font-size:8px}
-  .small{
-    min-height:16px!important;
-    padding:1px 3px!important;
-    font-size:7px!important;
-  }
-  .log-columns{
-    padding:1px;
-    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
-    font-size:6px;
-  }
-  .log-row{
-    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
-    padding:1px;
-    font-size:7px;
-  }
-}
-
-
-@media (orientation:portrait) and (max-width:900px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:
-      23px
-      10px
-      18px
-      9px
-      minmax(0,1fr)
-      10px
-      96px;
-  }
-
-  /* Player cards become shorter because the staff area gets the recovered
-     vertical space. */
-  .players{
-    min-height:0!important;
-    overflow:hidden!important;
-    padding:2px!important;
-    gap:2px!important;
-  }
-
-  .player-top{
-    height:20px!important;
-    min-height:20px!important;
-    flex-basis:20px!important;
-  }
-  .player-number{
-    height:20px!important;
-    min-height:20px!important;
-    width:54px!important;
-    min-width:54px!important;
-    line-height:20px!important;
-    font-size:16px!important;
-  }
-  .player-goals{
-    line-height:20px!important;
-    font-size:7px!important;
-  }
-  .player-stats{
-    height:12px!important;
-    min-height:12px!important;
-    flex-basis:12px!important;
-    padding:1px!important;
-    font-size:7px!important;
-  }
-  .player-expelled{
-    height:9px!important;
-    min-height:9px!important;
-    flex-basis:9px!important;
-    line-height:9px!important;
-    font-size:6px!important;
-  }
-
-  /* Staff: enough vertical room for both the clickable letter and the
-     disciplinary status. There is NO second letter button. */
-  .staff-title{
-    height:10px!important;
-    min-height:10px!important;
-    line-height:10px!important;
-  }
-  .staff{
-    height:96px!important;
-    min-height:96px!important;
-    padding:3px 3px!important;
-    gap:3px!important;
-    box-sizing:border-box!important;
-  }
-  .staff-card{
-    height:90px!important;
-    min-height:90px!important;
-    grid-template-rows:48px 40px!important;
-    box-sizing:border-box!important;
-  }
-  .staff-label{
-    height:48px!important;
-    min-height:48px!important;
-    line-height:48px!important;
-    font-size:15px!important;
-  }
-  .staff-status{
-    height:40px!important;
-    min-height:40px!important;
-    line-height:40px!important;
-    font-size:11px!important;
-  }
-  .staff-actions,
-  .staff-letter{
-    display:none!important;
-  }
-}
-
-
-/* =========================================================
-   11" TABLET - PORTRAIT ONLY
-   Player cards shorter vertically, staff area taller.
-   Number button stays wide.
-   ========================================================= */
-@media screen and (orientation: portrait) and (max-width: 900px){
-
-  html, body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-  }
-
-  .app{
-    width:100%;
-    height:100dvh;
-    min-height:0;
-    overflow:hidden;
-    padding:1px;
-    gap:2px;
-  }
-
-  .main{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) minmax(140px,.45fr) minmax(0,1fr) !important;
-    grid-template-rows:minmax(0,1fr) !important;
-    gap:2px !important;
-    overflow:hidden !important;
-  }
-
-  /* CASA and OSPITI */
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    min-width:0 !important;
-    min-height:0 !important;
-    height:100% !important;
-    overflow:hidden !important;
-
-    display:grid !important;
-    grid-template-rows:
-      23px
-      10px
-      18px
-      9px
-      minmax(0,1fr)
-      10px
-      112px !important;
-  }
-
-  /* Header */
-  .panel-head{
-    min-height:23px !important;
-    padding:1px 2px !important;
-  }
-
-  /* Exclusions */
-  .suspensions-title{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-    padding:0 !important;
-    font-size:6px !important;
-  }
-
-  .suspensions{
-    height:18px !important;
-    min-height:18px !important;
-    padding:1px 2px !important;
-  }
-
-  /* Players: THIS is where vertical space is removed.
-     The grid itself gets the exact remaining height and every card is
-     forced to fit its 4x4 cell. */
-  .players-caption{
-    height:9px !important;
-    min-height:9px !important;
-    line-height:9px !important;
-    padding:0 !important;
-  }
-
-  .players{
-    width:100% !important;
-    height:100% !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-
-    display:grid !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
-    gap:2px !important;
-    padding:2px !important;
-    box-sizing:border-box !important;
-  }
-
-  .player-card{
-    width:100% !important;
-    height:100% !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-
-  /* Number remains LARGE/WIDE. It is the event button. */
-  .player-top{
-    height:24px !important;
-    min-height:24px !important;
-    flex:0 0 24px !important;
-    padding:0 2px !important;
-  }
-
-  .player-number{
-    width:64px !important;
-    min-width:64px !important;
-    max-width:64px !important;
-    height:23px !important;
-    min-height:23px !important;
-    padding:0 !important;
-    font-size:18px !important;
-    line-height:23px !important;
-    border-radius:4px !important;
-  }
-
-  .player-goals{
-    font-size:8px !important;
-    line-height:23px !important;
-  }
-
-  .player-stats{
-    height:13px !important;
-    min-height:13px !important;
-    flex:0 0 13px !important;
-    padding:1px !important;
-    font-size:7px !important;
-  }
-
-  .player-expelled{
-    height:9px !important;
-    min-height:9px !important;
-    flex:0 0 9px !important;
-    line-height:9px !important;
-    font-size:6px !important;
-  }
-
-  /* Staff: explicitly 112px tall, so the disciplinary status is visible.
-     There is ONLY the A/B/C/D/E letter button. */
-  .staff-title{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-    padding:0 !important;
-    font-size:7px !important;
-  }
-
-  .staff{
-    width:100% !important;
-    height:112px !important;
-    min-height:112px !important;
-    max-height:112px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-    box-sizing:border-box !important;
-  }
-
-  .staff-card{
-    width:100% !important;
-    height:106px !important;
-    min-height:106px !important;
-    min-width:0 !important;
-    display:grid !important;
-    grid-template-rows:52px 52px !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-
-  .staff-label{
-    width:100% !important;
-    height:52px !important;
-    min-height:52px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    padding:0 !important;
-    font-size:15px !important;
-    line-height:52px !important;
-    border:0 !important;
-    border-radius:0 !important;
-    touch-action:manipulation !important;
-  }
-
-  .staff-status{
-    width:100% !important;
-    height:52px !important;
-    min-height:52px !important;
-    line-height:52px !important;
-    font-size:12px !important;
-    text-align:center !important;
-    overflow:hidden !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-
-  /* Compact only the central register. */
-  .main > .panel:nth-child(2){
-    min-width:0 !important;
-    min-height:0 !important;
-    height:100% !important;
-    overflow:hidden !important;
-  }
-}
-
-
-/* =========================================================
-   TABLET 10" - LANDSCAPE
-   Dedicated compact layout for a 10-inch tablet rotated 90°.
-   ========================================================= */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-  html,body{
-    width:100%;
-    height:100%;
-    margin:0;
-    overflow:hidden;
-  }
-
-  .app{
-    width:100%;
-    height:100dvh;
-    min-height:0;
-    box-sizing:border-box;
-    padding:2px;
-    gap:3px;
-    overflow:hidden;
-  }
-
-  /* Keep the upper controls compact but readable. */
-  .top{
-    flex:0 0 auto;
-    padding:2px 5px;
-  }
-  .score-row{gap:3px}
-  .team-title{font-size:15px}
-  .score{font-size:28px;padding:1px 10px}
-  .timer{min-width:120px;font-size:28px;padding:1px 8px}
-  .phase span{font-size:8px;padding:1px 7px}
-  .clock-row{gap:3px;margin-top:1px}
-  .clock-row .btn{
-    min-height:27px!important;
-    padding:2px 7px!important;
-    font-size:10px!important;
-  }
-  .top-match-btn{
-    min-height:27px!important;
-    padding:2px 7px!important;
-    font-size:9px!important;
-  }
-
-  /* CASA | REGISTRO | OSPITI */
-  .main{
-    flex:1 1 auto!important;
-    min-height:0!important;
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) minmax(210px,.58fr) minmax(0,1fr)!important;
-    grid-template-rows:minmax(0,1fr)!important;
-    gap:4px!important;
-    overflow:hidden!important;
-  }
-
-  .main > .panel{
-    min-width:0!important;
-    min-height:0!important;
-    overflow:hidden!important;
-  }
-
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    display:grid!important;
-    grid-template-rows:
-      31px
-      13px
-      25px
-      12px
-      minmax(0,1fr)
-      14px
-      72px!important;
-  }
-
-  .panel-head{
-    min-height:31px!important;
-    padding:2px 4px!important;
-  }
-  .team-line{min-height:27px}
-  .name-input{font-size:15px}
-  .timeout-btn{
-    min-height:27px!important;
-    padding:2px 7px!important;
-    font-size:9px!important;
-  }
-  .team-counters{
-    height:13px;
-    line-height:13px;
-    font-size:8px;
-  }
-
-  .suspensions-title{
-    height:13px!important;
-    min-height:13px!important;
-    line-height:13px!important;
-    font-size:7px!important;
-  }
-  .suspensions{
-    height:25px!important;
-    min-height:25px!important;
-    padding:2px 3px!important;
-  }
-
-  .players-caption{
-    height:12px!important;
-    min-height:12px!important;
-    line-height:12px!important;
-    font-size:7px!important;
-  }
-
-  /* 16 players in 4x4, with compact vertical cards. */
-  .players{
-    width:100%!important;
-    height:100%!important;
-    min-height:0!important;
-    overflow:hidden!important;
-    display:grid!important;
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    grid-template-rows:repeat(4,minmax(0,1fr))!important;
-    gap:3px!important;
-    padding:3px!important;
-    box-sizing:border-box!important;
-  }
-
-  .player-card{
-    min-width:0!important;
-    min-height:0!important;
-    height:100%!important;
-    overflow:hidden!important;
-  }
-
-  /* Number is deliberately wide and not clipped. */
-  .player-top{
-    height:29px!important;
-    min-height:29px!important;
-    flex:0 0 29px!important;
-    padding:0 3px!important;
-  }
-  .player-number{
-    width:62px!important;
-    min-width:62px!important;
-    height:28px!important;
-    min-height:28px!important;
-    font-size:19px!important;
-    line-height:28px!important;
-  }
-  .player-goals{
-    font-size:9px!important;
-    line-height:28px!important;
-  }
-  .player-stats{
-    height:17px!important;
-    min-height:17px!important;
-    flex:0 0 17px!important;
-    padding:1px 2px!important;
-    font-size:8px!important;
-  }
-  .player-expelled{
-    height:11px!important;
-    min-height:11px!important;
-    flex:0 0 11px!important;
-    line-height:11px!important;
-    font-size:7px!important;
-  }
-
-  /* Staff gets enough height for both letter and sanction. */
-  .staff-title{
-    height:14px!important;
-    min-height:14px!important;
-    line-height:14px!important;
-    font-size:8px!important;
-  }
-  .staff{
-    width:100%!important;
-    height:72px!important;
-    min-height:72px!important;
-    padding:2px 3px!important;
-    gap:3px!important;
-    display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    box-sizing:border-box!important;
-  }
-  .staff-card{
-    height:68px!important;
-    min-height:68px!important;
-    min-width:0!important;
-    display:grid!important;
-    grid-template-rows:37px 29px!important;
-    overflow:hidden!important;
-  }
-  .staff-label{
-    width:100%!important;
-    height:37px!important;
-    min-height:37px!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    font-size:13px!important;
-    line-height:37px!important;
-    touch-action:manipulation!important;
-  }
-  .staff-status{
-    width:100%!important;
-    height:29px!important;
-    min-height:29px!important;
-    line-height:29px!important;
-    font-size:10px!important;
-    text-align:center!important;
-  }
-  .staff-actions,.staff-letter{display:none!important}
-
-  /* Compact central register. */
-  .main > .panel:nth-child(2){
-    min-width:0!important;
-    min-height:0!important;
-    overflow:hidden!important;
-  }
-  .log-head{
-    height:24px!important;
-    min-height:24px!important;
-    flex:0 0 24px!important;
-    padding:2px 4px!important;
-  }
-  .log-title{font-size:10px!important}
-  .small{
-    min-height:20px!important;
-    padding:1px 4px!important;
-    font-size:8px!important;
-  }
-  .log-columns{
-    grid-template-columns:34px 19px 22px minmax(0,1fr) 30px!important;
-    padding:2px!important;
-    font-size:7px!important;
-  }
-  .log-row{
-    grid-template-columns:34px 19px 22px minmax(0,1fr) 30px!important;
-    padding:2px!important;
-    font-size:8px!important;
-  }
-}
-
-
-/* STAFF: letter is the only button; sanction is always visible underneath */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:31px 13px 25px 12px minmax(0,1fr) 14px 92px !important;
-  }
-
-  .staff{
-    height:92px !important;
-    min-height:92px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-  }
-
-  .staff-card{
-    height:86px !important;
-    min-height:86px !important;
-    display:grid !important;
-    grid-template-rows:48px 36px !important;
-    overflow:hidden !important;
-  }
-
-  .staff-label{
-    height:48px !important;
-    min-height:48px !important;
-    font-size:15px !important;
-    line-height:48px !important;
-    touch-action:manipulation !important;
-  }
-
-  .staff-status{
-    height:36px !important;
-    min-height:36px !important;
-    line-height:36px !important;
-    font-size:11px !important;
-    font-weight:900 !important;
-    text-align:center !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
-/* Also make the same staff sanction area usable in portrait. */
-@media screen and (orientation:portrait) and (max-width:900px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:23px 10px 18px 9px minmax(0,1fr) 10px 112px !important;
-  }
-
-  .staff{
-    height:112px !important;
-    min-height:112px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-  }
-
-  .staff-card{
-    height:106px !important;
-    min-height:106px !important;
-    grid-template-rows:58px 44px !important;
-  }
-
-  .staff-label{
-    height:58px !important;
-    min-height:58px !important;
-    font-size:15px !important;
-    line-height:58px !important;
-  }
-
-  .staff-status{
-    height:44px !important;
-    min-height:44px !important;
-    line-height:44px !important;
-    font-size:11px !important;
-    font-weight:900 !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
-
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-  .log-columns,
-  .log-row{
-    grid-template-columns:38px 22px 28px minmax(0,1fr) 38px !important;
-  }
-  .log-columns{
-    white-space:nowrap !important;
-    font-size:7px !important;
-  }
-  .log-row{
-    min-height:18px !important;
-    height:18px !important;
-    padding:1px 3px !important;
-    font-size:8px !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-  }
-  .log-time,.log-team,.log-num,.log-event,.log-res{
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-  .log-event{
-    min-width:0 !important;
-    text-align:left !important;
-  }
-}
-@media screen and (orientation:portrait) and (max-width:900px){
-  .log-columns,
-  .log-row{
-    grid-template-columns:32px 18px 22px minmax(0,1fr) 30px !important;
-  }
-  .log-columns{
-    white-space:nowrap !important;
-    font-size:6px !important;
-  }
-  .log-row{
-    min-height:17px !important;
-    height:17px !important;
-    padding:1px 2px !important;
-    font-size:7px !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-  }
-  .log-time,.log-team,.log-num,.log-event,.log-res{
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-}
-
-
-/* =========================================================
-   10" TABLET LANDSCAPE — STAFF VISIBILITY
-   ========================================================= */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:
-      31px
-      13px
-      25px
-      12px
-      minmax(0,1fr)
-      14px
-      120px !important;
-  }
-
-  .staff{
-    height:120px !important;
-    min-height:120px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-  }
-
-  .staff-card{
-    height:114px !important;
-    min-height:114px !important;
-    display:grid !important;
-    grid-template-rows:56px 56px !important;
-    overflow:hidden !important;
-  }
-
-  /* A/B/C/D/E is the only touch button. */
-  .staff-label{
-    width:100% !important;
-    height:56px !important;
-    min-height:56px !important;
-    font-size:16px !important;
-    line-height:56px !important;
-    touch-action:manipulation !important;
-  }
-
-  /* Sanction area: always visible under the letter. */
-  .staff-status{
-    width:100% !important;
-    height:56px !important;
-    min-height:56px !important;
-    line-height:56px !important;
-    font-size:13px !important;
-    font-weight:900 !important;
-    text-align:center !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
-
-/* =========================================================
-   10" TABLET PORTRAIT - STAFF LIKE PLAYERS
-   ========================================================= */
-@media screen and (orientation:portrait) and (max-width:900px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    /* Staff gets a real, fixed visible area. */
-    grid-template-rows:
-      23px
-      10px
-      18px
-      9px
-      minmax(0,1fr)
-      10px
-      118px !important;
-  }
-
-  /* Players: remove only vertical excess, never narrow the number. */
-  .players{
-    min-height:0 !important;
-    overflow:hidden !important;
-    padding:2px !important;
-    gap:2px !important;
-  }
-
-  .player-card{
-    min-height:0 !important;
-    height:100% !important;
-    overflow:hidden !important;
-  }
-
-  .player-top{
-    height:24px !important;
-    min-height:24px !important;
-    flex:0 0 24px !important;
-  }
-
-  .player-number{
-    width:64px !important;
-    min-width:64px !important;
-    height:23px !important;
-    min-height:23px !important;
-    line-height:23px !important;
-    font-size:18px !important;
-  }
-
-  .player-goals{
-    line-height:23px !important;
-  }
-
-  .player-stats{
-    height:13px !important;
-    min-height:13px !important;
-    flex:0 0 13px !important;
-  }
-
-  .player-expelled{
-    height:9px !important;
-    min-height:9px !important;
-    flex:0 0 9px !important;
-    line-height:9px !important;
-  }
-
-  /* Staff is deliberately shaped like a player card:
-     top = clickable A/B/C/D/E, bottom = visible sanction. */
-  .staff-title{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-    font-size:7px !important;
-  }
-
-  .staff{
-    width:100% !important;
-    height:118px !important;
-    min-height:118px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-    box-sizing:border-box !important;
-  }
-
-  .staff-card{
-    width:100% !important;
-    height:112px !important;
-    min-height:112px !important;
-    display:grid !important;
-    grid-template-rows:58px 50px !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-
-  /* ONE button only: the letter itself. */
-  .staff-label{
-    width:100% !important;
-    height:58px !important;
-    min-height:58px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    padding:0 !important;
-    border:0 !important;
-    border-radius:0 !important;
-    font-size:18px !important;
-    font-weight:900 !important;
-    line-height:58px !important;
-    touch-action:manipulation !important;
-  }
-
-  /* This is the area that MUST show A / 2' / E. */
-  .staff-status{
-    width:100% !important;
-    height:50px !important;
-    min-height:50px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    line-height:50px !important;
-    font-size:14px !important;
-    font-weight:900 !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    background:#f8fafc !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
-
-/* =========================================================
-   FINAL 10" TABLET LANDSCAPE FIX
-   The player grid must NOT reserve 100% height inside its grid row.
-   That was the reason the staff section was pushed below the viewport.
-   ========================================================= */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    min-height:0 !important;
-    overflow:hidden !important;
-    grid-template-rows:
-      31px
-      13px
-      25px
-      12px
-      minmax(0,1fr)
-      14px
-      120px !important;
-  }
-
-  /* CRITICAL: let the CSS grid determine the player height.
-     Do not use height:100%, which was forcing the grid to overflow. */
-  .players{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-    padding:3px !important;
-    gap:3px !important;
-    align-self:stretch !important;
-  }
-
-  .player-card{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-  }
-
-  /* Give the number a little more vertical breathing room without making
-     the whole player card taller. */
-  .player-top{
-    height:30px !important;
-    min-height:30px !important;
-    flex-basis:30px !important;
-  }
-
-  .player-number{
-    width:64px !important;
-    min-width:64px !important;
-    height:29px !important;
-    min-height:29px !important;
-    font-size:19px !important;
-    line-height:29px !important;
-  }
-
-  .player-goals{
-    line-height:29px !important;
-  }
-
-  .player-stats{
-    height:16px !important;
-    min-height:16px !important;
-    flex-basis:16px !important;
-  }
-
-  .player-expelled{
-    height:10px !important;
-    min-height:10px !important;
-    flex-basis:10px !important;
-    line-height:10px !important;
-  }
-
-  /* The staff section is now physically inside the available viewport. */
-  .staff-title{
-    height:14px !important;
-    min-height:14px !important;
-    line-height:14px !important;
-  }
-
-  .staff{
-    height:120px !important;
-    min-height:120px !important;
-    max-height:120px !important;
-    padding:3px !important;
-    gap:3px !important;
-    overflow:hidden !important;
-  }
-
-  .staff-card{
-    height:114px !important;
-    min-height:114px !important;
-    max-height:114px !important;
-    grid-template-rows:55px 55px !important;
-  }
-
-  /* One single A/B/C/D/E button, exactly like the player number. */
-  .staff-label{
-    height:55px !important;
-    min-height:55px !important;
-    font-size:16px !important;
-    line-height:55px !important;
-  }
-
-  /* This area is guaranteed to be visible below the letter. */
-  .staff-status{
-    height:55px !important;
-    min-height:55px !important;
-    line-height:55px !important;
-    font-size:13px !important;
-    font-weight:900 !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
-
-/* =========================================================
-   FINAL 10" TABLET LANDSCAPE LAYOUT
-   Transfer vertical space from PLAYER CONTAINERS to STAFF.
-   ========================================================= */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    height:100% !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    display:grid !important;
-
-    /* The last row is the staff area. It is physically reserved.
-       Players can no longer push it below the viewport. */
-    grid-template-rows:
-      31px
-      13px
-      25px
-      12px
-      minmax(0,1fr)
-      14px
-      150px !important;
-  }
-
-  /* PLAYER CONTAINER:
-     It occupies only the grid row above the staff section. */
-  .players{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-    align-self:stretch !important;
-    box-sizing:border-box !important;
-
-    display:grid !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
-    gap:2px !important;
-    padding:2px !important;
-  }
-
-  /* EACH PLAYER CONTAINER:
-     shorter vertical card, with no large empty body. */
-  .player-card{
-    height:100% !important;
-    min-height:0 !important;
-    max-height:none !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-
-  .player-top{
-    height:29px !important;
-    min-height:29px !important;
-    flex:0 0 29px !important;
-    padding:0 2px !important;
-  }
-
-  /* Keep the number wide and give it enough vertical room. */
-  .player-number{
-    width:64px !important;
-    min-width:64px !important;
-    max-width:64px !important;
-    height:28px !important;
-    min-height:28px !important;
-    line-height:28px !important;
-    font-size:19px !important;
-    padding:0 !important;
-  }
-
-  .player-goals{
-    line-height:28px !important;
-    font-size:9px !important;
-  }
-
-  .player-stats{
-    height:16px !important;
-    min-height:16px !important;
-    flex:0 0 16px !important;
-    padding:1px 2px !important;
-    font-size:8px !important;
-  }
-
-  .player-expelled{
-    height:10px !important;
-    min-height:10px !important;
-    flex:0 0 10px !important;
-    line-height:10px !important;
-    font-size:7px !important;
-  }
-
-  /* STAFF TITLE + STAFF CARDS:
-     large enough to show both the letter and its sanction. */
-  .staff-title{
-    height:14px !important;
-    min-height:14px !important;
-    line-height:14px !important;
-    font-size:8px !important;
-  }
-
-  .staff{
-    height:150px !important;
-    min-height:150px !important;
-    max-height:150px !important;
-    padding:3px !important;
-    gap:3px !important;
-    display:grid !important;
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-    box-sizing:border-box !important;
-  }
-
-  .staff-card{
-    height:144px !important;
-    min-height:144px !important;
-    max-height:144px !important;
-    min-width:0 !important;
-    display:grid !important;
-    grid-template-rows:70px 70px !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-
-  /* A/B/C/D/E is the ONLY button. */
-  .staff-label{
-    width:100% !important;
-    height:70px !important;
-    min-height:70px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    padding:0 !important;
-    border:0 !important;
-    border-radius:0 !important;
-    font-size:18px !important;
-    font-weight:900 !important;
-    line-height:70px !important;
-    touch-action:manipulation !important;
-  }
-
-  /* THE SANCTION AREA:
-     physically below the letter and always visible. */
-  .staff-status{
-    width:100% !important;
-    height:70px !important;
-    min-height:70px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    line-height:70px !important;
-    font-size:15px !important;
-    font-weight:900 !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    background:#f8fafc !important;
-  }
-
-  .staff-actions,
-  .staff-letter{
-    display:none !important;
-  }
-}
-
 </style>
 </head>
 
@@ -2198,21 +266,6 @@ function closePenalty(){
     </section>
 
   </main>
-
-  
-</div>
-
-<!-- MODIFICA NUMERI -->
-<div id="numberModal" class="modal-back">
-  <div class="modal">
-    <h3>Numeri di maglia</h3>
-    <p>Modifica i numeri prima o durante la gara.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left">
-      <div><b>CASA</b><div id="numberInputsA"></div></div>
-      <div><b>OSPITI</b><div id="numberInputsB"></div></div>
-    </div>
-    <button class="btn blue" style="width:100%;margin-top:10px" onclick="saveNumbers()">SALVA NUMERI</button>
-  </div>
 </div>
 
 <!-- TIME OUT -->
@@ -2224,8 +277,6 @@ function closePenalty(){
     <button class="btn gray" onclick="closeTimeout()">CHIUDI TIME OUT</button>
   </div>
 </div>
-
-
 
 <!-- POPUP SCELTA EVENTO -->
 <div id="eventModal" class="modal-back">
@@ -2261,19 +312,7 @@ function closePenalty(){
   </div>
 </div>
 
-<!-- PROVVEDIMENTO -->
-<div id="disciplineModal" class="modal-back">
-  <div class="modal">
-    <h3 id="disciplineTitle">PROVVEDIMENTO</h3>
-    <p id="disciplineText"></p>
-    <div class="modal-actions">
-      <button class="green" onclick="closeDiscipline()">OK</button>
-      <button class="gray" onclick="closeDiscipline()">CHIUDI</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div><div id="jsStatus" style="position:fixed;top:2px;left:2px;z-index:999;color:transparent;font-size:1px">JS OK</div>
+<div id="toast"></div>
 
 <script>
 const MAX_PLAYERS=16;
@@ -2315,19 +354,15 @@ function currentTime(){
   return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 
-
 function renderSuspensions(){
   ['A','B'].forEach(team=>{
     const box=el('suspensions'+team);
     if(!box)return;
-
     const list=state.activeSuspensions.filter(x=>x.team===team);
-
     if(!list.length){
       box.innerHTML='<div class="suspension-empty">Nessuna esclusione</div>';
       return;
     }
-
     box.innerHTML=list.map(x=>{
       const remaining=Math.max(0,x.endGameTime-state.timer);
       const m=Math.floor(remaining/60);
@@ -2364,12 +399,9 @@ function render(){
   el('halfBtn').style.display=atEnd?'block':'none';
   el('halfBtn').textContent=state.phase===1?'FINE 1° TEMPO':'FINE GARA';
 
-  // RESET GARA disappears as soon as the match starts.
   const resetBtn=el('resetBtn');
   if(resetBtn) resetBtn.style.display=state.running?'none':'block';
 
-  // FINE GARA / FINE 1° TEMPO is shown only with the clock stopped
-  // and only at the end of the relevant half.
   const endTop=el('endMatchTop');
   if(endTop) endTop.style.display=(!state.running && state.timer>0)?'block':'none';
 
@@ -2397,17 +429,15 @@ function renderPlayers(team){
 
     card.innerHTML=`
       <div class="player-top">
-        <button class="player-number player-touch" type="button"
+        <button class="player-number" type="button"
                 onclick="openEventMenu('PLAYER','${team}',${i})"
                 ${expelled?'disabled':''}>${num}</button>
-        <span class="player-goals">⚽ ${d.goals}</span>
       </div>
       <div class="player-stats">
         <span class="stat-yellow ${yellow?'active':''}">A${yellow?' ✓':''}</span>
         <span class="stat-two">2' ${d.two}/3</span>
       </div>
       ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
-      
     `;
     box.appendChild(card);
   });
@@ -2428,7 +458,7 @@ function renderStaff(team){
     if(d.red)staffBadges.push('E');
 
     card.innerHTML=`
-      <button class="staff-label staff-touch" type="button"
+      <button class="staff-label" type="button"
         onclick="openEventMenu('STAFF','${team}',${i})" ${d.red?'disabled':''}>
         ${letter}
       </button>
@@ -2450,19 +480,20 @@ function renderCounters(){
 }
 
 function renderLog(){
-  const box = document.getElementById('logRows');
+  const box = el('log');
   if(!box) return;
 
-  box.innerHTML = state.log.map(e => {
-    const cls = e.team === 'A' ? 'log-a' : 'log-b';
+  if(!state.events.length){
+    box.innerHTML='<div class="empty">Nessun evento</div>';
+    return;
+  }
 
-    // EVENTO contains only the action. The player/manager identifier
-    // belongs in N°; staff events intentionally have no N°.
-    let text = e.text || e.event || '';
-    text = String(text)
-      .replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'')
-      .replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'')
-      .trim();
+  box.innerHTML = state.events.map(e => {
+    let cls='';
+    if(e.type==='GOAL') cls='goal';
+    else if(e.type==='YELLOW'||e.type==='TWO') cls='disc';
+    else if(e.type==='RED') cls='exp';
+    else if(e.type==='TIMEOUT') cls='to';
 
     const num = e.num && e.num !== '—' ? e.num : '';
 
@@ -2471,7 +502,7 @@ function renderLog(){
         <div class="log-time">${e.time || ''}</div>
         <div class="log-team">${e.team || ''}</div>
         <div class="log-num">${num}</div>
-        <div class="log-event">${text}</div>
+        <div class="log-event">${e.text || ''}</div>
         <div class="log-res">${e.result || ''}</div>
       </div>`;
   }).join('');
@@ -2507,7 +538,6 @@ function addEvent(team,num,type,text,result=''){
   });
 }
 
-
 function openEventMenu(kind,team,index){
   selected={kind,team,index};
   const isPlayer=kind==='PLAYER';
@@ -2522,7 +552,7 @@ function openEventMenu(kind,team,index){
   el('eventModal').style.display='flex';
 }
 
-function closeEventModal(){
+function closeEventMenu(){
   selected=null;
   el('eventModal').style.display='none';
 }
@@ -2530,7 +560,7 @@ function closeEventModal(){
 function eventAction(type){
   if(!selected)return;
   const s=selected;
-  closeEventModal();
+  closeEventMenu();
 
   if(s.kind==='PLAYER'){
     playerAction(s.team,s.index,type);
@@ -2539,7 +569,6 @@ function eventAction(type){
   }
 }
 
-/* GIOCATORI */
 function playerAction(team,index,type){
   const d=state.discipline[team][index];
   const num=state.numbers[team][index];
@@ -2590,11 +619,9 @@ function playerAction(team,index,type){
     if(d.two===3){
       d.red=true;
       addEvent(team,num,'TWO','3° 2\' → ESCLUSIONE');
-      stopForDisciplinary(team,num,'3° 2\' → ESCLUSIONE');
     }else{
       addEvent(team,num,'TWO',`${d.two}° 2'`);
       startSuspension(team,num);
-      stopForDisciplinary(team,num,`${d.two}° 2'`);
     }
 
     render();
@@ -2604,11 +631,17 @@ function playerAction(team,index,type){
   if(type==='RED'){
     d.red=true;
     addEvent(team,num,'RED','ESPULSIONE DIRETTA');
-    stopForDisciplinary(team,num,'ESPULSIONE DIRETTA');
     render();
   }
 }
 
+function startSuspension(team,num){
+  state.activeSuspensions.push({
+    team:team,
+    num:num,
+    endGameTime:Math.min(state.phase===1?HALF:HALF*2, state.timer+120)
+  });
+}
 
 function penaltyResult(scored){
   if(!selectedPenalty)return;
@@ -2637,7 +670,6 @@ function closePenalty(){
   el('penaltyModal').style.display='none';
 }
 
-/* DIRIGENTI */
 function staffAction(team,index,type){
   const d=state.staff[team][index];
   const letter=STAFF[index];
@@ -2658,19 +690,16 @@ function staffAction(team,index,type){
   if(type==='TWO'){
     d.two++;
     addEvent(team,letter,'TWO',`DIRIGENTE ${letter} · 2'`);
-    stopForDisciplinary(team,letter,`DIRIGENTE ${letter} · 2'`);
   }
 
   if(type==='RED'){
     d.red=true;
     addEvent(team,letter,'RED',`DIRIGENTE ${letter} · ESPULSIONE`);
-    stopForDisciplinary(team,letter,`DIRIGENTE ${letter} · ESPULSIONE`);
   }
 
   render();
 }
 
-/* CRONOMETRO */
 function toggleClock(){
   const end=state.phase===1?HALF:HALF*2;
 
@@ -2680,7 +709,6 @@ function toggleClock(){
   }
 
   state.running=!state.running;
-
   clearInterval(interval);
 
   if(state.running){
@@ -2692,6 +720,9 @@ function toggleClock(){
 
 function tick(){
   state.timer++;
+  
+  state.activeSuspensions = state.activeSuspensions.filter(x => x.endGameTime > state.timer);
+
   renderSuspensions();
 
   const end=state.phase===1?HALF:HALF*2;
@@ -2701,7 +732,6 @@ function tick(){
     state.running=false;
     clearInterval(interval);
     interval=null;
-    beep();
     toast(state.phase===1?'FINE 1° TEMPO':'FINE GARA');
   }
 
@@ -2709,7 +739,6 @@ function tick(){
 }
 
 function adjustTimer(delta){
-  // Correzione manuale consentita anche con cronometro in movimento.
   const current = Number.isFinite(Number(state.timer)) ? Number(state.timer) : 0;
   const step = Number(delta) || 0;
 
@@ -2717,8 +746,6 @@ function adjustTimer(delta){
   const max = state.phase === 1 ? HALF : HALF * 2;
 
   state.timer = Math.max(min, Math.min(max, current + step));
-
-  // Aggiorna subito cronometro e countdown delle esclusioni.
   render();
 }
 
@@ -2746,7 +773,6 @@ function endMatch(){
   render();
 }
 
-/* TIME OUT: IL PULSANTE È IN ALTO */
 function requestTimeout(team){
   if(!state.running){
     toast('Il time-out è disponibile solo con il cronometro in corso');
@@ -2775,10 +801,12 @@ function requestTimeout(team){
   clearInterval(timeoutInterval);
   timeoutInterval=setInterval(()=>{
     left--;
-    el('timeoutCountdown').textContent=
-      String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
-
-    if(left<=0)closeTimeout();
+    let m=Math.floor(left/60), s=left%60;
+    el('timeoutCountdown').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(left<=0){
+      clearInterval(timeoutInterval);
+      closeTimeout();
+    }
   },1000);
 
   render();
@@ -2786,201 +814,32 @@ function requestTimeout(team){
 
 function closeTimeout(){
   clearInterval(timeoutInterval);
-  timeoutInterval=null;
   el('timeoutModal').style.display='none';
   render();
 }
 
-/* 2 MINUTI / ESPULSIONE */
-function startSuspension(team,num){
-  state.activeSuspensions.push({
-    team:team,
-    num:String(num),
-    endGameTime:state.timer+120,
-    end:Date.now()+120000
-  });
-  renderSuspensions();
-  startSuspensionWatcher();
-}
-
-function startSuspensionWatcher(){
-  if(window.suspensionWatcher)return;
-
-  window.suspensionWatcher=setInterval(()=>{
-    const before=state.activeSuspensions.length;
-
-    state.activeSuspensions=state.activeSuspensions.filter(x=>{
-      if(state.timer>=x.endGameTime){
-        addEvent(x.team,x.num,'SYSTEM','FINE 2\'');
-        return false;
-      }
-      return true;
-    });
-
-    if(before!==state.activeSuspensions.length)render();
-    renderSuspensions();
-
-    if(!state.activeSuspensions.length){
-      clearInterval(window.suspensionWatcher);
-      window.suspensionWatcher=null;
-    }
-  },250);
-}
-
-function stopForDisciplinary(team,num,text){
-  state.running=false;
-  clearInterval(interval);
-  interval=null;
-
-  el('timer').classList.add('blink');
-
-  el('disciplineTitle').textContent='PROVVEDIMENTO DISCIPLINARE';
-  el('disciplineText').textContent=
-    `${state.teams[team]} · ${num} · ${text}. Il cronometro è fermo.`;
-  el('disciplineModal').style.display='flex';
-}
-
-function closeDiscipline(){
-  el('disciplineModal').style.display='none';
-  el('timer').classList.remove('blink');
-  render();
-}
-
-/* NUMERI */
-function toggleNumbers(){
-  ['A','B'].forEach(t=>{
-    const box=el('numberInputs'+t);
-
-    box.innerHTML=state.numbers[t].map((n,i)=>`
-      <input
-        data-team="${t}"
-        data-index="${i}"
-        value="${n}"
-        type="number"
-        min="0"
-        max="99"
-        style="width:100%;margin:2px 0;padding:3px;border:1px solid #cbd5e1;border-radius:5px"
-      >`).join('');
-  });
-
-  el('numberModal').style.display='flex';
-}
-
-function saveNumbers(){
-  ['A','B'].forEach(t=>{
-    document.querySelectorAll(`#numberInputs${t} input`).forEach(inp=>{
-      const v=parseInt(inp.value);
-      if(!isNaN(v))state.numbers[t][+inp.dataset.index]=v;
-    });
-  });
-
-  el('numberModal').style.display='none';
-  render();
-}
-
-/* ALTRE FUNZIONI */
 function renameTeam(team){
-  const id=team==='A'?'teamAName':'teamBName';
-  state.teams[team]=el(id).value.trim()||(team==='A'?'CASA':'OSPITI');
-  render();
-}
-
-function clearLog(){
-  if(!confirm('Cancellare tutto il registro?'))return;
-  snapshot();
-  state.events=[];
-  render();
+  const val=el(team==='A'?'teamAName':'teamBName').value.trim();
+  if(val){
+    snapshot();
+    state.teams[team]=val;
+    render();
+  }
 }
 
 function resetMatch(){
-  if(!confirm('Azzerare completamente la gara?'))return;
-
-  clearInterval(interval);
-  clearInterval(timeoutInterval);
-  clearInterval(window.suspensionWatcher);
-  window.suspensionWatcher=null;
-
-  state={
-    phase:1,timer:0,running:false,scoreA:0,scoreB:0,
-    teams:{A:'CASA',B:'OSPITI'},
-    numbers:{
-      A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
-      B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)
-    },
-    discipline:{
-      A:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false})),
-      B:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false}))
-    },
-    staff:{
-      A:STAFF.map(()=>({yellow:0,two:0,red:false})),
-      B:STAFF.map(()=>({yellow:0,two:0,red:false}))
-    },
-    timeouts:{A:0,B:0},
-    penalty:{A:0,B:0},
-    penaltyScored:{A:0,B:0},
-    activeSuspensions:[],
-    events:[]
-  };
-
-  undoStack=[];
-  render();
-}
-
-function beep(){
-  try{
-    const c=new (window.AudioContext||window.webkitAudioContext)();
-    const o=c.createOscillator(),g=c.createGain();
-    o.frequency.value=850;
-    g.gain.value=.2;
-    o.connect(g);g.connect(c.destination);
-    o.start();o.stop(c.currentTime+.7);
-  }catch(e){}
+  if(confirm('Vuoi davvero resettare la gara?')){
+    location.reload();
+  }
 }
 
 function toast(msg){
   const t=el('toast');
   t.textContent=msg;
   t.style.display='block';
-  clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>t.style.display='none',1900);
+  setTimeout(()=>{t.style.display='none'},2500);
 }
 
-
-function changePlayerNumber(input){
-  const team=input.dataset.team;
-  const index=Number(input.dataset.index);
-  let value=parseInt(input.value,10);
-  if(isNaN(value)) value=0;
-  value=Math.max(0,Math.min(99,value));
-
-  snapshot();
-  state.numbers[team][index]=value;
-  render();
-}
-
-/* Controlli touch: funzionano su iPad/tablet e anche con mouse.
-   Il cronometro può essere avviato sia dal tasto START sia toccando direttamente il tempo. */
-function installTouchControls(){
-  const start=el('startBtn');
-  const timer=el('timer');
-
-  const startTimerTouch=(ev)=>{
-    ev.preventDefault();
-    ev.stopPropagation();
-    toggleClock();
-  };
-
-  timer.addEventListener('pointerup',startTimerTouch,{passive:false});
-
-  timer.addEventListener('keydown',(ev)=>{
-    if(ev.key==='Enter' || ev.key===' '){
-      ev.preventDefault();
-      toggleClock();
-    }
-  });
-}
-
-installTouchControls();
 render();
 </script>
 </body>
