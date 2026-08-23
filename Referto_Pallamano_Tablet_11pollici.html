@@ -1936,6 +1936,171 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   FINAL 10" TABLET LANDSCAPE LAYOUT
+   Transfer vertical space from PLAYER CONTAINERS to STAFF.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:grid !important;
+
+    /* The last row is the staff area. It is physically reserved.
+       Players can no longer push it below the viewport. */
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      150px !important;
+  }
+
+  /* PLAYER CONTAINER:
+     It occupies only the grid row above the staff section. */
+  .players{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    align-self:stretch !important;
+    box-sizing:border-box !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+  }
+
+  /* EACH PLAYER CONTAINER:
+     shorter vertical card, with no large empty body. */
+  .player-card{
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  .player-top{
+    height:29px !important;
+    min-height:29px !important;
+    flex:0 0 29px !important;
+    padding:0 2px !important;
+  }
+
+  /* Keep the number wide and give it enough vertical room. */
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    height:28px !important;
+    min-height:28px !important;
+    line-height:28px !important;
+    font-size:19px !important;
+    padding:0 !important;
+  }
+
+  .player-goals{
+    line-height:28px !important;
+    font-size:9px !important;
+  }
+
+  .player-stats{
+    height:16px !important;
+    min-height:16px !important;
+    flex:0 0 16px !important;
+    padding:1px 2px !important;
+    font-size:8px !important;
+  }
+
+  .player-expelled{
+    height:10px !important;
+    min-height:10px !important;
+    flex:0 0 10px !important;
+    line-height:10px !important;
+    font-size:7px !important;
+  }
+
+  /* STAFF TITLE + STAFF CARDS:
+     large enough to show both the letter and its sanction. */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    line-height:14px !important;
+    font-size:8px !important;
+  }
+
+  .staff{
+    height:150px !important;
+    min-height:150px !important;
+    max-height:150px !important;
+    padding:3px !important;
+    gap:3px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    height:144px !important;
+    min-height:144px !important;
+    max-height:144px !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-rows:70px 70px !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* A/B/C/D/E is the ONLY button. */
+  .staff-label{
+    width:100% !important;
+    height:70px !important;
+    min-height:70px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:70px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* THE SANCTION AREA:
+     physically below the letter and always visible. */
+  .staff-status{
+    width:100% !important;
+    height:70px !important;
+    min-height:70px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:70px !important;
+    font-size:15px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    background:#f8fafc !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
