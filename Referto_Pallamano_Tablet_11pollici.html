@@ -3729,6 +3729,257 @@ function closePenalty(){
   color:#fff !important;
 }
 
+
+/* =========================================================
+   V20 — RIDUZIONE VERTICALE DEI CONTENITORI GIOCATORI
+   e recupero dello spazio per DIRIGENTI.
+   IMPORTANTE: non viene modificata la parte superiore.
+   ========================================================= */
+
+/* TABLET 10" — orizzontale */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1600px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+
+    /* Tutta la parte superiore resta invariata.
+       Aumentiamo SOLO la quota verticale dei dirigenti:
+       il player-grid si accorcia automaticamente. */
+    display:grid !important;
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      145px !important;
+  }
+
+  /* Il contenitore dei 16 giocatori prende quindi meno altezza.
+     Nessun'altezza fissa sui singoli giocatori. */
+  .players{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:hidden !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+  }
+
+  .player-card{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* Il tasto numero NON viene ristretto:
+     resta quello già corretto. Riduciamo soltanto lo spazio
+     verticale vuoto della card. */
+  .player-top{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    flex:0 0 26px !important;
+  }
+
+  .player-number{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+  }
+
+  .player-stats{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    flex:0 0 14px !important;
+  }
+
+  /* DIRIGENTI: qui finisce lo spazio recuperato dai giocatori. */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    line-height:14px !important;
+  }
+
+  .staff{
+    height:145px !important;
+    min-height:145px !important;
+    max-height:145px !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    height:141px !important;
+    min-height:141px !important;
+    max-height:141px !important;
+
+    min-width:0 !important;
+    width:100% !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+
+    display:grid !important;
+    grid-template-rows:26px minmax(0,1fr) !important;
+    gap:2px !important;
+  }
+
+  /* Il pulsante dirigente resta corto: lo spazio aggiunto NON va
+     al pulsante, ma sotto di esso. */
+  .staff-label{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    width:51px !important;
+    min-width:51px !important;
+    max-width:51px !important;
+
+    background:#2563eb !important;
+    background-color:#2563eb !important;
+    color:#fff !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+    padding:0 !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  /* SPAZIO REALE PER IL PROVVEDIMENTO DEL DIRIGENTE */
+  .staff-status{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    width:100% !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+    border:0 !important;
+    border-radius:4px !important;
+    box-sizing:border-box !important;
+
+    font-size:14px !important;
+    font-weight:900 !important;
+  }
+}
+
+/* TABLET 10" — verticale */
+@media screen and (orientation:portrait) and (min-width:500px) and (max-width:1200px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+
+    /* Anche in verticale si recupera altezza dai giocatori. */
+    display:grid !important;
+    grid-template-rows:
+      23px
+      10px
+      18px
+      9px
+      minmax(0,1fr)
+      10px
+      130px !important;
+  }
+
+  .players{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+  }
+
+  .player-card{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+
+  .player-top,
+  .player-number{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+  }
+
+  .staff{
+    height:130px !important;
+    min-height:130px !important;
+    max-height:130px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    height:126px !important;
+    min-height:126px !important;
+    max-height:126px !important;
+    display:grid !important;
+    grid-template-rows:26px minmax(0,1fr) !important;
+    gap:2px !important;
+    overflow:hidden !important;
+  }
+
+  .staff-label{
+    width:51px !important;
+    min-width:51px !important;
+    max-width:51px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    background:#2563eb !important;
+    background-color:#2563eb !important;
+    color:#fff !important;
+    border:0 !important;
+    border-radius:4px !important;
+  }
+
+  .staff-status{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    width:100% !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+  }
+}
+
 </style>
 </head>
 
