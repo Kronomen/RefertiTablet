@@ -2599,6 +2599,312 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   STAFF BUTTON = PLAYER NUMBER BUTTON, PROPORTIONALLY 5/4
+   The clickable part is identical in shape/height to .player-number.
+   The remaining vertical area is reserved for the sanction.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px),
+       screen and (orientation:portrait) and (max-width:900px){
+
+  .staff{
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+    align-items:start !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    min-width:0 !important;
+    height:70px !important;
+    min-height:70px !important;
+    max-height:70px !important;
+    padding:0 !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+
+    display:grid !important;
+    grid-template-rows:26px 42px !important;
+    gap:2px !important;
+
+    border:1px solid #cbd5e1 !important;
+    border-radius:5px !important;
+    background:#f8fafc !important;
+  }
+
+  /* EXACT player-number button height and shape.
+     Width is automatic: 5 columns instead of 4 => proportional reduction. */
+  .staff-label{
+    width:100% !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    box-sizing:border-box !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#2563eb !important;
+    color:#fff !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:26px !important;
+
+    touch-action:manipulation !important;
+  }
+
+  /* Remaining space under the button is ONLY for the sanction/event. */
+  .staff-status{
+    width:100% !important;
+    height:42px !important;
+    min-height:42px !important;
+    max-height:42px !important;
+    box-sizing:border-box !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-size:12px !important;
+    font-weight:900 !important;
+    line-height:42px !important;
+
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
+
+/* =========================================================
+   10" TABLET — RECOVER VERTICAL SPACE FROM PLAYERS
+   Then use that recovered space below A/B/C/D/E for sanctions.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
+
+  /* The team panel has a controlled vertical budget.
+     The player section is deliberately shorter; staff gets the difference. */
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:grid !important;
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      150px !important;
+  }
+
+  /* PLAYER CONTAINER:
+     remove its old vertical locks and make the 4x4 grid compact. */
+  .players{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    flex:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    align-self:stretch !important;
+
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+
+    gap:2px !important;
+    padding:2px !important;
+  }
+
+  /* EACH PLAYER CARD:
+     no fixed vertical height and no flex growth. */
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    flex:none !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    align-self:stretch !important;
+  }
+
+  /* Keep the player's number button as it is visually:
+     only the surrounding card becomes shorter. */
+  .player-top{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    flex:0 0 26px !important;
+    padding:0 2px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    line-height:26px !important;
+    font-size:18px !important;
+    padding:0 !important;
+    border-radius:4px !important;
+  }
+
+  .player-goals{
+    line-height:26px !important;
+    font-size:9px !important;
+  }
+
+  .player-stats{
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    flex:0 0 14px !important;
+    padding:1px 2px !important;
+    font-size:8px !important;
+  }
+
+  .player-expelled{
+    height:9px !important;
+    min-height:9px !important;
+    max-height:9px !important;
+    flex:0 0 9px !important;
+    line-height:9px !important;
+    font-size:7px !important;
+  }
+
+  /* STAFF:
+     this is the space recovered from the player section. */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    line-height:14px !important;
+    font-size:8px !important;
+  }
+
+  .staff{
+    height:150px !important;
+    min-height:150px !important;
+    max-height:150px !important;
+    padding:2px !important;
+    gap:2px !important;
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    box-sizing:border-box !important;
+    align-items:start !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    height:144px !important;
+    min-height:144px !important;
+    max-height:144px !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+
+    display:grid !important;
+    grid-template-rows:26px 116px !important;
+    gap:2px !important;
+
+    border:1px solid #cbd5e1 !important;
+    border-radius:5px !important;
+    background:#f8fafc !important;
+  }
+
+  /* Same shape/height as the player number button.
+     Width is naturally smaller because there are 5 columns instead of 4. */
+  .staff-label{
+    width:100% !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#2563eb !important;
+    color:#fff !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:26px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* THIS is the missing space:
+     a large area directly below A/B/C/D/E for A / 2' / E. */
+  .staff-status{
+    width:100% !important;
+    height:116px !important;
+    min-height:116px !important;
+    max-height:116px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:4px !important;
+
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    font-size:16px !important;
+    font-weight:900 !important;
+    line-height:116px !important;
+
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
