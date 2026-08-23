@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gestione Gara Pallamano - Tablet</title>
+<style>
+:root{
+  --bg:#e9eef3; --panel:#fff; --line:#cbd5e1; --dark:#111827;
+  --a:#1769aa; --b:#7c3aed; --green:#16a34a; --yellow:#facc15;
+  --red:#dc2626; --orange:#ea580c;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--dark)}
+button,input{font:inherit}
+button{touch-action:manipulation;cursor:pointer}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column;padding:clamp(5px,1vw,10px);gap:clamp(5px,1vh,9px)}
+.top{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:clamp(6px,1vh,10px);box-shadow:0 2px 7px #0001}
+.score-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.team-title{font-size:clamp(18px,2.4vw,30px);font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-title.a{text-align:right;color:var(--a)}
+.team-title.b{text-align:left;color:var(--b)}
+.score{background:#090909;color:#f8fafc;border:3px solid #22c55e;border-radius:10px;padding:3px clamp(12px,2vw,28px);font:900 clamp(34px,6vw,68px)/1 monospace;letter-spacing:2px;white-space:nowrap}
+.phase{display:flex;justify-content:center;margin-top:3px}
+.phase span{background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:3px 14px;font-size:clamp(10px,1.3vw,14px);font-weight:900;letter-spacing:2px}
+.clock-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-top:5px}
+.clock-buttons{display:flex;align-items:center;gap:6px}
+.clock-buttons.left{justify-content:flex-end}
+.clock-buttons.right{justify-content:flex-start}
+.btn{border:0;border-radius:8px;min-height:clamp(34px,5vh,46px);padding:5px clamp(9px,1.5vw,18px);font-weight:900;font-size:clamp(11px,1.35vw,15px)}
+.btn.gray{background:#475569;color:white}.btn.green{background:var(--green);color:white}.btn.blue{background:#2563eb;color:white}.btn.red{background:var(--red);color:white}.btn.orange{background:var(--orange);color:white}.btn.light{background:#e2e8f0;color:#1e293b;border:1px solid #cbd5e1}
+.timer{background:#050505;color:#fde047;border:3px solid #eab308;border-radius:10px;padding:3px 14px;font:900 clamp(30px,5.3vw,62px)/1 monospace;min-width:clamp(145px,22vw,250px);text-align:center}
+.timer.warning{color:#ef4444;animation:blink .8s infinite}
+.timer.paused{animation:blink .7s infinite}
+@keyframes blink{50%{opacity:.3}}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,1.05fr) minmax(0,1fr);gap:clamp(5px,1vw,9px)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 7px #0001}
+.panel-head{padding:6px 8px;border-bottom:1px solid var(--line)}
+.panel-head.a{background:#eff6ff}.panel-head.b{background:#f5f3ff}
+.panel-name{display:flex;align-items:center;gap:6px}
+.name-input{width:100%;border:1px solid var(--line);border-radius:7px;padding:4px 7px;font-size:clamp(14px,1.8vw,22px);font-weight:900;text-transform:uppercase;text-align:center;background:white}
+.counters{display:flex;justify-content:center;gap:12px;margin-top:4px;font-size:clamp(10px,1.2vw,13px);font-weight:900}
+.player-grid{flex:1;min-height:0;overflow:auto;padding:clamp(5px,1vw,9px);display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(48px,1fr);gap:clamp(5px,.8vw,8px)}
+.player{position:relative;border:2px solid #cbd5e1;border-radius:9px;background:#f8fafc;color:#0f172a;font-size:clamp(17px,2.2vw,28px);font-weight:900;min-width:0}
+.player.has-yellow{border-color:#eab308;background:#fefce8}
+.player.has-2{border-color:#f97316;background:#fff7ed}
+.player.has-red{border-color:#dc2626;background:#fef2f2;color:#991b1b}
+.player .mini{position:absolute;right:3px;top:2px;font-size:clamp(8px,1vw,11px);line-height:1}
+.player .num{font-size:clamp(17px,2.3vw,29px)}
+.timeout{margin:5px 7px 7px;min-height:40px}
+.timeout button{width:100%;height:100%;border:0;border-radius:8px;background:#0891b2;color:white;font-weight:900;font-size:clamp(11px,1.3vw,15px)}
+.timeout button:disabled{background:#94a3b8}
+.log-head{padding:6px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:5px}
+.log-title{font-size:clamp(12px,1.5vw,17px);font-weight:900;letter-spacing:1px}
+.log-actions{display:flex;gap:4px}
+.log{flex:1;min-height:0;overflow:auto;background:#0f172a;color:white}
+.log-row{display:grid;grid-template-columns:45px 28px 34px 1fr 42px;gap:2px;padding:5px 4px;border-bottom:1px solid #334155;font-size:clamp(9px,1.1vw,12px);align-items:center}
+.log-row.goal{background:#052e16}.log-row.card{background:#3f1d00}.log-row.red{background:#450a0a}
+.log-time,.log-team,.log-num,.log-result{text-align:center;font-family:monospace;font-weight:900}
+.log-event{font-weight:800}
+.empty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#94a3b8;font-size:13px;padding:15px}
+.bottom{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
+.bottom .left{text-align:left}.bottom .center{text-align:center}.bottom .right{text-align:right}
+.modal-back{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:50;padding:15px}
+.modal{width:min(430px,94vw);background:white;border-radius:14px;padding:14px;box-shadow:0 15px 50px #0006}
+.modal h3{margin:0 0 10px;text-align:center;font-size:20px}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.action{min-height:54px;border:0;border-radius:10px;font-weight:900;font-size:14px}
+.action.goal{background:#16a34a;color:white}.action.yellow{background:#facc15;color:#111}.action.two{background:#f97316;color:white}.action.red{background:#dc2626;color:white}.action.cancel{background:#e2e8f0}
+.modal-note{text-align:center;margin:4px 0 10px;color:#475569;font-size:12px}
+#toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#111827;color:white;padding:8px 14px;border-radius:8px;font-weight:800;font-size:13px;display:none;z-index:100}
+@media(max-width:800px){
+  .main{grid-template-columns:minmax(0,1fr) minmax(210px,1.1fr) minmax(0,1fr)}
+  .player-grid{grid-template-columns:repeat(3,1fr)}
+  .score-row{gap:4px}.clock-row{gap:4px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <section class="top">
+    <div class="score-row">
+      <div id="teamAHeader" class="team-title a">CASA</div>
+      <div id="score" class="score">00 - 00</div>
+      <div id="teamBHeader" class="team-title b">OSPITI</div>
+    </div>
+    <div class="phase"><span id="phase">1° TEMPO</span></div>
+    <div class="clock-row">
+      <div class="clock-buttons left">
+        <button class="btn light" onclick="adjustTimer(-1)">−1</button>
+        <button id="startBtn" class="btn green" onclick="toggleClock()">▶ START</button>
+      </div>
+      <div id="timer" class="timer">00:00</div>
+      <div class="clock-buttons right">
+        <button class="btn light" onclick="adjustTimer(1)">+1</button>
+        <button id="halfBtn" class="btn blue" onclick="finishHalf()" style="display:none">FINE 1° TEMPO</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <section class="panel">
+      <div class="panel-head a">
+        <div class="panel-name"><input id="teamAName" class="name-input" value="CASA" onchange="renameTeam('A')"></div>
+        <div class="counters">
+          <span id="aTimeout">T.O. 0/3</span>
+          <span id="aDiscipline">A:0 · 2':0 · E:0</span>
+        </div>
+      </div>
+      <div id="playersA" class="player-grid"></div>
+      <div class="timeout"><button id="timeoutA" onclick="requestTimeout('A')">TIME OUT</button></div>
+    </section>
+
+    <section class="panel">
+      <div class="log-head">
+        <div class="log-title">REGISTRO GARA</div>
+        <div class="log-actions">
+          <button class="btn orange" style="min-height:30px;padding:3px 8px" onclick="undo()">↩ UNDO</button>
+          <button class="btn gray" style="min-height:30px;padding:3px 8px" onclick="clearLog()">CLR</button>
+        </div>
+      </div>
+      <div id="log" class="log"><div class="empty">Nessun evento</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head b">
+        <div class="panel-name"><input id="teamBName" class="name-input" value="OSPITI" onchange="renameTeam('B')"></div>
+        <div class="counters">
+          <span id="bTimeout">T.O. 0/3</span>
+          <span id="bDiscipline">A:0 · 2':0 · E:0</span>
+        </div>
+      </div>
+      <div id="playersB" class="player-grid"></div>
+      <div class="timeout"><button id="timeoutB" onclick="requestTimeout('B')">TIME OUT</button></div>
+    </section>
+  </main>
+
+  <section class="bottom">
+    <div class="left"><button class="btn gray" onclick="resetMatch()">RESET GARA</button></div>
+    <div class="center"><button class="btn light" onclick="toggleNumbers()">MODIFICA NUMERI</button></div>
+    <div class="right"><button class="btn red" onclick="endMatch()">FINE GARA</button></div>
+  </section>
+</div>
+
+<div id="actionModal" class="modal-back">
+  <div class="modal">
+    <h3 id="modalTitle">Giocatore</h3>
+    <div id="modalNote" class="modal-note"></div>
+    <div class="actions-grid">
+      <button class="action goal" onclick="doAction('GOAL')">GOAL</button>
+      <button class="action yellow" onclick="doAction('YELLOW')">AMMONIZIONE</button>
+      <button class="action two" onclick="doAction('TWO')">2 MINUTI</button>
+      <button class="action red" onclick="doAction('RED')">ESPULSIONE</button>
+      <button class="action cancel" style="grid-column:1/3" onclick="closeModal()">ANNULLA</button>
+    </div>
+  </div>
+</div>
+
+<div id="numberModal" class="modal-back">
+  <div class="modal">
+    <h3>Numeri di maglia</h3>
+    <div class="modal-note">Inserisci i numeri per le due squadre.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><b>CASA</b><div id="numberInputsA"></div></div>
+      <div><b>OSPITI</b><div id="numberInputsB"></div></div>
+    </div>
+    <button class="btn blue" style="width:100%;margin-top:12px" onclick="saveNumbers()">SALVA NUMERI</button>
+  </div>
+</div>
+
+<div id="timeoutModal" class="modal-back">
+  <div class="modal" style="text-align:center">
+    <h3 id="timeoutTitle">TIME OUT</h3>
+    <div id="timeoutCountdown" style="font:900 48px monospace;margin:10px">01:00</div>
+    <button class="btn gray" onclick="closeTimeout()">CHIUDI</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const MAX_PLAYERS=16;
+const HALF=30*60;
+let state={
+  phase:1,timer:0,running:false,scoreA:0,scoreB:0,
+  teams:{A:'CASA',B:'OSPITI'},
+  numbers:{A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)},
+  discipline:{A:Array.from({length:MAX_PLAYERS},()=>({yellow:0,two:0,red:false})),B:Array.from({length:MAX_PLAYERS},()=>({yellow:0,two:0,red:false}))},
+  timeouts:{A:0,B:0},events:[]
+};
+let interval=null, selected=null, timeoutInterval=null, timeoutTeam=null, undoStack=[];
+
+function el(id){return document.getElementById(id)}
+function currentTime(){let m=Math.floor(state.timer/60),s=state.timer%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function render(){
+  el('teamAHeader').textContent=state.teams.A; el('teamBHeader').textContent=state.teams.B;
+  el('teamAName').value=state.teams.A; el('teamBName').value=state.teams.B;
+  el('score').textContent=String(state.scoreA).padStart(2,'0')+' - '+String(state.scoreB).padStart(2,'0');
+  el('phase').textContent=state.phase===1?'1° TEMPO':'2° TEMPO';
+  el('timer').textContent=currentTime();
+  renderPlayers('A');renderPlayers('B');renderLog();renderCounters();
+  const atEnd=(state.phase===1&&state.timer===HALF)||(state.phase===2&&state.timer===HALF*2);
+  el('halfBtn').style.display=atEnd&&!state.running?'block':'none';
+  el('halfBtn').textContent=state.phase===1?'FINE 1° TEMPO':'FINE GARA';
+  el('startBtn').textContent=state.running?'⏸ PAUSA':'▶ START';
+  el('startBtn').className='btn '+(state.running?'orange':'green');
+  el('timer').classList.toggle('warning',state.running && ((state.phase===1&&state.timer>=HALF-30)||(state.phase===2&&state.timer>=HALF*2-30)));
+  el('timer').classList.toggle('paused',!state.running && state.timer>0 && state.timer<(state.phase===1?HALF:HALF*2));
+}
+function renderPlayers(team){
+  const box=el('players'+team);box.innerHTML='';
+  state.numbers[team].forEach((num,i)=>{
+    const d=state.discipline[team][i],b=document.createElement('button');
+    b.className='player'+(d.yellow?' has-yellow':'')+(d.two?' has-2':'')+(d.red?' has-red':'');
+    b.onclick=()=>openPlayer(team,i);
+    let badges='';
+    if(d.yellow)badges+='🟨';
+    if(d.two)badges+=` ${d.two}'`;
+    if(d.red)badges+=' 🟥';
+    b.innerHTML=`<span class="num">${num}</span><span class="mini">${badges}</span>`;
+    box.appendChild(b);
+  });
+}
+function renderCounters(){
+  for(const t of ['A','B']){
+    const ds=state.discipline[t], y=ds.reduce((n,d)=>n+d.yellow,0), two=ds.reduce((n,d)=>n+d.two,0), r=ds.filter(d=>d.red).length;
+    el(t==='A'?'aTimeout':'bTimeout').textContent=`T.O. ${state.timeouts[t]}/3`;
+    el(t==='A'?'aDiscipline':'bDiscipline').textContent=`A:${y} · 2':${two} · E:${r}`;
+    el('timeout'+t).disabled=state.timeouts[t]>=3;
+  }
+}
+function renderLog(){
+  const box=el('log');
+  if(!state.events.length){box.innerHTML='<div class="empty">Nessun evento</div>';return}
+  box.innerHTML=state.events.slice().reverse().map(e=>{
+    let cls=e.type==='GOAL'?'goal':e.type==='RED'?'red':(e.type==='YELLOW'||e.type==='TWO')?'card':'';
+    return `<div class="log-row ${cls}"><div class="log-time">${e.time}</div><div class="log-team">${e.team}</div><div class="log-num">${e.num}</div><div class="log-event">${e.text}</div><div class="log-result">${e.result||''}</div></div>`
+  }).join('');
+}
+function snapshot(){undoStack.push(JSON.stringify(state));if(undoStack.length>30)undoStack.shift()}
+function undo(){if(!undoStack.length){toast('Nessuna azione da annullare');return}state=JSON.parse(undoStack.pop());state.running=false;clearInterval(interval);interval=null;render()}
+function openPlayer(team,index){
+  selected={team,index};const d=state.discipline[team][index];
+  el('modalTitle').textContent=`${state.teams[team]} · N° ${state.numbers[team][index]}`;
+  el('modalNote').textContent=`Ammonizioni: ${d.yellow} · 2': ${d.two}${d.red?' · ESPULSO':''}`;
+  el('actionModal').style.display='flex';
+}
+function closeModal(){selected=null;el('actionModal').style.display='none'}
+function doAction(type){
+  if(!selected)return;
+  const {team,index}=selected,d=state.discipline[team][index],num=state.numbers[team][index];
+  snapshot();
+  if(type==='GOAL'){
+    if(team==='A')state.scoreA++;else state.scoreB++;
+    addEvent(team,num,'GOAL',`${state.scoreA} - ${state.scoreB}`);
+  }else if(type==='YELLOW'){
+    if(d.red){toast('Giocatore già espulso');undoStack.pop();return}
+    d.yellow++;addEvent(team,num,'YELLOW','AMMONIZIONE');
+  }else if(type==='TWO'){
+    if(d.red){toast('Giocatore già espulso');undoStack.pop();return}
+    if(d.two>=3){toast('Terzo 2\\' già assegnato: giocatore escluso');undoStack.pop();return}
+    d.two++;
+    if(d.two===3){d.red=true;addEvent(team,num,'TWO','3° 2\\' → ESCLUSIONE');}
+    else addEvent(team,num,'TWO',`${d.two}° 2'`);
+  }else if(type==='RED'){
+    if(d.red){toast('Giocatore già espulso');undoStack.pop();return}
+    d.red=true;addEvent(team,num,'RED','ESPULSIONE DIRETTA');
+  }
+  closeModal();render();
+}
+function addEvent(team,num,type,text,result=''){state.events.push({time:currentTime(),team,num,type,text,result})}
+function toggleClock(){
+  if(state.phase===1&&state.timer>=HALF){toast('Fine 1° tempo');return}
+  if(state.phase===2&&state.timer>=HALF*2){toast('Fine gara');return}
+  state.running=!state.running;
+  if(state.running){clearInterval(interval);interval=setInterval(tick,1000)}
+  else{clearInterval(interval);interval=null}
+  render();
+}
+function tick(){
+  state.timer++;
+  const end=state.phase===1?HALF:HALF*2;
+  if(state.timer>=end){state.timer=end;state.running=false;clearInterval(interval);interval=null;beep();toast(state.phase===1?'FINE 1° TEMPO':'FINE GARA')}
+  render();
+}
+function adjustTimer(delta){
+  if(state.running){toast('Mettere il cronometro in pausa');return}
+  const min=state.phase===1?0:HALF,max=state.phase===1?HALF:HALF*2;
+  state.timer=Math.max(min,Math.min(max,state.timer+delta));render()
+}
+function finishHalf(){
+  if(state.running)return;
+  if(state.phase===1&&state.timer===HALF){
+    state.phase=2;state.timer=HALF;addEvent('SYS','-','SYSTEM','INIZIO 2° TEMPO');render();
+  }else if(state.phase===2&&state.timer===HALF*2)endMatch();
+}
+function endMatch(){state.running=false;clearInterval(interval);interval=null;toast(`GARA TERMINATA · ${state.scoreA} - ${state.scoreB}`);render()}
+function requestTimeout(team){
+  if(state.running===false){toast('Il time-out richiede la gara in corso');return}
+  if(state.timeouts[team]>=3){toast('Time-out esauriti');return}
+  snapshot();state.timeouts[team]++;addEvent(team,'-','TIMEOUT','TIME OUT');
+  state.running=false;clearInterval(interval);interval=null;
+  timeoutTeam=team;let left=60;el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;el('timeoutCountdown').textContent='01:00';el('timeoutModal').style.display='flex';
+  timeoutInterval=setInterval(()=>{left--;el('timeoutCountdown').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');if(left<=0)closeTimeout()},1000);
+  render()
+}
+function closeTimeout(){clearInterval(timeoutInterval);timeoutInterval=null;el('timeoutModal').style.display='none';timeoutTeam=null;render()}
+function renameTeam(team){state.teams[team]=el(team==='A'?'teamAName':'teamBName').value.trim()|| (team==='A'?'CASA':'OSPITI');render()}
+function toggleNumbers(){
+  ['A','B'].forEach(t=>{
+    const box=el('numberInputs'+t);box.innerHTML=state.numbers[t].map((n,i)=>`<input data-team="${t}" data-index="${i}" value="${n}" type="number" min="0" max="99" style="width:100%;margin:2px 0;padding:4px;border:1px solid #cbd5e1;border-radius:5px">`).join('');
+  });el('numberModal').style.display='flex'
+}
+function saveNumbers(){
+  ['A','B'].forEach(t=>document.querySelectorAll(`#numberInputs${t} input`).forEach(inp=>{let v=parseInt(inp.value);if(!isNaN(v))state.numbers[t][+inp.dataset.index]=v}));
+  el('numberModal').style.display='none';render()
+}
+function clearLog(){if(confirm('Cancellare tutto il registro?')){snapshot();state.events=[];render()}}
+function resetMatch(){if(!confirm('Azzerare completamente la gara?'))return;state={phase:1,timer:0,running:false,scoreA:0,scoreB:0,teams:{A:'CASA',B:'OSPITI'},numbers:{A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)},discipline:{A:Array.from({length:MAX_PLAYERS},()=>({yellow:0,two:0,red:false})),B:Array.from({length:MAX_PLAYERS},()=>({yellow:0,two:0,red:false}))},timeouts:{A:0,B:0},events:[]};undoStack=[];render()}
+function beep(){try{const c=new (AudioContext||webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=850;o.connect(g);g.connect(c.destination);g.gain.value=.2;o.start();o.stop(c.currentTime+.7)}catch(e){}}
+function toast(msg){const t=el('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',1800)}
+render();
+</script>
+</body>
+</html>
