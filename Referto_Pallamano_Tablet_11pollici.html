@@ -274,6 +274,118 @@ function closePenalty(){
   .staff-event-btn{font-size:8px}
   .suspensions{flex-basis:30px;min-height:30px}
 }
+
+@media (orientation:portrait) and (max-width:900px){
+  html,body{height:100%;overflow:hidden}
+  .app{padding:2px;gap:2px}
+
+  /* Testata: compatta ma NON cambia il contenuto. */
+  .top{padding:2px 3px;border-radius:6px}
+  .score-row{gap:3px}
+  .team-title{font-size:14px}
+  .top-match-btn{min-height:25px!important;padding:2px 5px!important;font-size:8px!important}
+  .score{font-size:26px;padding:1px 9px}
+  .phase span{font-size:8px;padding:1px 7px}
+  .clock-row{gap:3px;margin-top:1px}
+  .clock-row .btn{min-height:25px!important;padding:2px 5px!important;font-size:9px!important}
+  .timer{min-width:112px;font-size:25px;padding:1px 7px}
+
+  /* Struttura verticale: le due squadre restano affiancate,
+     il registro prende una fascia bassa compatta. */
+  .main{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:minmax(0,1fr) 112px;
+    gap:3px;
+  }
+  .team-panel{border-radius:6px}
+  .panel-head{padding:2px 4px}
+  .panel-head .team-name{font-size:13px}
+  .panel-head .timeout-btn{min-height:25px!important;padding:2px 6px!important;font-size:8px!important}
+  .team-counters{font-size:8px;gap:3px}
+  .suspensions-title{font-size:7px;padding:1px}
+  .suspensions{flex-basis:25px;min-height:25px;padding:2px 3px}
+  .suspension-item{min-width:58px}
+  .suspension-num{font-size:11px}
+  .suspension-time{font-size:10px}
+
+  /* 16 giocatori: card molto compatte ma con numero e pulsante EVENTO
+     ancora fisicamente premibili. */
+  .players-caption{font-size:7px;padding:0}
+  .players{padding:3px;gap:3px}
+  .player-card{border-radius:5px}
+  .player-top{height:24px;flex-basis:24px;padding:0 2px}
+  .player-number{width:45px;height:21px;font-size:16px}
+  .player-goals{font-size:9px}
+  .player-stats{flex-basis:18px;gap:2px;padding:1px 2px;font-size:8px}
+  .player-expelled{flex-basis:14px;line-height:14px;font-size:7px}
+  .player-actions{padding:2px}
+  .player-event-btn{min-height:28px;font-size:8px;border-radius:4px}
+
+  /* Dirigenti: 5 card sempre visibili e con EVENTO fisicamente premibile. */
+  .staff-title{font-size:7px;padding:1px}
+  .staff{flex-basis:49px;padding:2px 3px;gap:2px}
+  .staff-card{border-radius:4px;grid-template-rows:14px 11px 1fr}
+  .staff-label{font-size:9px;line-height:14px}
+  .staff-status{font-size:7px;line-height:11px}
+  .staff-actions{padding:2px}
+  .staff-event-btn{font-size:7px;border-radius:4px;min-height:18px}
+
+  /* Registro molto basso in verticale. */
+  .log-panel{grid-column:1 / 3;grid-row:2;min-height:0}
+  .log-head{height:22px;flex-basis:22px;padding:1px 4px}
+  .log-title{font-size:9px}
+  .log-columns{padding:2px;font-size:7px;grid-template-columns:34px 19px 24px minmax(0,1fr) 30px}
+  .log-row{grid-template-columns:34px 19px 24px minmax(0,1fr) 30px;padding:2px;font-size:8px}
+}
+
+
+@media (orientation:portrait) and (max-width:900px){
+  /* Recupero spazio verticale */
+  .app{padding:1px;gap:2px}
+  .top{padding:1px 3px}
+  .score{font-size:24px}
+  .phase span{font-size:7px;padding:0 6px}
+  .clock-row{margin-top:0}
+  .clock-row .btn{min-height:22px!important;padding:1px 5px!important}
+  .timer{min-width:105px;font-size:23px}
+
+  .main{grid-template-rows:minmax(0,1fr) 100px;gap:3px}
+  .panel-head{padding:1px 3px}
+  .panel-head .team-name{font-size:12px}
+  .panel-head .timeout-btn{min-height:22px!important;padding:1px 5px!important}
+  .team-counters{font-size:7px}
+
+  .suspensions-title{font-size:6px;padding:0}
+  .suspensions{flex-basis:22px;min-height:22px;padding:1px 3px}
+  .players-caption{font-size:6px}
+  .players{padding:2px;gap:2px}
+
+  /* Card giocatore: riduciamo l'altezza della parte informativa,
+     lasciando un EVENTO alto esattamente come quello dei dirigenti. */
+  .player-top{height:22px;flex-basis:22px;padding:0 2px}
+  .player-number{width:43px;height:19px;font-size:15px}
+  .player-goals{font-size:8px}
+  .player-stats{flex-basis:15px;gap:2px;padding:1px;font-size:7px}
+  .player-expelled{flex-basis:12px;line-height:12px;font-size:6px}
+  .player-actions{padding:2px}
+  .player-event-btn{min-height:25px;height:25px;font-size:7px}
+
+  /* Dirigenti: stesso pulsante EVENTO del giocatore. */
+  .staff-title{font-size:6px;padding:0}
+  .staff{flex-basis:44px;padding:2px 3px;gap:2px}
+  .staff-card{grid-template-rows:13px 10px 1fr}
+  .staff-label{font-size:8px;line-height:13px}
+  .staff-status{font-size:6px;line-height:10px}
+  .staff-actions{padding:2px}
+  .staff-event-btn{height:25px;min-height:25px;font-size:7px}
+
+  /* Registro più compatto per restituire altezza alle squadre. */
+  .log-panel .log-head{height:20px;flex-basis:20px}
+  .log-title{font-size:8px}
+  .log-columns{padding:1px;font-size:6px}
+  .log-row{padding:1px;font-size:7px}
+}
+
 </style>
 </head>
 
@@ -877,7 +989,16 @@ function tick(){
 }
 
 function adjustTimer(delta){
-  state.timer=Math.max(0,Math.min(state.maxTime,state.timer+delta));
+  // Correzione manuale consentita anche con cronometro in movimento.
+  const current = Number.isFinite(Number(state.timer)) ? Number(state.timer) : 0;
+  const step = Number(delta) || 0;
+
+  const min = state.phase === 1 ? 0 : HALF;
+  const max = state.phase === 1 ? HALF : HALF * 2;
+
+  state.timer = Math.max(min, Math.min(max, current + step));
+
+  // Aggiorna subito cronometro e countdown delle esclusioni.
   render();
 }
 
