@@ -141,7 +141,7 @@ button{touch-action:manipulation;cursor:pointer}
     <div class="clock-row">
       <div class="clock-side left">
         <button class="btn light" onclick="adjustTimer(-1)">−1</button>
-        <button id="startBtn" class="btn green touch-start" type="button">▶ START</button>
+        <button id="startBtn" class="btn green touch-start" type="button" onclick="toggleClock()">▶ START</button>
       </div>
 
       <div id="timer" class="timer touch-start" role="button" tabindex="0" aria-label="Avvia o ferma cronometro">00:00</div>
@@ -251,7 +251,7 @@ button{touch-action:manipulation;cursor:pointer}
   </div>
 </div>
 
-<div id="toast"></div>
+<div id="toast"></div><div id="jsStatus" style="position:fixed;top:2px;left:2px;z-index:999;color:transparent;font-size:1px">JS OK</div>
 
 <script>
 const MAX_PLAYERS=16;
@@ -475,7 +475,7 @@ function playerAction(team,index,type){
   if(type==='TWO'){
     if(d.two>=3){
       undoStack.pop();
-      toast('Terzo 2\\' già registrato');
+      toast('Terzo 2\' già registrato');
       return;
     }
 
@@ -483,8 +483,8 @@ function playerAction(team,index,type){
 
     if(d.two===3){
       d.red=true;
-      addEvent(team,num,'TWO','3° 2\\' → ESCLUSIONE');
-      stopForDisciplinary(team,num,'3° 2\\' → ESCLUSIONE');
+      addEvent(team,num,'TWO','3° 2\' → ESCLUSIONE');
+      stopForDisciplinary(team,num,'3° 2\' → ESCLUSIONE');
     }else{
       addEvent(team,num,'TWO',`${d.two}° 2'`);
       startSuspension(team,num);
@@ -824,7 +824,6 @@ function installTouchControls(){
     toggleClock();
   };
 
-  start.addEventListener('pointerup',startTimerTouch,{passive:false});
   timer.addEventListener('pointerup',startTimerTouch,{passive:false});
 
   timer.addEventListener('keydown',(ev)=>{
