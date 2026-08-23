@@ -2435,6 +2435,170 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   DIRIGENTI = STESSA FORMA E GRANDEZZA DEI GIOCATORI
+   10" TABLET
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px),
+       screen and (orientation:portrait) and (max-width:900px){
+
+  .staff{
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:3px !important;
+    padding:3px !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    min-width:0 !important;
+    width:100% !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+    border:1px solid #cbd5e1 !important;
+    border-radius:5px !important;
+    background:#f8fafc !important;
+
+    /* exactly the same compact two-part idea as a player card */
+    display:grid !important;
+    grid-template-rows:30px 22px !important;
+  }
+
+  /* Same visual role as the player's blue number button.
+     A/B/C/D/E is the ONLY button. */
+  .staff-label{
+    width:100% !important;
+    height:30px !important;
+    min-height:30px !important;
+    max-height:30px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:4px !important;
+    background:#2563eb !important;
+    color:#fff !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:17px !important;
+    font-weight:900 !important;
+    line-height:30px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* Same role as the player's A / 2'/3 strip. */
+  .staff-status{
+    width:100% !important;
+    height:22px !important;
+    min-height:22px !important;
+    max-height:22px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:3px !important;
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:9px !important;
+    font-weight:900 !important;
+    line-height:22px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
+
+/* =========================================================
+   10" TABLET — 5 DIRIGENTI PROPORZIONALI AI 4 GIOCATORI
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px),
+       screen and (orientation:portrait) and (max-width:900px){
+
+  /* The staff row uses exactly the same horizontal padding/gap as players.
+     4 player columns -> each player column is the reference.
+     5 staff columns -> each staff column is naturally about 80% of it. */
+  .staff{
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:2px !important;
+    padding:2px !important;
+    box-sizing:border-box !important;
+  }
+
+  .staff-card{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+    border-radius:4px !important;
+    display:grid !important;
+
+    /* Same button height as the player number + same status-strip idea. */
+    grid-template-rows:26px 14px !important;
+  }
+
+  /* A/B/C/D/E:
+     same height/shape family as the player number, but 5 fit on one line.
+     Because there are 5 columns instead of 4, each button is automatically
+     about 80% of the player's width. */
+  .staff-label{
+    width:100% !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:4px !important;
+    background:#2563eb !important;
+    color:#fff !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:26px !important;
+    touch-action:manipulation !important;
+  }
+
+  /* Event/sanction directly under the letter, compact like player stats. */
+  .staff-status{
+    width:100% !important;
+    height:14px !important;
+    min-height:14px !important;
+    max-height:14px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:3px !important;
+    background:#e2e8f0 !important;
+    color:#475569 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:8px !important;
+    font-weight:900 !important;
+    line-height:14px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
