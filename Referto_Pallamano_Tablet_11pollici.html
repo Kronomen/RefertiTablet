@@ -180,17 +180,17 @@ function closePenalty(){
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   text-align:center;font-size:10px;font-weight:900;padding:3px}
-.staff{flex:0 0 104px;padding:6px 8px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.staff-card{border:1px solid #cbd5e1;border-radius:7px;background:#fafafa;display:grid;grid-template-rows:27px 20px 1fr}
-.staff-label{text-align:center;font-size:16px;font-weight:900;line-height:27px;background:#e2e8f0}
+.staff{flex:0 0 72px;padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.staff-card{border:1px solid #cbd5e1;border-radius:6px;background:#fafafa;display:grid;grid-template-rows:19px 15px 1fr}
+.staff-label{text-align:center;font-size:12px;font-weight:900;line-height:19px;background:#e2e8f0}
 .staff-status{
-  text-align:center;font-size:clamp(9px,1vw,12px);font-weight:900;
-  line-height:20px;background:#f8fafc;color:#334155;
+  text-align:center;font-size:9px;font-weight:900;
+  line-height:15px;background:#f8fafc;color:#334155;
 }
-.staff-actions{display:flex;padding:5px}
+.staff-actions{display:flex;padding:3px}
 .staff-event-btn{
-  width:100%;height:100%;border:0;border-radius:6px;background:#2563eb;
-  color:#fff;font-size:clamp(10px,1.1vw,13px);font-weight:900;touch-action:manipulation;
+  width:100%;height:100%;border:0;border-radius:5px;background:#2563eb;
+  color:#fff;font-size:9px;font-weight:900;touch-action:manipulation;
 }
 .sact.am{background:#eab308;color:#111}.sact.two{background:#ea580c}.sact.exp{background:#dc2626}
 
@@ -250,6 +250,29 @@ function closePenalty(){
   .main{grid-template-columns:minmax(0,1fr) minmax(205px,1.05fr) minmax(0,1fr)}
   .players{grid-template-columns:repeat(4,1fr)}
   .staff{flex-basis:66px}
+}
+@media (orientation:portrait) and (max-width:900px){
+  .app{padding:4px;gap:4px}
+  .main{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:minmax(0,1fr) minmax(135px,.42fr);
+    gap:4px;
+  }
+  .team-panel.a{grid-column:1;grid-row:1}
+  .team-panel.b{grid-column:2;grid-row:1}
+  .log-panel{grid-column:1 / 3;grid-row:2;min-height:0}
+  .players{gap:4px;padding:5px}
+  .player-top{height:34px;flex-basis:34px}
+  .player-number{width:58px;height:27px}
+  .player-stats{flex-basis:25px}
+  .player-event-btn{min-height:42px}
+  .staff{flex-basis:68px;padding:3px 5px;gap:3px}
+  .staff-card{grid-template-rows:18px 14px 1fr}
+  .staff-label{font-size:11px;line-height:18px}
+  .staff-status{font-size:8px;line-height:14px}
+  .staff-actions{padding:2px}
+  .staff-event-btn{font-size:8px}
+  .suspensions{flex-basis:30px;min-height:30px}
 }
 </style>
 </head>
@@ -854,15 +877,7 @@ function tick(){
 }
 
 function adjustTimer(delta){
-  if(state.running){
-    toast('Mettere il cronometro in pausa');
-    return;
-  }
-
-  const min=state.phase===1?0:HALF;
-  const max=state.phase===1?HALF:HALF*2;
-
-  state.timer=Math.max(min,Math.min(max,state.timer+delta));
+  state.timer=Math.max(0,Math.min(state.maxTime,state.timer+delta));
   render();
 }
 
