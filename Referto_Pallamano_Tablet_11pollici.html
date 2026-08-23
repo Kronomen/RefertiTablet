@@ -648,6 +648,271 @@ function closePenalty(){
   .log-row{grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;padding:1px;font-size:7px}
 }
 
+
+@media (orientation:portrait) and (max-width:900px){
+  html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+
+  .app{
+    width:100%;
+    height:100dvh;
+    min-height:0;
+    box-sizing:border-box;
+    padding:1px;
+    gap:2px;
+  }
+
+  .main{
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(145px,.48fr) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+    gap:2px;
+  }
+
+  /* IMPORTANT:
+     The team panel is now a fixed vertical grid.
+     This prevents the player flex block from pushing the staff block
+     outside the tablet viewport. */
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    min-width:0;
+    min-height:0;
+    overflow:hidden;
+    display:grid;
+    grid-template-rows:
+      23px      /* team header */
+      10px      /* suspension title */
+      18px      /* suspension list */
+      9px       /* players caption */
+      minmax(0,1fr) /* PLAYERS: takes only remaining space */
+      10px      /* staff title */
+      74px;     /* STAFF: deliberately enlarged */
+  }
+
+  .main > .panel:nth-child(2){
+    min-width:0;
+    min-height:0;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Team header */
+  .panel-head{
+    min-height:23px;
+    padding:1px 2px;
+  }
+  .team-line{min-height:21px}
+  .name-input{font-size:12px}
+  .timeout-btn{
+    min-height:21px!important;
+    padding:1px 4px!important;
+    font-size:7px!important;
+  }
+  .team-counters{
+    height:10px;
+    line-height:10px;
+    font-size:7px;
+    gap:2px;
+  }
+
+  /* Suspensions */
+  .suspensions-title{
+    height:10px;
+    min-height:10px;
+    padding:0;
+    line-height:10px;
+    font-size:6px;
+  }
+  .suspensions{
+    height:18px;
+    min-height:18px;
+    padding:1px 2px;
+    gap:2px;
+  }
+  .suspension-empty{font-size:7px}
+  .suspension-item{min-width:48px}
+  .suspension-num,.suspension-time{font-size:8px}
+
+  .players-caption{
+    height:9px;
+    min-height:9px;
+    padding:0;
+    line-height:9px;
+    font-size:6px;
+  }
+
+  /* PLAYERS:
+     Much shorter vertically. The cards no longer contain a large blank
+     body, and the saved height is transferred to STAFF. */
+  .players{
+    width:100%;
+    height:auto;
+    min-height:0;
+    overflow:hidden;
+    box-sizing:border-box;
+    padding:2px;
+    gap:2px;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-rows:repeat(4,minmax(0,1fr));
+  }
+
+  .player-card{
+    min-width:0;
+    min-height:0;
+    height:100%;
+    overflow:hidden;
+    border-radius:4px;
+  }
+
+  .player-top{
+    height:21px;
+    min-height:21px;
+    flex:0 0 21px;
+    padding:0 2px;
+    gap:1px;
+  }
+
+  .player-number{
+    width:52px;
+    min-width:52px;
+    height:21px;
+    min-height:21px;
+    padding:0;
+    border-radius:4px;
+    font-size:16px;
+    line-height:21px;
+  }
+
+  .player-goals{
+    font-size:7px;
+    line-height:21px;
+  }
+
+  .player-stats{
+    height:13px;
+    min-height:13px;
+    flex:0 0 13px;
+    gap:1px;
+    padding:1px;
+    font-size:7px;
+  }
+
+  .player-expelled{
+    height:10px;
+    min-height:10px;
+    flex:0 0 10px;
+    line-height:10px;
+    font-size:6px;
+  }
+
+  /* STAFF:
+     Now 74px for the whole cards, enough to show the letter AND the
+     disciplinary status clearly. No duplicate A/B/C/D/E button. */
+  .staff-title{
+    height:10px;
+    min-height:10px;
+    padding:0;
+    line-height:10px;
+    font-size:6px;
+  }
+
+  .staff{
+    width:100%;
+    height:74px;
+    min-height:74px;
+    padding:2px 3px;
+    gap:3px;
+    box-sizing:border-box;
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+  }
+
+  .staff-card{
+    width:100%;
+    height:70px;
+    min-height:70px;
+    min-width:0;
+    box-sizing:border-box;
+    border:1px solid #cbd5e1;
+    border-radius:5px;
+    overflow:hidden;
+    display:grid;
+    grid-template-rows:39px 29px;
+  }
+
+  /* The letter itself is the ONLY button. */
+  .staff-label{
+    width:100%;
+    height:39px;
+    min-height:39px;
+    padding:0;
+    border:0;
+    border-radius:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#e2e8f0;
+    color:#111827;
+    font-size:13px;
+    font-weight:900;
+    line-height:39px;
+    touch-action:manipulation;
+  }
+
+  .staff-label:disabled{
+    background:#cbd5e1;
+    color:#64748b;
+  }
+
+  .staff-status{
+    width:100%;
+    height:29px;
+    min-height:29px;
+    line-height:29px;
+    font-size:10px;
+    font-weight:900;
+    text-align:center;
+    background:#f8fafc;
+    color:#334155;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none!important;
+  }
+
+  /* Register stays compact and gives no height back to the player cards. */
+  .log-head{
+    height:18px;
+    min-height:18px;
+    flex:0 0 18px;
+    padding:1px 3px;
+  }
+  .log-title{font-size:8px}
+  .small{
+    min-height:16px!important;
+    padding:1px 3px!important;
+    font-size:7px!important;
+  }
+  .log-columns{
+    padding:1px;
+    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
+    font-size:6px;
+  }
+  .log-row{
+    grid-template-columns:30px 17px 20px minmax(0,1fr) 27px;
+    padding:1px;
+    font-size:7px;
+  }
+}
+
 </style>
 </head>
 
