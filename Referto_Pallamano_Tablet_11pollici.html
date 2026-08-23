@@ -38,6 +38,8 @@ button{touch-action:manipulation;cursor:pointer}
 .timer{background:#050505;color:#fde047;border:3px solid #eab308;border-radius:9px;
   min-width:clamp(135px,20vw,225px);padding:2px 12px;text-align:center;font:900 clamp(29px,4.7vw,55px)/1 monospace}
 .timer.blink{color:#ef4444;animation:flash .65s infinite}
+.touch-start{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.touch-start:active{transform:scale(.97)}
 @keyframes flash{50%{opacity:.25}}
 
 /* CORPO */
@@ -52,16 +54,25 @@ button{touch-action:manipulation;cursor:pointer}
 .team-counters{display:flex;justify-content:center;gap:10px;margin-top:3px;font-size:10px;font-weight:900}
 
 /* GIOCATORI */
+.players-caption{flex:0 0 auto;text-align:center;font-size:9px;font-weight:900;color:#64748b;padding:2px 0}
 .players{flex:1;min-height:0;padding:5px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:4px}
 .player-card{min-width:0;min-height:0;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;display:flex;flex-direction:column;overflow:hidden}
 .player-card.yellow{background:#fefce8;border-color:#eab308}
 .player-card.suspended{background:#fff7ed;border-color:#f97316}
 .player-card.expelled{background:#fef2f2;border-color:#dc2626}
 .player-top{height:25px;flex:0 0 25px;display:flex;align-items:center;justify-content:center;gap:3px;font-weight:900}
-.player-num{font-size:clamp(15px,1.8vw,23px)}
+.player-number{
+  width:42px;height:23px;border:0;background:transparent;text-align:center;
+  font-size:clamp(16px,2vw,24px);font-weight:900;color:#0f172a;
+  padding:0;outline:none;
+}
 .badges{font-size:8px;white-space:nowrap}
 .player-actions{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px}
-.pact{border:0;border-radius:4px;min-width:0;font-size:clamp(8px,.95vw,11px);font-weight:900;color:#fff}
+.pact{
+  border:0;border-radius:5px;min-width:0;min-height:27px;
+  font-size:clamp(9px,1.05vw,12px);font-weight:900;color:#fff;
+  touch-action:manipulation;-webkit-user-select:none;user-select:none;
+}
 .pact.goal{background:#16a34a}.pact.am{background:#eab308;color:#111}.pact.two{background:#ea580c}.pact.exp{background:#dc2626}
 .pact:disabled{background:#cbd5e1;color:#64748b}
 
@@ -70,7 +81,7 @@ button{touch-action:manipulation;cursor:pointer}
   text-align:center;font-size:9px;font-weight:900;padding:2px}
 .staff{flex:0 0 72px;padding:3px 5px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
 .staff-card{border:1px solid #cbd5e1;border-radius:5px;background:#fafafa;display:grid;grid-template-rows:17px 1fr}
-.staff-label{text-align:center;font-size:10px;font-weight:900;line-height:17px;background:#e2e8f0}
+.staff-label{text-align:center;font-size:13px;font-weight:900;line-height:19px;background:#e2e8f0}
 .staff-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px}
 .sact{border:0;border-radius:3px;font-size:8px;font-weight:900;color:#fff}
 .sact.am{background:#eab308;color:#111}.sact.two{background:#ea580c}.sact.exp{background:#dc2626}
@@ -130,10 +141,10 @@ button{touch-action:manipulation;cursor:pointer}
     <div class="clock-row">
       <div class="clock-side left">
         <button class="btn light" onclick="adjustTimer(-1)">−1</button>
-        <button id="startBtn" class="btn green" onclick="toggleClock()">▶ START</button>
+        <button id="startBtn" class="btn green touch-start" type="button">▶ START</button>
       </div>
 
-      <div id="timer" class="timer">00:00</div>
+      <div id="timer" class="timer touch-start" role="button" tabindex="0" aria-label="Avvia o ferma cronometro">00:00</div>
 
       <div class="clock-side right">
         <button class="btn light" onclick="adjustTimer(1)">+1</button>
@@ -157,6 +168,7 @@ button{touch-action:manipulation;cursor:pointer}
         </div>
       </div>
 
+      <div class="players-caption">N° MAGLIA · EVENTO</div>
       <div id="playersA" class="players"></div>
 
       <div class="staff-title">DIRIGENTI A · B · C · D · E</div>
@@ -188,6 +200,7 @@ button{touch-action:manipulation;cursor:pointer}
         </div>
       </div>
 
+      <div class="players-caption">N° MAGLIA · EVENTO</div>
       <div id="playersB" class="players"></div>
 
       <div class="staff-title">DIRIGENTI A · B · C · D · E</div>
@@ -325,7 +338,10 @@ function renderPlayers(team){
 
     card.innerHTML=`
       <div class="player-top">
-        <span class="player-num">${num}</span>
+        <input class="player-number" type="number" min="0" max="99"
+               value="${num}" data-team="${team}" data-index="${i}"
+               onclick="event.stopPropagation()"
+               onchange="changePlayerNumber(this)">
         <span class="badges">${badges.join(' ')}</span>
       </div>
       <div class="player-actions">
@@ -783,6 +799,43 @@ function toast(msg){
   window.toastTimer=setTimeout(()=>t.style.display='none',1900);
 }
 
+
+function changePlayerNumber(input){
+  const team=input.dataset.team;
+  const index=Number(input.dataset.index);
+  let value=parseInt(input.value,10);
+  if(isNaN(value)) value=0;
+  value=Math.max(0,Math.min(99,value));
+
+  snapshot();
+  state.numbers[team][index]=value;
+  render();
+}
+
+/* Controlli touch: funzionano su iPad/tablet e anche con mouse.
+   Il cronometro può essere avviato sia dal tasto START sia toccando direttamente il tempo. */
+function installTouchControls(){
+  const start=el('startBtn');
+  const timer=el('timer');
+
+  const startTimerTouch=(ev)=>{
+    ev.preventDefault();
+    ev.stopPropagation();
+    toggleClock();
+  };
+
+  start.addEventListener('pointerup',startTimerTouch,{passive:false});
+  timer.addEventListener('pointerup',startTimerTouch,{passive:false});
+
+  timer.addEventListener('keydown',(ev)=>{
+    if(ev.key==='Enter' || ev.key===' '){
+      ev.preventDefault();
+      toggleClock();
+    }
+  });
+}
+
+installTouchControls();
 render();
 </script>
 </body>
