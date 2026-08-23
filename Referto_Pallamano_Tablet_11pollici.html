@@ -51,7 +51,7 @@ button{touch-action:manipulation;cursor:pointer}
   border-bottom:1px solid #fed7aa;font-size:7px;font-weight:900;padding:1px 0;
 }
 .suspensions{
-  flex:0 0 28px;min-height:28px;padding:2px 4px;display:flex;gap:3px;
+  flex:0 0 24px;min-height:24px;padding:2px 4px;display:flex;gap:3px;
   overflow-x:auto;background:#fff7ed;
 }
 .suspension-empty{
@@ -59,66 +59,65 @@ button{touch-action:manipulation;cursor:pointer}
   color:#94a3b8;font-size:8px;font-weight:800;
 }
 .suspension-item{
-  min-width:70px;border-radius:5px;background:#ea580c;color:white;
-  display:grid;grid-template-columns:22px 1fr;align-items:center;
-  padding:1px 3px;font-weight:900;
+  min-width:65px;border-radius:4px;background:#ea580c;color:white;
+  display:grid;grid-template-columns:18px 1fr;align-items:center;
+  padding:1px 2px;font-weight:900;
 }
-.suspension-num{font-size:12px;text-align:center}
-.suspension-time{font:900 11px monospace;text-align:center}
+.suspension-num{font-size:11px;text-align:center}
+.suspension-time{font:900 10px monospace;text-align:center}
 #suspensionsB .suspension-item{background:#7c3aed}
 
 /* CORPO */
 .main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(175px,0.72fr) minmax(0,1.12fr);gap:4px}
 .panel{background:#fff;border:1px solid var(--line);border-radius:8px;min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-.panel-head{flex:0 0 auto;padding:3px 5px;border-bottom:1px solid var(--line)}
+.panel-head{flex:0 0 auto;padding:2px 5px;border-bottom:1px solid var(--line)}
 .panel-head.a{background:#eff6ff}.panel-head.b{background:#f5f3ff}
 .team-line{display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center}
-.name-input{width:100%;border:1px solid var(--line);border-radius:5px;background:#fff;padding:2px 5px;text-align:center;text-transform:uppercase;font-size:clamp(12px,1.4vw,17px);font-weight:900}
+.name-input{width:100%;border:1px solid var(--line);border-radius:5px;background:#fff;padding:2px 5px;text-align:center;text-transform:uppercase;font-size:clamp(11px,1.3vw,16px);font-weight:900}
 .team-panel.b .timeout-btn{background:#7c3aed}
-.timeout-btn{min-height:30px;border:0;border-radius:6px;background:var(--cyan);color:#fff;padding:3px 10px;font-size:clamp(9px,1.1vw,12px);font-weight:900}
+.timeout-btn{min-height:26px;border:0;border-radius:6px;background:var(--cyan);color:#fff;padding:2px 8px;font-size:clamp(8px,1vw,11px);font-weight:900}
 .timeout-btn:disabled{background:#94a3b8}
-.team-counters{display:flex;justify-content:center;gap:8px;margin-top:2px;font-size:9px;font-weight:900}
+.team-counters{display:flex;justify-content:center;gap:8px;margin-top:1px;font-size:8px;font-weight:900}
 
-/* GIOCATORI */
+/* GIOCATORI (COMPATTATI) */
 .players-caption{flex:0 0 auto;text-align:center;font-size:7px;font-weight:900;color:#64748b;padding:1px 0}
-.players{flex:1;min-height:0;padding:4px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:3px}
-.player-card{min-width:0;min-height:0;border:1px solid #cbd5e1;border-radius:5px;background:#f8fafc;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 1px 2px #0001}
+.players{flex:1;min-height:0;padding:3px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:2px}
+.player-card{min-width:0;min-height:0;border:1px solid #cbd5e1;border-radius:4px;background:#f8fafc;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;box-shadow:0 1px 1px #0001;padding:1px}
 .player-card.yellow{background:#fefce8;border-color:#eab308}
 .player-card.suspended{background:#fff7ed;border-color:#f97316}
 .player-card.expelled{background:#fef2f2;border-color:#dc2626}
-.player-top{height:24px;flex:0 0 24px;display:flex;align-items:center;justify-content:space-between;padding:0 2px;gap:1px;font-weight:900}
 .player-number{
-  width:100%;height:22px;border:0;border-radius:4px;background:#2563eb;color:#fff;
-  text-align:center;font-size:clamp(14px,1.8vw,21px);font-weight:900;
-  padding:0;outline:none;touch-action:manipulation;
+  width:100%;height:100%;min-height:16px;border:0;border-radius:3px;background:#2563eb;color:#fff;
+  text-align:center;font-size:clamp(12px,1.5vw,18px);font-weight:900;
+  padding:0;outline:none;touch-action:manipulation;line-height:1;
 }
 .player-stats{
-  flex:0 0 18px;display:grid;grid-template-columns:1fr 1fr;gap:2px;
-  padding:1px 2px;font-size:clamp(8px,0.9vw,11px);font-weight:900;text-align:center;
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  font-size:clamp(7px,0.8vw,10px);font-weight:900;text-align:center;
 }
-.stat-yellow{border-radius:3px;background:#e2e8f0;color:#64748b}
+.stat-yellow{border-radius:2px;background:#e2e8f0;color:#64748b;padding:1px 0}
 .stat-yellow.active{background:#facc15;color:#111}
-.stat-two{border-radius:3px;background:#ffedd5;color:#9a3412}
+.stat-two{border-radius:2px;background:#ffedd5;color:#9a3412;padding:1px 0}
 .player-expelled{
-  flex:0 0 16px;text-align:center;background:#dc2626;color:white;
-  font-size:8px;font-weight:900;line-height:16px;
+  text-align:center;background:#dc2626;color:white;
+  font-size:7px;font-weight:900;line-height:1;padding:1px 0;border-radius:2px;
 }
 .team-panel.b .player-number{background:#7c3aed}
 
-/* DIRIGENTI */
+/* DIRIGENTI (INGRANDITI) */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  text-align:center;font-size:8px;font-weight:900;padding:2px}
-.staff{flex:0 0 54px;padding:3px 4px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
-.staff-card{border:1px solid #cbd5e1;border-radius:5px;background:#fafafa;display:grid;grid-template-rows:22px 1fr;overflow:hidden}
-.staff-label{text-align:center;font-size:11px;font-weight:900;line-height:22px;background:#e2e8f0;border:0;width:100%}
+  text-align:center;font-size:8px;font-weight:900;padding:3px}
+.staff{flex:0 0 68px;padding:3px 4px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.staff-card{border:1px solid #cbd5e1;border-radius:5px;background:#fafafa;display:grid;grid-template-rows:26px 1fr;overflow:hidden}
+.staff-label{text-align:center;font-size:12px;font-weight:900;line-height:26px;background:#e2e8f0;border:0;width:100%}
 .staff-label:disabled{background:#cbd5e1;color:#64748b}
 .staff-status{
-  text-align:center;font-size:8px;font-weight:900;
+  text-align:center;font-size:9px;font-weight:900;
   display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#334155;
 }
 
 /* REGISTRO */
-.log-head{height:30px;flex:0 0 30px;display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-bottom:1px solid var(--line)}
+.log-head{height:28px;flex:0 0 28px;display:flex;align-items:center;justify-content:space-between;padding:2px 5px;border-bottom:1px solid var(--line)}
 .log-columns{
   display:grid;grid-template-columns:36px 20px 28px minmax(0,1fr) 34px;
   gap:2px;padding:2px 3px;background:#1e293b;color:#cbd5e1;
@@ -127,7 +126,7 @@ button{touch-action:manipulation;cursor:pointer}
 .log-columns div{text-align:center}
 .log-title{font-size:clamp(9px,1.1vw,13px);font-weight:900;letter-spacing:.5px;text-align:center}
 .log-actions{display:flex;gap:2px}
-.small{min-height:24px!important;padding:2px 6px!important;font-size:8px!important}
+.small{min-height:22px!important;padding:2px 6px!important;font-size:8px!important}
 .log{flex:1;min-height:0;overflow:auto;background:#0f172a;color:#fff}
 .log-row{display:grid;grid-template-columns:36px 20px 28px minmax(0,1fr) 34px;gap:2px;padding:3px 2px;border-bottom:1px solid #334155;font-size:clamp(8px,.9vw,10px);align-items:center}
 .log-row.goal{background:#052e16}.log-row.disc{background:#3f2500}.log-row.exp{background:#450a0a}.log-row.to{background:#083344}
@@ -158,16 +157,15 @@ button{touch-action:manipulation;cursor:pointer}
 @media (orientation:portrait) and (max-width:1000px){
   .players{
     grid-template-rows:repeat(4,minmax(0,1fr));
-    gap:2px;
+    gap:1px;
     padding:2px;
   }
-  .player-top{height:20px;flex:0 0 20px}
-  .player-number{height:19px;font-size:14px;line-height:19px}
-  .player-stats{flex:0 0 14px;font-size:7px;padding:0 1px}
-  .staff{flex:0 0 46px;padding:2px;gap:2px}
-  .staff-card{grid-template-rows:18px 1fr}
-  .staff-label{font-size:10px;line-height:18px}
-  .staff-status{font-size:7px}
+  .player-number{font-size:13px}
+  .player-stats{font-size:7px}
+  .staff{flex:0 0 58px;padding:2px;gap:2px}
+  .staff-card{grid-template-rows:22px 1fr}
+  .staff-label{font-size:11px;line-height:22px}
+  .staff-status{font-size:8px}
 }
 </style>
 </head>
@@ -428,16 +426,14 @@ function renderPlayers(team){
     const expelled=d.red;
 
     card.innerHTML=`
-      <div class="player-top">
-        <button class="player-number" type="button"
-                onclick="openEventMenu('PLAYER','${team}',${i})"
-                ${expelled?'disabled':''}>${num}</button>
-      </div>
+      <button class="player-number" type="button"
+              onclick="openEventMenu('PLAYER','${team}',${i})"
+              ${expelled?'disabled':''}>${num}</button>
+      ${expelled ? '<div class="player-expelled">ESPULSO</div>' : `
       <div class="player-stats">
-        <span class="stat-yellow ${yellow?'active':''}">A${yellow?' ✓':''}</span>
+        <span class="stat-yellow ${yellow?'active':''}">A${yellow?'✓':''}</span>
         <span class="stat-two">2' ${d.two}/3</span>
-      </div>
-      ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
+      </div>`}
     `;
     box.appendChild(card);
   });
