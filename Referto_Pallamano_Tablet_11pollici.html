@@ -1812,6 +1812,130 @@ function closePenalty(){
   }
 }
 
+
+/* =========================================================
+   FINAL 10" TABLET LANDSCAPE FIX
+   The player grid must NOT reserve 100% height inside its grid row.
+   That was the reason the staff section was pushed below the viewport.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
+
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    min-height:0 !important;
+    overflow:hidden !important;
+    grid-template-rows:
+      31px
+      13px
+      25px
+      12px
+      minmax(0,1fr)
+      14px
+      120px !important;
+  }
+
+  /* CRITICAL: let the CSS grid determine the player height.
+     Do not use height:100%, which was forcing the grid to overflow. */
+  .players{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    padding:3px !important;
+    gap:3px !important;
+    align-self:stretch !important;
+  }
+
+  .player-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+
+  /* Give the number a little more vertical breathing room without making
+     the whole player card taller. */
+  .player-top{
+    height:30px !important;
+    min-height:30px !important;
+    flex-basis:30px !important;
+  }
+
+  .player-number{
+    width:64px !important;
+    min-width:64px !important;
+    height:29px !important;
+    min-height:29px !important;
+    font-size:19px !important;
+    line-height:29px !important;
+  }
+
+  .player-goals{
+    line-height:29px !important;
+  }
+
+  .player-stats{
+    height:16px !important;
+    min-height:16px !important;
+    flex-basis:16px !important;
+  }
+
+  .player-expelled{
+    height:10px !important;
+    min-height:10px !important;
+    flex-basis:10px !important;
+    line-height:10px !important;
+  }
+
+  /* The staff section is now physically inside the available viewport. */
+  .staff-title{
+    height:14px !important;
+    min-height:14px !important;
+    line-height:14px !important;
+  }
+
+  .staff{
+    height:120px !important;
+    min-height:120px !important;
+    max-height:120px !important;
+    padding:3px !important;
+    gap:3px !important;
+    overflow:hidden !important;
+  }
+
+  .staff-card{
+    height:114px !important;
+    min-height:114px !important;
+    max-height:114px !important;
+    grid-template-rows:55px 55px !important;
+  }
+
+  /* One single A/B/C/D/E button, exactly like the player number. */
+  .staff-label{
+    height:55px !important;
+    min-height:55px !important;
+    font-size:16px !important;
+    line-height:55px !important;
+  }
+
+  /* This area is guaranteed to be visible below the letter. */
+  .staff-status{
+    height:55px !important;
+    min-height:55px !important;
+    line-height:55px !important;
+    font-size:13px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .staff-actions,
+  .staff-letter{
+    display:none !important;
+  }
+}
+
 </style>
 </head>
 
