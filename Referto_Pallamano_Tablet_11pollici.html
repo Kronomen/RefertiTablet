@@ -119,11 +119,11 @@ function eventAction(type){
 .player-card.yellow{background:#fefce8;border-color:#eab308}
 .player-card.suspended{background:#fff7ed;border-color:#f97316}
 .player-card.expelled{background:#fef2f2;border-color:#dc2626}
-.player-top{height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:space-between;padding:0 5px;gap:3px;font-weight:900}
+.player-top{height:32px;flex:0 0 32px;display:flex;align-items:center;justify-content:space-between;padding:0 3px;gap:2px;font-weight:900}
 .player-number{
-  width:62px;height:29px;border:0;background:transparent;text-align:center;
-  font-size:clamp(18px,2.2vw,27px);font-weight:900;color:#0f172a;
-  padding:0;outline:none;
+  width:58px;height:29px;border:0;border-radius:6px;background:#2563eb;color:#fff;
+  text-align:center;font-size:clamp(17px,2.1vw,26px);font-weight:900;
+  padding:0;outline:none;touch-action:manipulation;
 }
 .player-goals{font-size:clamp(11px,1.25vw,15px);font-weight:900;white-space:nowrap}
 .player-stats{
@@ -187,7 +187,7 @@ function closePenalty(){
   text-align:center;font-size:9px;font-weight:900;
   line-height:15px;background:#f8fafc;color:#334155;
 }
-.staff-actions{display:flex;padding:3px}
+.staff-actions{display:flex;padding:2px}
 .staff-event-btn{
   width:100%;height:100%;border:0;border-radius:5px;background:#2563eb;
   color:#fff;font-size:9px;font-weight:900;touch-action:manipulation;
@@ -384,6 +384,119 @@ function closePenalty(){
   .log-title{font-size:8px}
   .log-columns{padding:1px;font-size:6px}
   .log-row{padding:1px;font-size:7px}
+}
+
+
+@media (orientation:portrait) and (max-width:900px){
+  .main{grid-template-rows:minmax(0,1fr) 78px}
+  .player-top{height:25px;flex-basis:25px}
+  .player-number{width:44px;height:24px;font-size:15px}
+  .player-goals{font-size:8px}
+  .player-stats{flex-basis:16px;font-size:7px}
+  .player-expelled{flex-basis:12px;line-height:12px}
+  .staff{flex-basis:63px;padding:2px 4px;gap:3px}
+  .staff-card{grid-template-rows:15px 11px 1fr}
+  .staff-label{font-size:9px;line-height:15px}
+  .staff-status{font-size:7px;line-height:11px}
+  .staff-actions{padding:2px}
+  .staff-letter{height:24px;min-height:24px;font-size:9px}
+}
+
+
+@media (orientation:portrait) and (max-width:900px){
+  /* In verticale la squadra deve stare tutta dentro la propria colonna:
+     giocatori + dirigenti, senza overflow sotto lo schermo. */
+  .team-panel{
+    display:grid;
+    grid-template-rows:auto auto 22px auto minmax(0,1fr) 12px 62px;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .panel-head{min-height:28px}
+  .suspensions-title{min-height:12px}
+  .suspensions{height:22px;min-height:22px;flex:none}
+  .players-caption{height:12px;min-height:12px;flex:none}
+
+  /* I 16 giocatori occupano solo lo spazio realmente disponibile.
+     Il grande spazio bianco precedente non viene più lasciato libero. */
+  .players{
+    min-height:0;
+    height:auto;
+    padding:3px;
+    gap:3px;
+    grid-template-rows:repeat(4,minmax(0,1fr));
+  }
+
+  /* Il numero è il pulsante: più largo e molto più leggibile,
+     soprattutto per 10-16. */
+  .player-top{
+    height:29px;
+    flex-basis:29px;
+    padding:0 3px;
+  }
+  .player-number{
+    width:58px;
+    min-width:58px;
+    height:27px;
+    font-size:17px;
+  }
+  .player-goals{font-size:9px}
+  .player-stats{
+    flex-basis:17px;
+    min-height:17px;
+    font-size:8px;
+    padding:1px 2px;
+  }
+  .player-expelled{
+    flex-basis:12px;
+    line-height:12px;
+    font-size:6px;
+  }
+
+  /* Dirigenti sempre visibili e con pulsante-lettera grande quanto
+     il pulsante numero del giocatore. */
+  .staff-title{
+    height:12px;
+    min-height:12px;
+    padding:0;
+    font-size:7px;
+    line-height:12px;
+  }
+  .staff{
+    height:62px;
+    min-height:62px;
+    flex:none;
+    padding:2px 4px;
+    gap:3px;
+  }
+  .staff-card{
+    min-height:0;
+    grid-template-rows:15px 12px minmax(0,1fr);
+  }
+  .staff-label{
+    font-size:10px;
+    line-height:15px;
+  }
+  .staff-status{
+    font-size:7px;
+    line-height:12px;
+  }
+  .staff-actions{
+    padding:2px;
+  }
+  .staff-letter{
+    width:100%;
+    height:27px;
+    min-height:27px;
+    font-size:10px;
+  }
+
+  /* Registro ancora più compatto: lo spazio serve alle squadre. */
+  .log-panel{
+    min-height:0;
+    overflow:hidden;
+  }
 }
 
 </style>
@@ -674,10 +787,9 @@ function renderPlayers(team){
 
     card.innerHTML=`
       <div class="player-top">
-        <input class="player-number" type="number" min="0" max="99"
-               value="${num}" data-team="${team}" data-index="${i}"
-               onclick="event.stopPropagation()"
-               onchange="changePlayerNumber(this)">
+        <button class="player-number player-touch" type="button"
+                onclick="openEventMenu('PLAYER','${team}',${i})"
+                ${expelled?'disabled':''}>${num}</button>
         <span class="player-goals">⚽ ${d.goals}</span>
       </div>
       <div class="player-stats">
@@ -685,11 +797,7 @@ function renderPlayers(team){
         <span class="stat-two">2' ${d.two}/3</span>
       </div>
       ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
-      <div class="player-actions">
-        <button class="player-event-btn" onclick="openEventMenu('PLAYER','${team}',${i})" ${expelled?'disabled':''}>
-          ${expelled?'INIBITO':'EVENTO'}
-        </button>
-      </div>
+      
     `;
     box.appendChild(card);
   });
@@ -713,8 +821,9 @@ function renderStaff(team){
       <div class="staff-label">${letter}</div>
       <div class="staff-status">${staffBadges.length ? staffBadges.join(' · ') : '—'}</div>
       <div class="staff-actions">
-        <button class="staff-event-btn" onclick="openEventMenu('STAFF','${team}',${i})" ${d.red?'disabled':''}>
-          ${d.red?'INIBITO':'EVENTO'}
+        <button class="staff-letter staff-touch" type="button"
+          onclick="openEventMenu('STAFF','${team}',${i})" ${d.red?'disabled':''}>
+          ${letter}
         </button>
       </div>
     `;
