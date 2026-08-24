@@ -5818,12 +5818,132 @@ function finishHalf(){
   }
 }
 
+/* =========================================================
+   PREPARA I DATI PER IL REFERTO FIGH
+   Usa esclusivamente i dati realmente presenti nella gara.
+   I campi mancanti vengono lasciati vuoti.
+   ========================================================= */
+function preparaRefertoFIGH(){
+  try{
+    const firstA = Number(state.firstHalfScoreA ?? 0);
+    const firstB = Number(state.firstHalfScoreB ?? 0);
+    const finalA = Number(state.scoreA ?? 0);
+    const finalB = Number(state.scoreB ?? 0);
+
+    const partita = {
+      scoreA: finalA,
+      scoreB: finalB,
+
+      penaltyScoredA: Number(state.penaltyScored?.A ?? 0),
+      penaltyTotalA: Number(state.penalty?.A ?? 0),
+      penaltyScoredB: Number(state.penaltyScored?.B ?? 0),
+      penaltyTotalB: Number(state.penalty?.B ?? 0),
+
+      timeoutsA: Number(state.timeouts?.A ?? 0),
+      timeoutsB: Number(state.timeouts?.B ?? 0),
+
+      timerSeconds: Number(state.timer ?? 0),
+      currentHalf: Number(state.phase ?? 2),
+
+      firstHalfScoreA: firstA,
+      firstHalfScoreB: firstB,
+      secondHalfScoreA: finalA - firstA,
+      secondHalfScoreB: finalB - firstB,
+
+      /* I nomi non sono presenti nel tablet: non vengono inventati. */
+      currentRosterA: {
+        players: (state.numbers?.A || []).map((num,i)=>({
+          num: num ?? "",
+          name: ""
+        })),
+        officials: (state.staffLetters?.A || []).map(()=>({
+          role: "",
+          name: ""
+        }))
+      },
+
+      currentRosterB: {
+        players: (state.numbers?.B || []).map((num,i)=>({
+          num: num ?? "",
+          name: ""
+        })),
+        officials: (state.staffLetters?.B || []).map(()=>({
+          role: "",
+          name: ""
+        }))
+      },
+
+      teamA: state.teams?.A || "",
+      teamB: state.teams?.B || "",
+
+      matchNumber: "",
+      league: "",
+      group: "",
+      season: "",
+      matchDate: "",
+      matchTime: "",
+      city: "",
+      venue: "",
+
+      referee1: "",
+      referee2: "",
+      delegate1: "",
+      delegate2: "",
+      timekeeper: "",
+      secretary: "",
+
+      eventi: JSON.parse(JSON.stringify(state.events || [])),
+
+      risultati: {
+        primoTempo: {A:firstA, B:firstB},
+        secondoTempo: {A:finalA-firstA, B:finalB-firstB},
+        finale: {A:finalA, B:finalB},
+        setteMetri: {
+          tiriA: Number(state.penalty?.A ?? 0),
+          retiA: Number(state.penaltyScored?.A ?? 0),
+          tiriB: Number(state.penalty?.B ?? 0),
+          retiB: Number(state.penaltyScored?.B ?? 0)
+        }
+      }
+    };
+
+    localStorage.setItem("RefertoFIGH", JSON.stringify(partita));
+    return partita;
+
+  }catch(err){
+    console.error("Errore preparazione Referto FIGH:",err);
+    toast("Errore nella preparazione del Referto FIGH");
+    return null;
+  }
+}
+
+function apriRefertoFIGH(){
+  /*
+     Il file RefertoFIGH.html deve trovarsi nella stessa cartella
+     del Referto_Pallamano_Tablet.html.
+  */
+  window.open("RefertoFIGH.html","_blank");
+}
+
 function endMatch(){
   state.running=false;
   clearInterval(interval);
   interval=null;
-  toast(`GARA TERMINATA · ${state.scoreA} - ${state.scoreB}`);
-  render();
+
+  const partitaFIGH = preparaRefertoFIGH();
+
+  if(partitaFIGH){
+    clearRecovery();
+    toast(`GARA TERMINATA · ${state.scoreA} - ${state.scoreB}`);
+
+    render();
+
+    setTimeout(()=>{
+      apriRefertoFIGH();
+    },150);
+  }else{
+    render();
+  }
 }
 
 /* TIME OUT: IL PULSANTE È IN ALTO */
@@ -6170,7 +6290,7 @@ render();
     const root=document.documentElement;
     if(!root.requestFullscreen) return;
     richiesto=true;
-    root.requestFullscreen().catch(()=>{richiesto=false;});
+    root..catch(()=>{richiesto=false;});
   }
 
   document.addEventListener('pointerdown', entraSchermoIntero, {once:true, passive:true});
