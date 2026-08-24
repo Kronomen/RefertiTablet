@@ -1261,23 +1261,60 @@ console.log("GIOCATORI B =", giocatoriB);
 console.log("DIRIGENTI B =", dirigentiB);
 /* RETI GIOCATORI — compatibilità con gare salvate prima del campo "goals". */
 function integraRetiDaEventi(lista, squadra){
-    const eventi = partita.eventi || partita.events || [];
+
+    const eventi =
+        partita.eventi ||
+        partita.events ||
+        partita.logEvents ||
+        [];
+
     const conteggio = {};
 
     eventi.forEach(e => {
-        if(!e || e.team !== squadra) return;
+        if(!e) return;
 
-        const tipo = String(e.type || "").toUpperCase();
-        const testo = String(e.text || e.event || "").toUpperCase();
+        const team = String(
+            e.squadra ??
+            e.team ??
+            ""
+        ).trim().toUpperCase();
+
+        if(team !== squadra) return;
+
+        const tipo = String(
+            e.type ??
+            e.tipo ??
+            ""
+        ).trim().toUpperCase();
+
+        const testo = String(
+            e.text ??
+            e.event ??
+            e.evento ??
+            e.desc ??
+            ""
+        ).trim().toUpperCase();
 
         const realizzato =
             tipo === "GOAL" ||
-            (tipo === "PENALTY" &&
-             (testo.includes("REALIZZATO") || testo.includes("RIGORE REALIZZATO")));
+            tipo === "RETE" ||
+            (
+                tipo === "PENALTY" &&
+                testo.includes("REALIZZATO")
+            ) ||
+            (
+                testo.includes("RIGORE") &&
+                testo.includes("REALIZZATO")
+            );
 
         if(!realizzato) return;
 
-        const num = String(e.num ?? "").trim();
+        const num = String(
+            e.num ??
+            e.numero ??
+            ""
+        ).trim();
+
         if(!num || num === "—") return;
 
         conteggio[num] = (conteggio[num] || 0) + 1;
@@ -1286,13 +1323,23 @@ function integraRetiDaEventi(lista, squadra){
     lista.forEach(player => {
         if(!player) return;
 
-        const num = String(player.num ?? player.number ?? "").trim();
-        const salvato = Number(player.goals);
+        const num = String(
+            player.num ??
+            player.number ??
+            ""
+        ).trim();
+
+        const salvato = Number(
+            player.goals ??
+            player.goal ??
+            player.reti ??
+            player.goalsScored ??
+            0
+        );
 
         player.goals =
-            Number.isFinite(salvato) && salvato > 0
-            ? salvato
-            : (conteggio[num] || 0);
+            conteggio[num] ??
+            (Number.isFinite(salvato) ? salvato : 0);
     });
 }
 
@@ -1739,79 +1786,73 @@ function trovaRigaGiocatore(squadra, numero){
 function ricostruisciGoalDaRegistro(){
 
     const goal = {
-
         A:{},
-
         B:{}
-
     };
 
-    (partita.logEvents || []).forEach(ev=>{
+    // Il Tablet salva il registro gara nella proprietà "eventi".
+    // Manteniamo compatibilità con "events" e con vecchie gare "logEvents".
+    const eventi =
+        partita.eventi ||
+        partita.events ||
+        partita.logEvents ||
+        [];
 
-        //------------------------------------------
-        // Compatibilità vecchio / nuovo formato
-        //------------------------------------------
+    eventi.forEach(ev => {
 
-        const squadra =
-            ev.squadra ?? ev.team ?? "";
+        const squadra = String(
+            ev.squadra ??
+            ev.team ??
+            ""
+        ).trim().toUpperCase();
 
-        const numero =
-            String(
-                ev.numero ??
-                ev.num ??
-                ""
+        if(squadra !== "A" && squadra !== "B") return;
+
+        const numero = String(
+            ev.numero ??
+            ev.num ??
+            ""
+        ).trim();
+
+        if(!numero || numero === "—") return;
+
+        const tipo = String(
+            ev.type ??
+            ev.tipo ??
+            ""
+        ).trim().toUpperCase();
+
+        const testo = String(
+            ev.text ??
+            ev.event ??
+            ev.evento ??
+            ev.desc ??
+            ""
+        ).trim().toUpperCase();
+
+        const èRete =
+            tipo === "GOAL" ||
+            tipo === "RETE" ||
+            (
+                tipo === "PENALTY" &&
+                testo.includes("REALIZZATO")
+            ) ||
+            (
+                testo.includes("RIGORE") &&
+                testo.includes("REALIZZATO")
             );
 
-        const evento =
-            (
-                ev.evento ??
-                ev.desc ??
-                ""
-            ).toUpperCase();
+        if(!èRete) return;
 
-        //------------------------------------------
-        // Solo GOAL
-        //------------------------------------------
-
-       const èRete =
-
-    evento.includes("GOAL") ||
-
-    evento.includes("RETE") ||
-
-    (
-        evento.includes("RIGORE") &&
-        evento.includes("REALIZZATO")
-    );
-
-if(èRete){
-
-            if(!goal[squadra]){
-
-                goal[squadra] = {};
-
-            }
-
-            if(!goal[squadra][numero]){
-
-                goal[squadra][numero] = 0;
-
-            }
-
-            goal[squadra][numero]++;
-
-        }
-
+        goal[squadra][numero] =
+            (goal[squadra][numero] || 0) + 1;
     });
 
-    console.log("GOAL RICOSTRUITI", goal);
+    console.log("EVENTI LETTI DAL REFERTO =", eventi);
+    console.log("GOAL RICOSTRUITI =", goal);
 
     return goal;
-
 }
-
-
-
 //====================================================
 // COMPILA IL REFERTO FIGH
 //====================================================
@@ -1837,7 +1878,8 @@ function compilaReferto(){
         const numero = String(g.num ?? g.number ?? "");
 
         const goals =
-            goalRegistro.A?.[numero] ?? 0;
+            goalRegistro.A?.[numero] ??
+            Number(g.goals ?? g.goal ?? g.reti ?? g.goalsScored ?? 0);
 
         const yellow      = g.yellowTime ?? "";
         const susp1       = g.susp1Time ?? "";
@@ -1869,7 +1911,8 @@ function compilaReferto(){
         const numero = String(g.num ?? g.number ?? "");
 
         const goals =
-            goalRegistro.B?.[numero] ?? 0;
+            goalRegistro.B?.[numero] ??
+            Number(g.goals ?? g.goal ?? g.reti ?? g.goalsScored ?? 0);
 
         const yellow      = g.yellowTime ?? "";
         const susp1       = g.susp1Time ?? "";
