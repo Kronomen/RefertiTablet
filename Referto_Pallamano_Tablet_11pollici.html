@@ -82,6 +82,11 @@ button{touch-action:manipulation;cursor:pointer}
 
 
 function openEventMenu(kind,team,index){
+  if(kind==='PLAYER' && state.discipline[team]?.[index]?.red){
+    toast('Giocatore espulso: nessuna azione disponibile');
+    return;
+  }
+
   selected={kind,team,index};
   const isPlayer=kind==='PLAYER';
   const label=isPlayer
@@ -103,6 +108,14 @@ function closeEventModal(){
 }
 
 function eventAction(type){
+  if(selected?.kind==='PLAYER' &&
+     state.discipline[selected.team]?.[selected.index]?.red){
+    selected=null;
+    closeEventModal();
+    toast('Giocatore espulso: nessuna azione disponibile');
+    return;
+  }
+
   if(!selected)return;
   const s=selected;
   closeEventModal();
@@ -4892,6 +4905,22 @@ tr.team-b td,
   background:#fffde7 !important;
 }
 
+
+/* ALONE ROSSO PER GIOCATORI SOTTO PROVVEDIMENTO */
+.player-card.suspended{
+  box-shadow:
+    0 0 0 3px rgba(220,38,38,.95),
+    0 0 12px 4px rgba(220,38,38,.45) !important;
+}
+
+.player-card.expelled{
+  box-shadow:
+    0 0 0 4px rgba(220,38,38,1),
+    0 0 16px 6px rgba(220,38,38,.60) !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+}
+
 </style>
 </head>
 
@@ -5494,9 +5523,15 @@ function playerAction(team,index,type){
 
     if(d.two===3){
       d.red=true;
-      addEvent(team,num,'TWO','3° 2\' → ESCLUSIONE');
+
+      // Sul registro il 3° 2' genera DUE registrazioni:
+      // 1) il normale 2'
+      // 2) l'esclusione definitiva per 3x2'
+      addEvent(team,num,'TWO',"2'");
+      addEvent(team,num,'RED',"ESCLUSIONE PER 3x2'");
+
       startSuspension(team,num);
-      stopForDisciplinary(team,num,'3° 2\' → ESCLUSIONE');
+      stopForDisciplinary(team,num,'ESCLUSIONE PER 3x2\'');
     }else{
       addEvent(team,num,'TWO',"2'");
       startSuspension(team,num);
