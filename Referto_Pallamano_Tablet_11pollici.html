@@ -66,7 +66,7 @@ button{touch-action:manipulation;cursor:pointer}
 }
 .suspension-num{font-size:14px;text-align:center}
 .suspension-time{font:900 13px monospace;text-align:center}
-#suspensionsB .suspension-item{background:#7c3aed}
+#suspensionsB .suspension-item{background:#16a34a}
 
 /* CORPO */
 .main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(175px,0.72fr) minmax(0,1.12fr);gap:6px}
@@ -75,7 +75,7 @@ button{touch-action:manipulation;cursor:pointer}
 .panel-head.a{background:#eff6ff}.panel-head.b{background:#f5f3ff}
 .team-line{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center}
 .name-input{width:100%;border:1px solid var(--line);border-radius:6px;background:#fff;padding:3px 6px;text-align:center;text-transform:uppercase;font-size:clamp(13px,1.6vw,19px);font-weight:900}
-.team-panel.b .timeout-btn{background:#7c3aed}
+.team-panel.b .timeout-btn{background:#16a34a}
 .timeout-btn{min-height:35px;border:0;border-radius:7px;background:var(--cyan);color:#fff;padding:4px 12px;font-size:clamp(10px,1.2vw,13px);font-weight:900}
 .timeout-btn:disabled{background:#94a3b8}
 .team-counters{display:flex;justify-content:center;gap:10px;margin-top:3px;font-size:10px;font-weight:900}
@@ -92,6 +92,8 @@ function openEventMenu(kind,team,index){
   el('eventSubtitle').textContent=`${state.teams[team]} · ${label}`;
   el('eventPlayerActions').style.display=isPlayer?'grid':'none';
   el('eventStaffActions').style.display=isPlayer?'none':'grid';
+  el('eventModal').classList.remove('team-a','team-b');
+  el('eventModal').classList.add(team==='A'?'team-a':'team-b');
   el('eventModal').style.display='flex';
 }
 
@@ -145,8 +147,8 @@ function eventAction(type){
   font-weight:900;touch-action:manipulation;
 }
 .player-event-btn:active{transform:scale(.97)}
-.team-panel.b .player-event-btn{background:#7c3aed}
-.team-panel.b .staff-event-btn{background:#7c3aed}
+.team-panel.b .player-event-btn{background:#16a34a}
+.team-panel.b .staff-event-btn{background:#16a34a}
 
 
 
@@ -3761,7 +3763,7 @@ function closePenalty(){
 }
 
 #suspensionsB .suspension-item{
-  background:#7c3aed !important;
+  background:#16a34a !important;
   color:#fff !important;
 }
 
@@ -4470,6 +4472,426 @@ function closePenalty(){
   transform:scale(.995);
 }
 
+
+/* V29 — popup TIME OUT: più leggibile, colorato e in grassetto. */
+#timeoutModal .modal-content,
+#timeoutModal .modal-box,
+#timeoutModal .popup-content,
+.timeout-modal .modal-content,
+.timeout-popup{
+  background:linear-gradient(135deg,#f8fafc,#dbeafe) !important;
+  border:2px solid #2563eb !important;
+  border-radius:12px !important;
+  box-shadow:0 10px 30px rgba(0,0,0,.35) !important;
+}
+
+#timeoutModal h1,
+#timeoutModal h2,
+#timeoutModal h3,
+#timeoutModal .modal-title,
+#timeoutModal .popup-title,
+.timeout-modal h1,
+.timeout-modal h2,
+.timeout-modal h3,
+.timeout-popup h1,
+.timeout-popup h2,
+.timeout-popup h3{
+  color:#1d4ed8 !important;
+  font-weight:900 !important;
+}
+
+#timeoutModal button,
+#timeoutModal .btn,
+.timeout-modal button,
+.timeout-popup button{
+  font-weight:900 !important;
+  color:#fff !important;
+  border:0 !important;
+  border-radius:8px !important;
+  text-shadow:0 1px 1px rgba(0,0,0,.18);
+}
+
+#timeoutModal .team-a,
+.timeout-modal .team-a{
+  background:#2563eb !important;
+  color:#fff !important;
+}
+
+#timeoutModal .team-b,
+.timeout-modal .team-b{
+  background:#16a34a !important;
+  color:#fff !important;
+}
+
+#timeoutModal .cancel,
+#timeoutModal .close,
+.timeout-modal .cancel,
+.timeout-popup .close{
+  background:#64748b !important;
+  color:#fff !important;
+}
+
+
+/* V31 — IDENTITÀ CROMATICA DELLE SQUADRE
+   CASA = BLU
+   OSPITI = VERDE
+   Le regole sono applicate anche ai testi e ai pulsanti. */
+
+/* Contenitori squadra */
+.team-a,
+.team-a *{
+  --team-color:#2563eb;
+}
+.team-b,
+.team-b *{
+  --team-color:#16a34a;
+}
+
+/* Titoli / nomi squadra */
+.team-a .team-name,
+.team-a .team-title,
+.team-a .team-label{
+  color:#2563eb !important;
+}
+.team-b .team-name,
+.team-b .team-title,
+.team-b .team-label{
+  color:#16a34a !important;
+}
+
+/* TUTTI I TASTI GIOCATORI */
+.team-a .player-number,
+.team-a .player-touch,
+.team-a .staff-label{
+  background:#2563eb !important;
+  background-color:#2563eb !important;
+  color:#fff !important;
+}
+.team-b .player-number,
+.team-b .player-touch,
+.team-b .staff-label{
+  background:#16a34a !important;
+  background-color:#16a34a !important;
+  color:#fff !important;
+}
+
+/* Bordo/identità dei contenitori */
+.team-a .player-card,
+.team-a .staff-card{
+  border-color:#2563eb !important;
+}
+.team-b .player-card,
+.team-b .staff-card{
+  border-color:#16a34a !important;
+}
+
+/* Intestazioni e informazioni della squadra */
+.team-a .panel-head,
+.team-a .staff-title,
+.team-a .players-caption{
+  color:#2563eb !important;
+}
+.team-b .panel-head,
+.team-b .staff-title,
+.team-b .players-caption{
+  color:#16a34a !important;
+}
+
+/* Registro: quando la riga appartiene alla squadra, il testo
+   identificativo viene colorato con il colore della squadra. */
+tr.team-a td,
+.event-row.team-a td{
+  color:#2563eb !important;
+}
+tr.team-b td,
+.event-row.team-b td{
+  color:#16a34a !important;
+}
+
+/* Popup evento: pulsanti della squadra selezionata */
+#eventModal.team-a .goal-btn,
+#eventModal.team-a .penalty-btn,
+#eventModal.team-a .yellow-btn,
+#eventModal.team-a .two-btn,
+#eventModal.team-a .red-btn{
+  background:#2563eb !important;
+  color:#fff !important;
+}
+#eventModal.team-b .goal-btn,
+#eventModal.team-b .penalty-btn,
+#eventModal.team-b .yellow-btn,
+#eventModal.team-b .two-btn,
+#eventModal.team-b .red-btn{
+  background:#16a34a !important;
+  color:#fff !important;
+}
+
+/* Popup TIME OUT */
+#timeoutModal.team-a h3,
+#timeoutModal.team-a p{
+  color:#2563eb !important;
+}
+#timeoutModal.team-b h3,
+#timeoutModal.team-b p{
+  color:#16a34a !important;
+}
+#timeoutModal.team-a .team-a,
+#timeoutModal.team-b .team-b{
+  color:#fff !important;
+}
+
+/* Countdown / esclusioni in corso */
+.suspension-a,
+.team-a .suspension{
+  color:#2563eb !important;
+}
+.suspension-b,
+.team-b .suspension{
+  color:#16a34a !important;
+}
+
+
+/* =========================================================
+   COLORI SQUADRE — VERSIONE 32
+   CASA = BLU
+   OSPITI = VERDE
+   ========================================================= */
+
+:root{
+  --team-home:#2563eb;
+  --team-away:#16a34a;
+}
+
+/* NOMI SQUADRE */
+.team-title.a,
+.team-title.b,
+.panel.team-a .name-input,
+.panel.team-b .name-input,
+.panel.team-a .team-counters,
+.panel.team-b .team-counters,
+.panel.team-a .players-caption,
+.panel.team-b .players-caption,
+.panel.team-a .staff-title,
+.panel.team-b .staff-title{
+  font-weight:900 !important;
+}
+
+.team-title.a,
+.panel.team-a .name-input,
+.panel.team-a .team-counters,
+.panel.team-a .players-caption,
+.panel.team-a .staff-title{
+  color:var(--team-home) !important;
+}
+
+.team-title.b,
+.panel.team-b .name-input,
+.panel.team-b .team-counters,
+.panel.team-b .players-caption,
+.panel.team-b .staff-title{
+  color:var(--team-away) !important;
+}
+
+/* TESTATA DEI PANNELLI */
+.panel-head.a{
+  background:#eff6ff !important;
+  border-bottom-color:var(--team-home) !important;
+}
+.panel-head.b{
+  background:#f5f3ff !important;
+  border-bottom-color:var(--team-away) !important;
+}
+
+/* TIME OUT */
+.panel.team-a .timeout-btn{
+  background:var(--team-home) !important;
+  color:#fff !important;
+}
+.panel.team-b .timeout-btn{
+  background:var(--team-away) !important;
+  color:#fff !important;
+}
+
+/* PULSANTI NUMERO / EVENTO GIOCATORI */
+.panel.team-a .player-number,
+.panel.team-a .player-event-btn{
+  background:var(--team-home) !important;
+  background-color:var(--team-home) !important;
+  color:#fff !important;
+}
+.panel.team-b .player-number,
+.panel.team-b .player-event-btn{
+  background:var(--team-away) !important;
+  background-color:var(--team-away) !important;
+  color:#fff !important;
+}
+
+/* PULSANTI DIRIGENTI */
+.panel.team-a .staff-label,
+.panel.team-a .staff-event-btn{
+  background:var(--team-home) !important;
+  background-color:var(--team-home) !important;
+  color:#fff !important;
+}
+.panel.team-b .staff-label,
+.panel.team-b .staff-event-btn{
+  background:var(--team-away) !important;
+  background-color:var(--team-away) !important;
+  color:#fff !important;
+}
+
+/* CONTENITORI DELLE SQUADRE */
+.panel.team-a .player-card,
+.panel.team-a .staff-card{
+  border-color:var(--team-home) !important;
+}
+.panel.team-b .player-card,
+.panel.team-b .staff-card{
+  border-color:var(--team-away) !important;
+}
+
+/* ESCLUSIONI IN CORSO */
+.panel.team-a .suspensions-title{
+  color:var(--team-home) !important;
+  background:#eff6ff !important;
+  border-bottom-color:#bfdbfe !important;
+}
+.panel.team-b .suspensions-title{
+  color:var(--team-away) !important;
+  background:#f5f3ff !important;
+  border-bottom-color:#ddd6fe !important;
+}
+
+#suspensionsA .suspension-item{
+  background:var(--team-home) !important;
+}
+#suspensionsB .suspension-item{
+  background:var(--team-away) !important;
+}
+
+/* REGISTRO: identificativo della squadra */
+.log-row.log-a .log-team,
+.log-row.log-a .log-num{
+  color:var(--team-home) !important;
+}
+.log-row.log-b .log-team,
+.log-row.log-b .log-num{
+  color:var(--team-away) !important;
+}
+
+/* POPUP EVENTO */
+#eventModal.team-a #eventTitle,
+#eventModal.team-a #eventSubtitle{
+  color:var(--team-home) !important;
+}
+#eventModal.team-b #eventTitle,
+#eventModal.team-b #eventSubtitle{
+  color:var(--team-away) !important;
+}
+
+#eventModal.team-a .event-actions button{
+  background:var(--team-home) !important;
+  color:#fff !important;
+}
+#eventModal.team-b .event-actions button{
+  background:var(--team-away) !important;
+  color:#fff !important;
+}
+
+/* POPUP TIME OUT */
+#timeoutModal.team-a #timeoutTitle,
+#timeoutModal.team-a #timeoutCountdown{
+  color:var(--team-home) !important;
+}
+#timeoutModal.team-b #timeoutTitle,
+#timeoutModal.team-b #timeoutCountdown{
+  color:var(--team-away) !important;
+}
+
+/* POPUP RIGORE */
+#penaltyModal.team-a #penaltyTitle{
+  color:var(--team-home) !important;
+}
+#penaltyModal.team-b #penaltyTitle{
+  color:var(--team-away) !important;
+}
+#penaltyModal.team-a .modal-actions button,
+#penaltyModal.team-b .modal-actions button{
+  color:#fff !important;
+}
+#penaltyModal.team-a .modal-actions button{
+  background:var(--team-home) !important;
+}
+#penaltyModal.team-b .modal-actions button{
+  background:var(--team-away) !important;
+}
+
+
+/* =========================================================
+   V33 — LIMITE AMMONIZIONI
+   Massimo 3 ammonizioni per ciascuna squadra.
+   ========================================================= */
+.toast.error{
+  background:#dc2626 !important;
+  color:#fff !important;
+  font-weight:900 !important;
+}
+
+
+/* =========================================================
+   V34 — REGISTRO GARA
+   Sfondo giallo pallido.
+   Tutti i testi del registro seguono il colore della squadra
+   interessata all'evento.
+   ========================================================= */
+
+#log,
+.log,
+.log-columns,
+.log-row{
+  background:#fffde7 !important;
+}
+
+/* Intestazione: inizialmente blu, ma il colore delle singole
+   colonne viene aggiornato in base all'evento quando presente. */
+.log-columns{
+  color:#475569 !important;
+  font-weight:900 !important;
+}
+
+/* Righe CASA = blu */
+.log-row.log-a,
+.log-row.log-a > div{
+  color:#2563eb !important;
+  background:#fffde7 !important;
+}
+
+/* Righe OSPITI = viola */
+.log-row.log-b,
+.log-row.log-b > div{
+  color:#16a34a !important;
+  background:#fffde7 !important;
+}
+
+/* La scritta dell'intestazione TEMPO SQ N° EVENTO RIS deve
+   seguire il colore dell'evento più recente quando disponibile.
+   JavaScript assegna .header-a / .header-b. */
+.log-columns.header-a,
+.log-columns.header-a > div{
+  color:#2563eb !important;
+}
+
+.log-columns.header-b,
+.log-columns.header-b > div{
+  color:#16a34a !important;
+}
+
+/* Registro vuoto */
+.log .empty{
+  color:#64748b !important;
+  background:#fffde7 !important;
+}
+
 </style>
 </head>
 
@@ -4509,7 +4931,7 @@ function closePenalty(){
   <main class="main">
 
     <!-- SQUADRA A -->
-    <section class="panel">
+    <section class="panel team-a">
       <div class="panel-head a">
         <div class="team-line">
           <input id="teamAName" class="name-input" value="CASA" onchange="renameTeam('A')">
@@ -4531,7 +4953,7 @@ function closePenalty(){
     </section>
 
     <!-- REGISTRO -->
-    <section class="panel">
+    <section class="panel team-b">
       <div class="log-head">
         <div class="log-title">REGISTRO GARA</div>
         <div class="log-actions">
@@ -4545,7 +4967,7 @@ function closePenalty(){
     </section>
 
     <!-- SQUADRA B -->
-    <section class="panel">
+    <section class="panel team-b">
       <div class="panel-head b">
         <div class="team-line">
           <input id="teamBName" class="name-input" value="OSPITI" onchange="renameTeam('B')">
@@ -4867,7 +5289,7 @@ function renderStaff(team){
 
     card.innerHTML=`
       <button class="staff-label staff-touch" type="button"
-        onclick="openEventMenu('STAFF','${team}',${i})" ${(!letter || d.red)?'disabled':''}>
+        ${(!letter || d.red)?'disabled':''}>
         ${letter}
       </button>
       <div class="staff-status staff-stats">
@@ -4878,6 +5300,18 @@ function renderStaff(team){
       </div>
       ${d.red ? '<div class="staff-expelled">ESPULSO</div>' : '<div class="staff-expelled staff-expelled-empty"></div>'}
     `;
+
+    /* Come per i giocatori, tutto il contenitore del dirigente
+       apre il popup. Lettera assente o dirigente espulso = non cliccabile. */
+    if(letter && !d.red){
+      card.classList.add('staff-card-touch');
+      card.addEventListener('click', function(){
+        openEventMenu('STAFF', team, i);
+      });
+      card.style.cursor='pointer';
+      card.style.touchAction='manipulation';
+    }
+
     box.appendChild(card);
   });
 }
@@ -4898,6 +5332,17 @@ function renderLog(){
   if(!box) return;
 
   const events = Array.isArray(state.events) ? state.events : [];
+
+  /* L'intestazione TEMPO / SQ / N° / EVENTO / RIS segue
+     la squadra dell'evento visualizzato più recente. */
+  const columns = box.previousElementSibling;
+  if(columns && columns.classList.contains('log-columns')){
+    columns.classList.remove('header-a','header-b');
+    const latest = events.length ? events[events.length - 1] : null;
+    if(latest?.team === 'A') columns.classList.add('header-a');
+    if(latest?.team === 'B') columns.classList.add('header-b');
+  }
+
   box.innerHTML = [...events].reverse().map(e => {
     const cls = e.team === 'A' ? 'log-a' : 'log-b';
 
@@ -4996,6 +5441,8 @@ function playerAction(team,index,type){
     undoStack.pop();
     el('penaltyTitle').textContent=`RIGORE · ${state.teams[team]} · N° ${num}`;
     el('penaltyText').textContent='Seleziona il risultato del tiro dai 7 metri.';
+    el('penaltyModal').classList.remove('team-a','team-b');
+    el('penaltyModal').classList.add(team==='A'?'team-a':'team-b');
     el('penaltyModal').style.display='flex';
     return;
   }
@@ -5017,6 +5464,19 @@ function playerAction(team,index,type){
   }
 
   if(type==='YELLOW'){
+    /* MASSIMO 3 AMMONIZIONI PER SQUADRA.
+       Se la squadra ha già raggiunto il limite, non modificare nulla:
+       nessuna ammonizione, nessun evento e nessuna variazione del registro. */
+    const yellowCount = state.events.filter(e =>
+      e.team === team && e.type === 'YELLOW'
+    ).length;
+
+    if(yellowCount >= 3){
+      undoStack.pop();
+      toast(`ERRORE · MASSIMO 3 AMMONIZIONI PER ${team==='A'?'LA SQUADRA DI CASA':'LA SQUADRA OSPITE'}`);
+      return;
+    }
+
     d.yellow++;
     addEvent(team,num,'YELLOW','AMMONIZIONE');
     render();
@@ -5200,12 +5660,229 @@ function finishHalf(){
   }
 }
 
+
+/* =========================================================
+   ESPORTAZIONE JSON
+   Questa funzione NON modifica la struttura grafica o lo stato
+   della schermata: crea solamente il file JSON della gara.
+   ========================================================= */
+function creaJSONGaraTablet(){
+
+  const firstHalf = {A:0,B:0};
+  const secondHalf = {A:0,B:0};
+
+  // Ricava i parziali dagli eventi già presenti nel registro.
+  state.events.forEach(e=>{
+    if(e.team!=='A' && e.team!=='B') return;
+    const isGoal = e.type==='GOAL' || (e.type==='PENALTY' && e.text==='RIGORE REALIZZATO');
+    if(!isGoal) return;
+
+    const parts = String(e.time||'0:00').split(':');
+    const seconds = (parseInt(parts[0],10)||0)*60 + (parseInt(parts[1],10)||0);
+
+    if(seconds <= HALF) firstHalf[e.team]++;
+    else secondHalf[e.team]++;
+  });
+
+  const logEvents = state.events.map(e=>({
+    tempo: e.time || '',
+    squadra: e.team || '',
+    numero: e.num ?? '',
+    evento: e.text || e.event || '',
+    risultato: e.result || '',
+    type: e.type || ''
+  }));
+
+  const partita = {
+    statoGara: "PARTITA_TERMINATA",
+    currentHalf: state.phase,
+    timerSeconds: state.timer,
+    matchDurationMinutes: Math.round(HALF/60),
+    overtimeSeries: 0,
+    overtimeHalf: 0,
+    motivoFineGara: "",
+    partitaDefinitiva: false,
+
+    usaTempiSupplementari: false,
+    usaRigori: false,
+
+    scoreA: state.scoreA,
+    scoreB: state.scoreB,
+
+    firstHalfScoreA: firstHalf.A,
+    firstHalfScoreB: firstHalf.B,
+    secondHalfScoreA: secondHalf.A,
+    secondHalfScoreB: secondHalf.B,
+
+    overtime1ScoreA: 0,
+    overtime1ScoreB: 0,
+    overtime2ScoreA: 0,
+    overtime2ScoreB: 0,
+    overtime3ScoreA: 0,
+    overtime3ScoreB: 0,
+    overtime4ScoreA: 0,
+    overtime4ScoreB: 0,
+
+    risultati:{
+      primoTempo:{A:firstHalf.A,B:firstHalf.B},
+      secondoTempo:{A:secondHalf.A,B:secondHalf.B},
+      primoSupplementare:{A:0,B:0},
+      secondoSupplementare:{A:0,B:0},
+      rigoriFinali:{A:0,B:0},
+      finale:{A:state.scoreA,B:state.scoreB}
+    },
+
+    penaltyScoredA: state.penaltyScored.A,
+    penaltyTotalA: state.penalty.A,
+    penaltyScoredB: state.penaltyScored.B,
+    penaltyTotalB: state.penalty.B,
+
+    penaltyShootout:{
+      played:false,
+      started:false,
+      finished:false,
+      scoreA:0,
+      scoreB:0,
+      winner:"",
+      currentRound:1,
+      suddenDeath:false,
+      sequence:[]
+    },
+
+    timeoutsA: state.timeouts.A,
+    timeoutsB: state.timeouts.B,
+
+    activePenalties: JSON.parse(JSON.stringify(state.activeSuspensions)),
+
+    currentRosterA:{
+      players: state.numbers.A.map((numero,i)=>({
+        numero:String(numero ?? ''),
+        nome:"",
+        goals:state.discipline.A[i]?.goals || 0,
+        yellow:state.discipline.A[i]?.yellow || 0,
+        two:state.discipline.A[i]?.two || 0,
+        red:!!state.discipline.A[i]?.red
+      })),
+      officials: state.staffLetters.A.map((lettera,i)=>({
+        lettera:String(lettera ?? ''),
+        nome:"",
+        yellow:state.staff.A[i]?.yellow || 0,
+        two:state.staff.A[i]?.two || 0,
+        red:!!state.staff.A[i]?.red
+      }))
+    },
+
+    currentRosterB:{
+      players: state.numbers.B.map((numero,i)=>({
+        numero:String(numero ?? ''),
+        nome:"",
+        goals:state.discipline.B[i]?.goals || 0,
+        yellow:state.discipline.B[i]?.yellow || 0,
+        two:state.discipline.B[i]?.two || 0,
+        red:!!state.discipline.B[i]?.red
+      })),
+      officials: state.staffLetters.B.map((lettera,i)=>({
+        lettera:String(lettera ?? ''),
+        nome:"",
+        yellow:state.staff.B[i]?.yellow || 0,
+        two:state.staff.B[i]?.two || 0,
+        red:!!state.staff.B[i]?.red
+      }))
+    },
+
+    savedRosterDataA:{players:{},officials:{}},
+    savedRosterDataB:{players:{},officials:{}},
+
+    rosterA: state.numbers.A.map((numero,i)=>({
+      numero:String(numero ?? ''),
+      nome:"",
+      goals:state.discipline.A[i]?.goals || 0,
+      yellow:state.discipline.A[i]?.yellow || 0,
+      two:state.discipline.A[i]?.two || 0,
+      red:!!state.discipline.A[i]?.red
+    })),
+
+    rosterB: state.numbers.B.map((numero,i)=>({
+      numero:String(numero ?? ''),
+      nome:"",
+      goals:state.discipline.B[i]?.goals || 0,
+      yellow:state.discipline.B[i]?.yellow || 0,
+      two:state.discipline.B[i]?.two || 0,
+      red:!!state.discipline.B[i]?.red
+    })),
+
+    logEvents: logEvents,
+
+    teamA: state.teams.A,
+    teamB: state.teams.B,
+
+    matchNumber:"",
+    league:"",
+    season:"",
+    matchDate:"",
+    matchTime:"",
+    city:"",
+    venue:"",
+    referee1:"",
+    referee2:"",
+    delegate1:"",
+    delegate2:"",
+
+    giocatoriA: state.numbers.A.map(numero=>({
+      numero:String(numero ?? ''),
+      nome:""
+    })),
+    giocatoriB: state.numbers.B.map(numero=>({
+      numero:String(numero ?? ''),
+      nome:""
+    })),
+
+    dirigentiA: state.staffLetters.A.map(lettera=>({
+      lettera:String(lettera ?? ''),
+      nome:""
+    })),
+    dirigentiB: state.staffLetters.B.map(lettera=>({
+      lettera:String(lettera ?? ''),
+      nome:""
+    })),
+
+    finalResult:{
+      scoreA:state.scoreA,
+      scoreB:state.scoreB,
+      penaltiesA:0,
+      penaltiesB:0,
+      winner: state.scoreA>state.scoreB ? "A" :
+              state.scoreB>state.scoreA ? "B" : ""
+    }
+  };
+
+  const json = JSON.stringify(partita,null,2);
+  const blob = new Blob([json],{type:'application/json;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+
+  const d = new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const filename =
+    `Referto_Pallamano_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-`+
+    `${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.json`;
+
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
 function endMatch(){
   state.running=false;
   clearInterval(interval);
   interval=null;
   toast(`GARA TERMINATA · ${state.scoreA} - ${state.scoreB}`);
   render();
+  creaJSONGaraTablet();
 }
 
 /* TIME OUT: IL PULSANTE È IN ALTO */
@@ -5232,6 +5909,8 @@ function requestTimeout(team){
   let left=60;
   el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;
   el('timeoutCountdown').textContent='01:00';
+  el('timeoutModal').classList.remove('team-a','team-b');
+  el('timeoutModal').classList.add(team==='A'?'team-a':'team-b');
   el('timeoutModal').style.display='flex';
 
   clearInterval(timeoutInterval);
@@ -5329,6 +6008,25 @@ function openEditTeams(){
               value="${letter.replace(/"/g,'&quot;')}" placeholder="—">`;
     }).join('');
   });
+
+  /* Quando si seleziona un campo GIOCATORE o DIRIGENTE nel popup,
+     il valore precedente viene cancellato immediatamente, così si può
+     digitare direttamente il nuovo numero/lettera. */
+  document.querySelectorAll('#editTeamsModal .edit-player-input, #editTeamsModal .edit-staff-input')
+    .forEach(inp=>{
+      inp.addEventListener('focus', function(){
+        if(this.dataset.cleared !== '1'){
+          this.value='';
+          this.dataset.cleared='1';
+        }
+      });
+      inp.addEventListener('click', function(){
+        if(this.dataset.cleared !== '1'){
+          this.value='';
+          this.dataset.cleared='1';
+        }
+      });
+    });
 
   el('editTeamsModal').style.display='flex';
 }
