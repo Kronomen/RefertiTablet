@@ -5913,6 +5913,56 @@ function preparaRefertoFIGH(){
     const firstB = Number(state.firstHalfScoreB ?? 0);
     const finalA = Number(state.scoreA ?? 0);
     const finalB = Number(state.scoreB ?? 0);
+    const eventi = JSON.parse(JSON.stringify(state.events || []));
+
+    // I dati disciplinari sono già presenti in state.discipline.
+    // I tempi dei provvedimenti e dei time-out sono invece nel registro eventi.
+    function tempiTimeOut(team){
+      return eventi
+        .filter(e => e && e.team === team && e.type === 'TIMEOUT')
+        .map(e => e.time || '')
+        .filter(Boolean)
+        .slice(0,3);
+    }
+
+    function playerData(team){
+      return (state.numbers?.[team] || []).map((num,i)=>{
+        const d = state.discipline?.[team]?.[i] || {};
+        const p = {
+          num: num ?? "",
+          name: "",
+          goals: Number(d.goals ?? 0),
+          yellow: Number(d.yellow ?? 0),
+          two: Number(d.two ?? 0),
+          red: Boolean(d.red)
+        };
+
+        // Tempi dei provvedimenti: vengono letti direttamente dagli eventi.
+        const ev = eventi.filter(e =>
+          e && e.team === team && String(e.num ?? '') === String(num ?? '')
+        );
+
+        const yellow = ev.find(e => e.type === 'YELLOW');
+        const twos = ev.filter(e => e.type === 'TWO');
+        const reds = ev.filter(e => e.type === 'RED');
+
+        p.yellowTime = yellow?.time || "";
+        p.susp1Time = twos[0]?.time || "";
+        p.susp2Time = twos[1]?.time || "";
+        p.susp3Time = twos[2]?.time || "";
+        p.suspensions = twos.length;
+
+        const directRed = reds.find(e =>
+          !String(e.text || '').toUpperCase().includes('3X2')
+        );
+        p.directRedTime = directRed?.time || "";
+
+        return p;
+      });
+    }
+
+    const timeoutsA = tempiTimeOut('A');
+    const timeoutsB = tempiTimeOut('B');
 
     const partita = {
       scoreA: finalA,
@@ -5923,8 +5973,16 @@ function preparaRefertoFIGH(){
       penaltyScoredB: Number(state.penaltyScored?.B ?? 0),
       penaltyTotalB: Number(state.penalty?.B ?? 0),
 
-      timeoutsA: Number(state.timeouts?.A ?? 0),
-      timeoutsB: Number(state.timeouts?.B ?? 0),
+      timeoutsA: {
+        firstTime: timeoutsA[0] || "",
+        secondTime: timeoutsA[1] || "",
+        thirdTime: timeoutsA[2] || ""
+      },
+      timeoutsB: {
+        firstTime: timeoutsB[0] || "",
+        secondTime: timeoutsB[1] || "",
+        thirdTime: timeoutsB[2] || ""
+      },
 
       timerSeconds: Number(state.timer ?? 0),
       currentHalf: Number(state.phase ?? 2),
@@ -5934,34 +5992,25 @@ function preparaRefertoFIGH(){
       secondHalfScoreA: finalA - firstA,
       secondHalfScoreB: finalB - firstB,
 
-      /* I nomi non sono presenti nel tablet: non vengono inventati. */
       currentRosterA: {
-        players: (state.numbers?.A || []).map((num,i)=>({
-          num: num ?? "",
+        players: playerData('A'),
+        officials: (state.staffLetters?.A || []).map((letter,i)=>({
+          role: String(letter ?? '').trim().toUpperCase(),
           name: "",
-          goals: Number(state.discipline?.A?.[i]?.goals ?? 0),
-          yellow: Number(state.discipline?.A?.[i]?.yellow ?? 0),
-          two: Number(state.discipline?.A?.[i]?.two ?? 0),
-          red: Boolean(state.discipline?.A?.[i]?.red)
-        })),
-        officials: (state.staffLetters?.A || []).map(()=>({
-          role: "",
-          name: ""
+          yellow: Number(state.staff?.A?.[i]?.yellow ?? 0),
+          two: Number(state.staff?.A?.[i]?.two ?? 0),
+          red: Boolean(state.staff?.A?.[i]?.red)
         }))
       },
 
       currentRosterB: {
-        players: (state.numbers?.B || []).map((num,i)=>({
-          num: num ?? "",
+        players: playerData('B'),
+        officials: (state.staffLetters?.B || []).map((letter,i)=>({
+          role: String(letter ?? '').trim().toUpperCase(),
           name: "",
-          goals: Number(state.discipline?.B?.[i]?.goals ?? 0),
-          yellow: Number(state.discipline?.B?.[i]?.yellow ?? 0),
-          two: Number(state.discipline?.B?.[i]?.two ?? 0),
-          red: Boolean(state.discipline?.B?.[i]?.red)
-        })),
-        officials: (state.staffLetters?.B || []).map(()=>({
-          role: "",
-          name: ""
+          yellow: Number(state.staff?.B?.[i]?.yellow ?? 0),
+          two: Number(state.staff?.B?.[i]?.two ?? 0),
+          red: Boolean(state.staff?.B?.[i]?.red)
         }))
       },
 
@@ -5984,7 +6033,7 @@ function preparaRefertoFIGH(){
       timekeeper: "",
       secretary: "",
 
-      eventi: JSON.parse(JSON.stringify(state.events || [])),
+      eventi: eventi,
 
       risultati: {
         primoTempo: {A:firstA, B:firstB},
@@ -6008,7 +6057,6 @@ function preparaRefertoFIGH(){
     return null;
   }
 }
-
 function apriRefertoFIGH(){
   /*
      Il file RefertoFIGH.html deve trovarsi nella stessa cartella
