@@ -6050,5 +6050,25 @@ function installTouchControls(){
 installTouchControls();
 render();
 </script>
+
+<script>
+/* FULLSCREEN TABLET - solo comportamento dello schermo */
+(function(){
+  let richiesto=false;
+
+  function entraSchermoIntero(){
+    if(richiesto || document.fullscreenElement) return;
+    const root=document.documentElement;
+    if(!root.requestFullscreen) return;
+    richiesto=true;
+    root.requestFullscreen().catch(()=>{richiesto=false;});
+  }
+
+  document.addEventListener('pointerdown', entraSchermoIntero, {once:true, passive:true});
+  document.addEventListener('touchstart', entraSchermoIntero, {once:true, passive:true});
+  document.addEventListener('click', entraSchermoIntero, {once:true});
+})();
+</script>
+
 </body>
 </html>

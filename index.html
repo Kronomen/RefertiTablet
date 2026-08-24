@@ -113,8 +113,18 @@ body{
 </div>
 
 <script>
+function entraSchermoIntero(){
+  const root=document.documentElement;
+  if(!document.fullscreenElement && root.requestFullscreen){
+    return root.requestFullscreen().catch(()=>{});
+  }
+  return Promise.resolve();
+}
+
 function apriGara(){
-  window.location.href = "Referto_Pallamano_Tablet.html";
+  entraSchermoIntero().finally(()=>{
+    window.location.href = "Referto_Pallamano_Tablet.html";
+  });
 }
 function chiudi(){
   window.close();
