@@ -86,7 +86,7 @@ function openEventMenu(kind,team,index){
   const isPlayer=kind==='PLAYER';
   const label=isPlayer
     ? `N° ${state.numbers[team][index]}`
-    : `DIRIGENTE ${STAFF[index]}`;
+    : `DIRIGENTE ${String((state.staffLetters?.[team]?.[index]) ?? '').trim()}`;
 
   el('eventTitle').textContent='SELEZIONA EVENTO';
   el('eventSubtitle').textContent=`${state.teams[team]} · ${label}`;
@@ -180,8 +180,8 @@ function closePenalty(){
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   text-align:center;font-size:10px;font-weight:900;padding:3px}
-.staff{flex:0 0 72px;padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.staff-card{border:1px solid #cbd5e1;border-radius:6px;background:#fafafa;display:grid;grid-template-rows:19px 15px 1fr}
+.staff{flex:0 0 108px;padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.staff-card{border:1px solid #cbd5e1;border-radius:6px;background:#fafafa;display:grid;grid-template-rows:19px 29px 20px;overflow:hidden}
 .staff-label{text-align:center;font-size:12px;font-weight:900;line-height:19px;background:#e2e8f0}
 .staff-status{
   text-align:center;font-size:9px;font-weight:900;
@@ -216,6 +216,42 @@ function closePenalty(){
 /* BARRA INFERIORE */
 .bottom{flex:0 0 35px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px}
 .bottom .left{text-align:left}.bottom .center{text-align:center}.bottom .right{text-align:right}
+
+/* MODIFICA SQUADRE */
+.edit-teams-modal{
+  width:min(760px,96vw);
+  max-height:92vh;
+  overflow:auto;
+}
+.edit-teams-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;
+}
+.edit-team-box{
+  min-width:0;border:1px solid #cbd5e1;border-radius:8px;padding:7px;background:#f8fafc;
+}
+.edit-team-name{
+  width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;
+  padding:6px 7px;text-align:center;text-transform:uppercase;font-weight:900;font-size:15px;
+}
+.edit-section-title{
+  margin-top:7px;margin-bottom:4px;text-align:center;font-size:9px;font-weight:900;color:#475569;
+}
+.edit-players-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:3px;
+}
+.edit-staff-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:3px;
+}
+.edit-player-input,.edit-staff-input{
+  width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:5px;
+  background:#fff;text-align:center;font-weight:900;padding:4px 2px;
+}
+.edit-player-input{font-size:12px}.edit-staff-input{font-size:12px;text-transform:uppercase}
+.edit-teams-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+@media(max-width:600px){
+  .edit-teams-grid{grid-template-columns:1fr}
+  .edit-teams-modal{max-height:94vh;padding:10px}
+}
 
 /* POPUP */
 
@@ -4408,6 +4444,32 @@ function closePenalty(){
   height:auto !important;
 }
 
+
+/* V26 — più spazio verticale ai dirigenti e riga ESPULSO come nei giocatori. */
+.staff-expelled{display:flex;align-items:center;justify-content:center;width:100%;min-height:20px;background:#dc2626 !important;color:#fff !important;font-size:10px;font-weight:900;line-height:20px;text-align:center}
+.staff-expelled-empty{background:transparent !important;color:transparent !important}
+
+/* V26 — popup sanzioni: ogni pulsante mantiene il proprio colore e testo bianco. */
+.event-actions button,.event-actions .goal-btn,.event-actions .penalty-btn,.event-actions .yellow-btn,.event-actions .two-btn,.event-actions .red-btn{color:#fff !important;text-shadow:0 1px 1px rgba(0,0,0,.18)}
+.event-actions .goal-btn{background:#16a34a !important}.event-actions .penalty-btn{background:#2563eb !important}.event-actions .yellow-btn{background:#eab308 !important}.event-actions .two-btn{background:#ea580c !important}.event-actions .red-btn{background:#dc2626 !important}
+#penaltyModal .green{background:#16a34a !important;color:#fff !important}
+#penaltyModal .red{background:#dc2626 !important;color:#fff !important}
+#penaltyModal .gray{background:#64748b !important;color:#fff !important}
+
+
+/* V28 — tutto il contenitore del giocatore apre il popup.
+   Il numero resta visivamente identico, ma non è più l'unica zona cliccabile. */
+.player-card-touch{
+  cursor:pointer !important;
+  touch-action:manipulation !important;
+}
+.player-card-touch .player-number{
+  cursor:pointer !important;
+}
+.player-card-touch:active{
+  transform:scale(.995);
+}
+
 </style>
 </head>
 
@@ -4417,7 +4479,7 @@ function closePenalty(){
   <section class="top">
     <div class="score-row">
       <div class="header-side left">
-        <button id="resetBtn" class="btn gray top-match-btn" onclick="resetMatch()">RESET GARA</button>
+        <button id="editTeamsBtn" class="btn gray top-match-btn" onclick="openEditTeams()">MODIFICA SQUADRE</button>
         <div id="teamAHeader" class="team-title a">CASA</div>
       </div>
       <div id="score" class="score">00 - 00</div>
@@ -4522,6 +4584,34 @@ function closePenalty(){
   </div>
 </div>
 
+<!-- MODIFICA SQUADRE -->
+<div id="editTeamsModal" class="modal-back">
+  <div class="modal edit-teams-modal">
+    <h3>MODIFICA SQUADRE</h3>
+    <p>Modifica nomi delle squadre, numeri dei giocatori e lettere dei dirigenti prima dell'avvio della gara.</p>
+    <div class="edit-teams-grid">
+      <section class="edit-team-box">
+        <input id="editTeamAName" class="edit-team-name" value="CASA" maxlength="30">
+        <div class="edit-section-title">GIOCATORI</div>
+        <div id="editPlayersA" class="edit-players-grid"></div>
+        <div class="edit-section-title">DIRIGENTI</div>
+        <div id="editStaffA" class="edit-staff-grid"></div>
+      </section>
+      <section class="edit-team-box">
+        <input id="editTeamBName" class="edit-team-name" value="OSPITI" maxlength="30">
+        <div class="edit-section-title">GIOCATORI</div>
+        <div id="editPlayersB" class="edit-players-grid"></div>
+        <div class="edit-section-title">DIRIGENTI</div>
+        <div id="editStaffB" class="edit-staff-grid"></div>
+      </section>
+    </div>
+    <div class="edit-teams-actions">
+      <button class="btn gray" onclick="closeEditTeams()">ANNULLA</button>
+      <button class="btn blue" onclick="saveEditTeams()">SALVA MODIFICHE</button>
+    </div>
+  </div>
+</div>
+
 <!-- TIME OUT -->
 <div id="timeoutModal" class="modal-back">
   <div class="modal">
@@ -4588,7 +4678,7 @@ const STAFF=['A','B','C','D','E'];
 const HALF=1800;
 
 let state={
-  phase:1,timer:0,running:false,scoreA:0,scoreB:0,
+  phase:1,timer:0,running:false,matchStarted:false,scoreA:0,scoreB:0,
   teams:{A:'CASA',B:'OSPITI'},
   numbers:{
     A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
@@ -4598,6 +4688,7 @@ let state={
     A:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false})),
     B:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false}))
   },
+  staffLetters:{A:[...STAFF],B:[...STAFF]},
   staff:{
     A:STAFF.map(()=>({yellow:0,two:0,red:false})),
     B:STAFF.map(()=>({yellow:0,two:0,red:false}))
@@ -4662,6 +4753,17 @@ function render(){
   renderPlayers('B');
   renderStaff('A');
   renderStaff('B');
+
+  // Il titolo dei dirigenti segue le lettere effettivamente configurate.
+  ['A','B'].forEach(team=>{
+    const panel=el('staff'+team);
+    const title=panel?.previousElementSibling;
+    if(title && title.classList.contains('staff-title')){
+      const letters=STAFF.map((_,i)=>String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase() || '—');
+      title.textContent='DIRIGENTI '+letters.join(' · ');
+    }
+  });
+
   renderLog();
   renderCounters();
 
@@ -4671,9 +4773,15 @@ function render(){
   el('halfBtn').style.display=atEnd?'block':'none';
   el('halfBtn').textContent=state.phase===1?'FINE 1° TEMPO':'FINE GARA';
 
-  // RESET GARA disappears as soon as the match starts.
-  const resetBtn=el('resetBtn');
-  if(resetBtn) resetBtn.style.display=state.running?'none':'block';
+  // MODIFICA SQUADRE è disponibile solo prima dell'avvio del cronometro.
+  const editTeamsBtn=el('editTeamsBtn');
+  if(editTeamsBtn) editTeamsBtn.style.display=state.matchStarted?'none':'block';
+
+  // I nomi delle squadre restano modificabili solo tramite il popup prima dell'avvio.
+  const teamAInput=el('teamAName');
+  const teamBInput=el('teamBName');
+  if(teamAInput) teamAInput.disabled=state.matchStarted;
+  if(teamBInput) teamBInput.disabled=state.matchStarted;
 
   // FINE GARA / FINE 1° TEMPO is shown only with the clock stopped
   // and only at the end of the relevant half.
@@ -4688,8 +4796,24 @@ function renderPlayers(team){
   const box=el('players'+team);
   box.innerHTML='';
 
-  state.numbers[team].forEach((num,i)=>{
+  /* Sul referto i giocatori vengono sempre visualizzati in ordine
+     numerico crescente. L'indice originale resta associato alla relativa
+     disciplina, quindi goal/sanzioni non vengono persi quando si riordinano
+     i numeri. Le posizioni senza numero vengono messe in fondo. */
+  const playerOrder = state.numbers[team]
+    .map((num,i)=>({num,i}))
+    .sort((a,b)=>{
+      const aEmpty=String(a.num ?? '').trim()==='';
+      const bEmpty=String(b.num ?? '').trim()==='';
+      if(aEmpty && bEmpty) return a.i-b.i;
+      if(aEmpty) return 1;
+      if(bEmpty) return -1;
+      return Number(a.num)-Number(b.num);
+    });
+
+  playerOrder.forEach(({num,i})=>{
     const d=state.discipline[team][i];
+    const hasNumber=String(num ?? '').trim()!=='';
     const card=document.createElement('div');
 
     let cls='player-card';
@@ -4705,8 +4829,7 @@ function renderPlayers(team){
     card.innerHTML=`
       <div class="player-top">
         <button class="player-number player-touch" type="button"
-                onclick="openEventMenu('PLAYER','${team}',${i})"
-                ${expelled?'disabled':''}>${num}</button>
+                ${(!hasNumber || expelled)?'disabled':''}>${hasNumber ? num : '—'}</button>
         <span class="player-goals">⚽ ${d.goals}</span>
       </div>
       <div class="player-stats">
@@ -4716,6 +4839,18 @@ function renderPlayers(team){
       ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
       
     `;
+    /* L'intera scheda del giocatore è il touch target del popup.
+       Un numero mancante o un giocatore già espulso resta completamente
+       non cliccabile, come richiesto. */
+    if(hasNumber && !expelled){
+      card.classList.add('player-card-touch');
+      card.addEventListener('click', function(){
+        openEventMenu('PLAYER', team, i);
+      });
+      card.style.cursor='pointer';
+      card.style.touchAction='manipulation';
+    }
+
     box.appendChild(card);
   });
 }
@@ -4724,14 +4859,15 @@ function renderStaff(team){
   const box=el('staff'+team);
   box.innerHTML='';
 
-  STAFF.forEach((letter,i)=>{
+  STAFF.forEach((_,i)=>{
+    const letter=String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase();
     const d=state.staff[team][i];
     const card=document.createElement('div');
     card.className='staff-card';
 
     card.innerHTML=`
       <button class="staff-label staff-touch" type="button"
-        onclick="openEventMenu('STAFF','${team}',${i})" ${d.red?'disabled':''}>
+        onclick="openEventMenu('STAFF','${team}',${i})" ${(!letter || d.red)?'disabled':''}>
         ${letter}
       </button>
       <div class="staff-status staff-stats">
@@ -4740,6 +4876,7 @@ function renderStaff(team){
           ? '<span class="staff-red active">E</span>'
           : `<span class="staff-two ${d.two ? 'active' : ''}">2'${d.two ? ' ✓' : ''}</span>`}
       </div>
+      ${d.red ? '<div class="staff-expelled">ESPULSO</div>' : '<div class="staff-expelled staff-expelled-empty"></div>'}
     `;
     box.appendChild(card);
   });
@@ -4900,7 +5037,7 @@ function playerAction(team,index,type){
       addEvent(team,num,'TWO','3° 2\' → ESCLUSIONE');
       stopForDisciplinary(team,num,'3° 2\' → ESCLUSIONE');
     }else{
-      addEvent(team,num,'TWO',`${d.two}° 2'`);
+      addEvent(team,num,'TWO',"2'");
       startSuspension(team,num);
       stopForDisciplinary(team,num,`${d.two}° 2'`);
     }
@@ -4948,7 +5085,12 @@ function closePenalty(){
 /* DIRIGENTI */
 function staffAction(team,index,type){
   const d=state.staff[team][index];
-  const letter=STAFF[index];
+  const letter=String((state.staffLetters?.[team]?.[index]) ?? '').trim().toUpperCase();
+
+  if(!letter){
+    toast('Dirigente senza lettera');
+    return;
+  }
 
   snapshot();
 
@@ -4960,28 +5102,29 @@ function staffAction(team,index,type){
 
   if(type==='YELLOW'){
     d.yellow++;
-    addEvent(team,letter,'YELLOW',`DIRIGENTE ${letter} · AMMONIZIONE`);
+    addEvent(team,letter,'YELLOW',`AMMONIZIONE`);
   }
 
   if(type==='TWO'){
-    /* Un dirigente non può ricevere un secondo 2': dopo il primo 2'
-       il successivo provvedimento è direttamente l'espulsione. */
+    /* Un dirigente riceve un solo 2'. Il successivo provvedimento è direttamente espulsione. */
     if(d.two >= 1){
       d.red=true;
-      addEvent(team,letter,'RED',`ESPULSIONE`);
-      stopForDisciplinary(team,letter,`ESPULSIONE`);
+      state.activeSuspensions = state.activeSuspensions.filter(x => !(x.team===team && String(x.num)===letter));
+      addEvent(team,letter,'RED','ESPULSIONE');
+      stopForDisciplinary(team,letter,'ESPULSIONE');
     }else{
       d.two=1;
-      addEvent(team,letter,'TWO',`2'`);
+      addEvent(team,letter,'TWO',"2'");
       startSuspension(team,letter);
-      stopForDisciplinary(team,letter,`2'`);
+      stopForDisciplinary(team,letter,"2'");
     }
   }
 
   if(type==='RED'){
     d.red=true;
-    addEvent(team,letter,'RED',`DIRIGENTE ${letter} · ESPULSIONE`);
-    stopForDisciplinary(team,letter,`DIRIGENTE ${letter} · ESPULSIONE`);
+    state.activeSuspensions = state.activeSuspensions.filter(x => !(x.team===team && String(x.num)===letter));
+    addEvent(team,letter,'RED','ESPULSIONE');
+    stopForDisciplinary(team,letter,'ESPULSIONE');
   }
 
   render();
@@ -4997,6 +5140,8 @@ function toggleClock(){
   }
 
   state.running=!state.running;
+
+  if(state.running) state.matchStarted=true;
 
   clearInterval(interval);
 
@@ -5127,11 +5272,7 @@ function startSuspensionWatcher(){
     const before=state.activeSuspensions.length;
 
     state.activeSuspensions=state.activeSuspensions.filter(x=>{
-      if(state.timer>=x.endGameTime){
-        addEvent(x.team,x.num,'SYSTEM','FINE 2\'');
-        return false;
-      }
-      return true;
+      return state.timer < x.endGameTime;
     });
 
     if(before!==state.activeSuspensions.length)render();
@@ -5160,6 +5301,66 @@ function stopForDisciplinary(team,num,text){
 function closeDiscipline(){
   el('disciplineModal').style.display='none';
   el('timer').classList.remove('blink');
+  render();
+}
+
+/* MODIFICA SQUADRE */
+function openEditTeams(){
+  if(state.matchStarted || state.running){
+    toast('Modifica squadre disponibile solo prima dello START');
+    return;
+  }
+
+  ['A','B'].forEach(team=>{
+    el('editTeam'+team+'Name').value=state.teams[team] || '';
+
+    const playersBox=el('editPlayers'+team);
+    playersBox.innerHTML=state.numbers[team].map((num,i)=>`
+      <input class="edit-player-input" data-team="${team}" data-index="${i}"
+             type="number" min="1" max="99" inputmode="numeric"
+             value="${String(num ?? '').replace(/"/g,'&quot;')}" placeholder="${i+1}">
+    `).join('');
+
+    const staffBox=el('editStaff'+team);
+    staffBox.innerHTML=STAFF.map((_,i)=>{
+      const letter=String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase();
+      return `<input class="edit-staff-input" data-team="${team}" data-index="${i}"
+              type="text" maxlength="1" inputmode="text"
+              value="${letter.replace(/"/g,'&quot;')}" placeholder="—">`;
+    }).join('');
+  });
+
+  el('editTeamsModal').style.display='flex';
+}
+
+function closeEditTeams(){
+  el('editTeamsModal').style.display='none';
+}
+
+function saveEditTeams(){
+  if(state.matchStarted || state.running){
+    closeEditTeams();
+    toast('La gara è già iniziata');
+    return;
+  }
+
+  snapshot();
+
+  ['A','B'].forEach(team=>{
+    const name=el('editTeam'+team+'Name').value.trim();
+    state.teams[team]=name || (team==='A'?'CASA':'OSPITI');
+
+    document.querySelectorAll(`#editPlayers${team} .edit-player-input`).forEach(inp=>{
+      const raw=inp.value.trim();
+      state.numbers[team][+inp.dataset.index]=raw==='' ? '' : Math.max(1,Math.min(99,parseInt(raw,10)||1));
+    });
+
+    document.querySelectorAll(`#editStaff${team} .edit-staff-input`).forEach(inp=>{
+      state.staffLetters[team][+inp.dataset.index]=inp.value.trim().slice(0,1).toUpperCase();
+    });
+  });
+
+  closeEditTeams();
   render();
 }
 
@@ -5218,7 +5419,7 @@ function resetMatch(){
   window.suspensionWatcher=null;
 
   state={
-    phase:1,timer:0,running:false,scoreA:0,scoreB:0,
+    phase:1,timer:0,running:false,matchStarted:false,scoreA:0,scoreB:0,
     teams:{A:'CASA',B:'OSPITI'},
     numbers:{
       A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
@@ -5228,6 +5429,7 @@ function resetMatch(){
       A:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false})),
       B:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false}))
     },
+    staffLetters:{A:[...STAFF],B:[...STAFF]},
     staff:{
       A:STAFF.map(()=>({yellow:0,two:0,red:false})),
       B:STAFF.map(()=>({yellow:0,two:0,red:false}))
