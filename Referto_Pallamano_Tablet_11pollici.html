@@ -5495,6 +5495,7 @@ function playerAction(team,index,type){
     if(d.two===3){
       d.red=true;
       addEvent(team,num,'TWO','3° 2\' → ESCLUSIONE');
+      startSuspension(team,num);
       stopForDisciplinary(team,num,'3° 2\' → ESCLUSIONE');
     }else{
       addEvent(team,num,'TWO',"2'");
@@ -5509,6 +5510,7 @@ function playerAction(team,index,type){
   if(type==='RED'){
     d.red=true;
     addEvent(team,num,'RED','ESPULSIONE DIRETTA');
+    startSuspension(team,num);
     stopForDisciplinary(team,num,'ESPULSIONE DIRETTA');
     render();
   }
@@ -5601,7 +5603,17 @@ function toggleClock(){
 
   state.running=!state.running;
 
-  if(state.running) state.matchStarted=true;
+  if(state.running){
+    state.matchStarted=true;
+    // Premendo START il lampeggio termina immediatamente.
+    el('timer').classList.remove('blink');
+  }else{
+    // Dopo che il cronometro è partito, ogni pausa con timer > 0
+    // deve lasciare il tempo lampeggiante fino al successivo START.
+    if(state.timer>0){
+      el('timer').classList.add('blink');
+    }
+  }
 
   clearInterval(interval);
 
@@ -5613,6 +5625,9 @@ function toggleClock(){
 }
 
 function tick(){
+  // Durante il running il cronometro non deve lampeggiare.
+  el('timer').classList.remove('blink');
+
   state.timer++;
   renderSuspensions();
 
@@ -5660,229 +5675,12 @@ function finishHalf(){
   }
 }
 
-
-/* =========================================================
-   ESPORTAZIONE JSON
-   Questa funzione NON modifica la struttura grafica o lo stato
-   della schermata: crea solamente il file JSON della gara.
-   ========================================================= */
-function creaJSONGaraTablet(){
-
-  const firstHalf = {A:0,B:0};
-  const secondHalf = {A:0,B:0};
-
-  // Ricava i parziali dagli eventi già presenti nel registro.
-  state.events.forEach(e=>{
-    if(e.team!=='A' && e.team!=='B') return;
-    const isGoal = e.type==='GOAL' || (e.type==='PENALTY' && e.text==='RIGORE REALIZZATO');
-    if(!isGoal) return;
-
-    const parts = String(e.time||'0:00').split(':');
-    const seconds = (parseInt(parts[0],10)||0)*60 + (parseInt(parts[1],10)||0);
-
-    if(seconds <= HALF) firstHalf[e.team]++;
-    else secondHalf[e.team]++;
-  });
-
-  const logEvents = state.events.map(e=>({
-    tempo: e.time || '',
-    squadra: e.team || '',
-    numero: e.num ?? '',
-    evento: e.text || e.event || '',
-    risultato: e.result || '',
-    type: e.type || ''
-  }));
-
-  const partita = {
-    statoGara: "PARTITA_TERMINATA",
-    currentHalf: state.phase,
-    timerSeconds: state.timer,
-    matchDurationMinutes: Math.round(HALF/60),
-    overtimeSeries: 0,
-    overtimeHalf: 0,
-    motivoFineGara: "",
-    partitaDefinitiva: false,
-
-    usaTempiSupplementari: false,
-    usaRigori: false,
-
-    scoreA: state.scoreA,
-    scoreB: state.scoreB,
-
-    firstHalfScoreA: firstHalf.A,
-    firstHalfScoreB: firstHalf.B,
-    secondHalfScoreA: secondHalf.A,
-    secondHalfScoreB: secondHalf.B,
-
-    overtime1ScoreA: 0,
-    overtime1ScoreB: 0,
-    overtime2ScoreA: 0,
-    overtime2ScoreB: 0,
-    overtime3ScoreA: 0,
-    overtime3ScoreB: 0,
-    overtime4ScoreA: 0,
-    overtime4ScoreB: 0,
-
-    risultati:{
-      primoTempo:{A:firstHalf.A,B:firstHalf.B},
-      secondoTempo:{A:secondHalf.A,B:secondHalf.B},
-      primoSupplementare:{A:0,B:0},
-      secondoSupplementare:{A:0,B:0},
-      rigoriFinali:{A:0,B:0},
-      finale:{A:state.scoreA,B:state.scoreB}
-    },
-
-    penaltyScoredA: state.penaltyScored.A,
-    penaltyTotalA: state.penalty.A,
-    penaltyScoredB: state.penaltyScored.B,
-    penaltyTotalB: state.penalty.B,
-
-    penaltyShootout:{
-      played:false,
-      started:false,
-      finished:false,
-      scoreA:0,
-      scoreB:0,
-      winner:"",
-      currentRound:1,
-      suddenDeath:false,
-      sequence:[]
-    },
-
-    timeoutsA: state.timeouts.A,
-    timeoutsB: state.timeouts.B,
-
-    activePenalties: JSON.parse(JSON.stringify(state.activeSuspensions)),
-
-    currentRosterA:{
-      players: state.numbers.A.map((numero,i)=>({
-        numero:String(numero ?? ''),
-        nome:"",
-        goals:state.discipline.A[i]?.goals || 0,
-        yellow:state.discipline.A[i]?.yellow || 0,
-        two:state.discipline.A[i]?.two || 0,
-        red:!!state.discipline.A[i]?.red
-      })),
-      officials: state.staffLetters.A.map((lettera,i)=>({
-        lettera:String(lettera ?? ''),
-        nome:"",
-        yellow:state.staff.A[i]?.yellow || 0,
-        two:state.staff.A[i]?.two || 0,
-        red:!!state.staff.A[i]?.red
-      }))
-    },
-
-    currentRosterB:{
-      players: state.numbers.B.map((numero,i)=>({
-        numero:String(numero ?? ''),
-        nome:"",
-        goals:state.discipline.B[i]?.goals || 0,
-        yellow:state.discipline.B[i]?.yellow || 0,
-        two:state.discipline.B[i]?.two || 0,
-        red:!!state.discipline.B[i]?.red
-      })),
-      officials: state.staffLetters.B.map((lettera,i)=>({
-        lettera:String(lettera ?? ''),
-        nome:"",
-        yellow:state.staff.B[i]?.yellow || 0,
-        two:state.staff.B[i]?.two || 0,
-        red:!!state.staff.B[i]?.red
-      }))
-    },
-
-    savedRosterDataA:{players:{},officials:{}},
-    savedRosterDataB:{players:{},officials:{}},
-
-    rosterA: state.numbers.A.map((numero,i)=>({
-      numero:String(numero ?? ''),
-      nome:"",
-      goals:state.discipline.A[i]?.goals || 0,
-      yellow:state.discipline.A[i]?.yellow || 0,
-      two:state.discipline.A[i]?.two || 0,
-      red:!!state.discipline.A[i]?.red
-    })),
-
-    rosterB: state.numbers.B.map((numero,i)=>({
-      numero:String(numero ?? ''),
-      nome:"",
-      goals:state.discipline.B[i]?.goals || 0,
-      yellow:state.discipline.B[i]?.yellow || 0,
-      two:state.discipline.B[i]?.two || 0,
-      red:!!state.discipline.B[i]?.red
-    })),
-
-    logEvents: logEvents,
-
-    teamA: state.teams.A,
-    teamB: state.teams.B,
-
-    matchNumber:"",
-    league:"",
-    season:"",
-    matchDate:"",
-    matchTime:"",
-    city:"",
-    venue:"",
-    referee1:"",
-    referee2:"",
-    delegate1:"",
-    delegate2:"",
-
-    giocatoriA: state.numbers.A.map(numero=>({
-      numero:String(numero ?? ''),
-      nome:""
-    })),
-    giocatoriB: state.numbers.B.map(numero=>({
-      numero:String(numero ?? ''),
-      nome:""
-    })),
-
-    dirigentiA: state.staffLetters.A.map(lettera=>({
-      lettera:String(lettera ?? ''),
-      nome:""
-    })),
-    dirigentiB: state.staffLetters.B.map(lettera=>({
-      lettera:String(lettera ?? ''),
-      nome:""
-    })),
-
-    finalResult:{
-      scoreA:state.scoreA,
-      scoreB:state.scoreB,
-      penaltiesA:0,
-      penaltiesB:0,
-      winner: state.scoreA>state.scoreB ? "A" :
-              state.scoreB>state.scoreA ? "B" : ""
-    }
-  };
-
-  const json = JSON.stringify(partita,null,2);
-  const blob = new Blob([json],{type:'application/json;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-
-  const d = new Date();
-  const pad=n=>String(n).padStart(2,'0');
-  const filename =
-    `Referto_Pallamano_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-`+
-    `${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.json`;
-
-  const a=document.createElement('a');
-  a.href=url;
-  a.download=filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
 function endMatch(){
   state.running=false;
   clearInterval(interval);
   interval=null;
   toast(`GARA TERMINATA · ${state.scoreA} - ${state.scoreB}`);
   render();
-  creaJSONGaraTablet();
 }
 
 /* TIME OUT: IL PULSANTE È IN ALTO */
@@ -5905,6 +5703,10 @@ function requestTimeout(team){
   state.running=false;
   clearInterval(interval);
   interval=null;
+
+  if(state.timer>0){
+    el('timer').classList.add('blink');
+  }
 
   let left=60;
   el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;
@@ -5929,6 +5731,11 @@ function closeTimeout(){
   clearInterval(timeoutInterval);
   timeoutInterval=null;
   el('timeoutModal').style.display='none';
+
+  if(!state.running && state.timer>0){
+    el('timer').classList.add('blink');
+  }
+
   render();
 }
 
@@ -5979,7 +5786,15 @@ function stopForDisciplinary(team,num,text){
 
 function closeDiscipline(){
   el('disciplineModal').style.display='none';
-  el('timer').classList.remove('blink');
+
+  // Il provvedimento può essere chiuso senza far ripartire il gioco:
+  // in quel caso il timer continua a lampeggiare finché non viene premuto START.
+  if(!state.running && state.timer>0){
+    el('timer').classList.add('blink');
+  }else{
+    el('timer').classList.remove('blink');
+  }
+
   render();
 }
 
