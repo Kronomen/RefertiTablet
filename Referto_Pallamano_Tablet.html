@@ -23,6 +23,7 @@ button{touch-action:manipulation;cursor:pointer}
 }
 .score-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:7px}
 .header-side{display:flex;align-items:center;gap:5px;min-width:0}
+.header-controls{display:flex;flex-direction:column;align-items:stretch;gap:3px}
 .header-side.left{justify-content:flex-end}
 .header-side.right{justify-content:flex-start}
 .team-title{font-size:clamp(15px,2vw,26px);font-weight:900;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -195,7 +196,7 @@ function closePenalty(){
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   text-align:center;font-size:10px;font-weight:900;padding:3px}
-.staff{flex:0 0 108px;padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.staff{padding:4px 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .staff-card{border:1px solid #cbd5e1;border-radius:6px;background:#fafafa;display:grid;grid-template-rows:19px 29px 20px;overflow:hidden}
 .staff-label{text-align:center;font-size:12px;font-weight:900;line-height:19px;background:#e2e8f0}
 .staff-status{
@@ -293,14 +294,14 @@ function closePenalty(){
   #app{padding:5px;gap:5px}
   .main{gap:5px}
   .players{gap:3px;padding:4px}
-  .staff{flex-basis:104px}
+  .staff{}
 }
 
 /* tablet più stretto */
 @media(max-width:900px){
   .main{grid-template-columns:minmax(0,1fr) minmax(205px,1.05fr) minmax(0,1fr)}
   .players{grid-template-columns:repeat(4,1fr)}
-  .staff{flex-basis:66px}
+  .staff{}
 }
 
 /* =========================================================
@@ -503,9 +504,9 @@ function closePenalty(){
   }
 
   .staff{
-    flex:0 0 51px;
-    height:51px;
-    min-height:51px;
+    
+    
+    
     padding:1px 2px;
     gap:2px;
     display:grid;
@@ -667,7 +668,7 @@ function closePenalty(){
     padding:0;font-size:6px;
   }
   .staff{
-    height:64px;min-height:64px;
+    
     padding:2px 2px 1px;gap:2px;
     display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
   }
@@ -876,8 +877,8 @@ function closePenalty(){
 
   .staff{
     width:100%;
-    height:74px;
-    min-height:74px;
+    
+    
     padding:2px 3px;
     gap:3px;
     box-sizing:border-box;
@@ -1027,8 +1028,8 @@ function closePenalty(){
     line-height:10px!important;
   }
   .staff{
-    height:96px!important;
-    min-height:96px!important;
+    
+    
     padding:3px 3px!important;
     gap:3px!important;
     box-sizing:border-box!important;
@@ -1218,9 +1219,9 @@ function closePenalty(){
 
   .staff{
     width:100% !important;
-    height:112px !important;
-    min-height:112px !important;
-    max-height:112px !important;
+    
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -1453,8 +1454,8 @@ function closePenalty(){
   }
   .staff{
     width:100%!important;
-    height:72px!important;
-    min-height:72px!important;
+    
+    
     padding:2px 3px!important;
     gap:3px!important;
     display:grid!important;
@@ -1529,8 +1530,8 @@ function closePenalty(){
   }
 
   .staff{
-    height:92px !important;
-    min-height:92px !important;
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -1578,8 +1579,8 @@ function closePenalty(){
   }
 
   .staff{
-    height:112px !important;
-    min-height:112px !important;
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -1685,8 +1686,8 @@ function closePenalty(){
   }
 
   .staff{
-    height:120px !important;
-    min-height:120px !important;
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -1805,8 +1806,8 @@ function closePenalty(){
 
   .staff{
     width:100% !important;
-    height:118px !important;
-    min-height:118px !important;
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -1946,9 +1947,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:120px !important;
-    min-height:120px !important;
-    max-height:120px !important;
+    
+    
+    
     padding:3px !important;
     gap:3px !important;
     overflow:hidden !important;
@@ -2090,9 +2091,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:150px !important;
-    min-height:150px !important;
-    max-height:150px !important;
+    
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -2262,9 +2263,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:170px !important;
-    min-height:170px !important;
-    max-height:170px !important;
+    
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -2428,9 +2429,9 @@ function closePenalty(){
 
   .staff{
     width:100% !important;
-    height:125px !important;
-    min-height:125px !important;
-    max-height:125px !important;
+    
+    
+    
     padding:3px !important;
     gap:3px !important;
     display:grid !important;
@@ -2866,9 +2867,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:150px !important;
-    min-height:150px !important;
-    max-height:150px !important;
+    
+    
+    
     padding:2px !important;
     gap:2px !important;
     display:grid !important;
@@ -3057,9 +3058,9 @@ function closePenalty(){
 
   /* Five staff cards on one line. */
   .staff{
-    height:105px !important;
-    min-height:105px !important;
-    max-height:105px !important;
+    
+    
+    
     padding:2px !important;
     gap:2px !important;
     box-sizing:border-box !important;
@@ -3241,9 +3242,9 @@ function closePenalty(){
      4 colonne -> 64 px; 5 colonne -> circa 64*4/5 = 51 px.
      Quindi non occupa tutta la card e rimane spazio laterale. */
   .staff{
-    height:135px !important;
-    min-height:135px !important;
-    max-height:135px !important;
+    
+    
+    
     padding:2px !important;
     gap:2px !important;
     display:grid !important;
@@ -3426,9 +3427,9 @@ function closePenalty(){
 
   /* Five compact staff cards. */
   .staff{
-    height:105px !important;
-    min-height:105px !important;
-    max-height:105px !important;
+    
+    
+    
     padding:2px !important;
     gap:2px !important;
     display:grid !important;
@@ -3579,9 +3580,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:105px !important;
-    min-height:105px !important;
-    max-height:105px !important;
+    
+    
+    
     display:grid !important;
     grid-template-columns:repeat(5,minmax(0,1fr)) !important;
     gap:2px !important;
@@ -3867,9 +3868,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:145px !important;
-    min-height:145px !important;
-    max-height:145px !important;
+    
+    
+    
 
     display:grid !important;
     grid-template-columns:repeat(5,minmax(0,1fr)) !important;
@@ -3984,9 +3985,9 @@ function closePenalty(){
   }
 
   .staff{
-    height:130px !important;
-    min-height:130px !important;
-    max-height:130px !important;
+    
+    
+    
     display:grid !important;
     grid-template-columns:repeat(5,minmax(0,1fr)) !important;
     gap:2px !important;
@@ -4147,11 +4148,11 @@ function closePenalty(){
   }
 
   .staff{
-    flex:0 0 130px !important;
+    
     width:100% !important;
-    height:130px !important;
-    min-height:130px !important;
-    max-height:130px !important;
+    
+    
+    
 
     display:grid !important;
     grid-template-columns:repeat(5,minmax(0,1fr)) !important;
@@ -4296,11 +4297,11 @@ function closePenalty(){
   }
 
   .staff{
-    flex:0 0 125px !important;
+    
     width:100% !important;
-    height:125px !important;
-    min-height:125px !important;
-    max-height:125px !important;
+    
+    
+    
     display:grid !important;
     grid-template-columns:repeat(5,minmax(0,1fr)) !important;
     gap:2px !important;
@@ -4921,6 +4922,25 @@ tr.team-b td,
   pointer-events:none !important;
 }
 
+
+/* =========================================================
+   DIMENSIONAMENTO DEFINITIVO GIOCATORI / DIRIGENTI
+   Il contenitore GIOCATORI è il riferimento.
+   Il contenitore DIRIGENTI viene portato ESATTAMENTE alla
+   stessa altezza, senza modificare i giocatori.
+   ========================================================= */
+.players{
+  min-height:0;
+  box-sizing:border-box;
+}
+.staff{
+  min-height:0;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+/* Il sincronizzatore JavaScript sotto imposta le due righe
+   alla stessa misura reale. Nessuna altezza fissa per STAFF. */
 </style>
 </head>
 
@@ -4930,7 +4950,10 @@ tr.team-b td,
   <section class="top">
     <div class="score-row">
       <div class="header-side left">
-        <button id="editTeamsBtn" class="btn gray top-match-btn" onclick="openEditTeams()">MODIFICA SQUADRE</button>
+        <div class="header-controls">
+          <button id="editTeamsBtn" class="btn gray top-match-btn" onclick="openEditTeams()">MODIFICA SQUADRE</button>
+          <button id="restoreBtn" class="btn blue top-match-btn" type="button" onclick="restoreMatch()" title="Ripristina l'ultima gara salvata">RIPRISTINA</button>
+        </div>
         <div id="teamAHeader" class="team-title a">CASA</div>
       </div>
       <div id="score" class="score">00 - 00</div>
@@ -5159,6 +5182,89 @@ let undoStack=[];
 
 function el(id){return document.getElementById(id)}
 
+/* =========================================================
+   RECUPERO AUTOMATICO DELLA GARA
+   La gara viene conservata nel browser anche se la pagina viene
+   chiusa accidentalmente. Il ripristino riapre la gara nello stato
+   dell'ultimo salvataggio e lascia il cronometro fermo.
+   ========================================================= */
+const RECOVERY_KEY='RefertoPallamanoTablet_Ripristino_v1';
+
+function saveRecovery(){
+  try{
+    const meaningful = state.matchStarted || state.timer>0 || state.events.length ||
+      state.scoreA!==0 || state.scoreB!==0 || state.teams.A!=='CASA' || state.teams.B!=='OSPITI';
+    if(!meaningful)return;
+    const copy=JSON.parse(JSON.stringify(state));
+    copy.running=false;
+    localStorage.setItem(RECOVERY_KEY,JSON.stringify({
+      savedAt:Date.now(),
+      state:copy
+    }));
+    updateRestoreButton();
+  }catch(e){}
+}
+
+function hasRecovery(){
+  try{return !!localStorage.getItem(RECOVERY_KEY)}catch(e){return false}
+}
+
+function updateRestoreButton(){
+  const b=el('restoreBtn');
+  if(!b)return;
+  // RIPRISTINA compare solo se esiste una gara in memoria e il cronometro
+  // non è mai stato avviato nella gara corrente. Dopo START non ricompare.
+  const visible=hasRecovery() && !state.matchStarted;
+  b.style.display=visible?'block':'none';
+  b.disabled=false;
+  b.style.opacity='1';
+}
+
+function restoreMatch(){
+  try{
+    const raw=localStorage.getItem(RECOVERY_KEY);
+    if(!raw){
+      toast('Nessuna gara da ripristinare');
+      updateRestoreButton();
+      return;
+    }
+    const saved=JSON.parse(raw);
+    if(!saved || !saved.state){
+      toast('Salvataggio non valido');
+      return;
+    }
+
+    clearInterval(interval);
+    clearInterval(timeoutInterval);
+    if(window.suspensionWatcher){
+      clearInterval(window.suspensionWatcher);
+      window.suspensionWatcher=null;
+    }
+
+    state=saved.state;
+    state.running=false;
+    interval=null;
+    timeoutInterval=null;
+    selected=null;
+    selectedPenalty=null;
+    undoStack=[];
+
+    render();
+    toast('GARA RIPRISTINATA');
+  }catch(e){
+    toast('Impossibile ripristinare la gara');
+  }
+}
+
+function clearRecovery(){
+  try{localStorage.removeItem(RECOVERY_KEY)}catch(e){}
+  updateRestoreButton();
+}
+
+window.addEventListener('beforeunload',saveRecovery);
+window.addEventListener('pagehide',saveRecovery);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveRecovery()});
+
 function currentTime(){
   const m=Math.floor(state.timer/60),s=state.timer%60;
   return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
@@ -5241,6 +5347,8 @@ function render(){
 
   el('startBtn').textContent=state.running?'⏸ PAUSA':'▶ START';
   el('startBtn').className='btn '+(state.running?'orange':'green');
+  saveRecovery();
+  updateRestoreButton();
 }
 
 function renderPlayers(team){
@@ -5990,6 +6098,7 @@ function resetMatch(){
   };
 
   undoStack=[];
+  clearRecovery();
   render();
 }
 
@@ -6067,6 +6176,89 @@ render();
   document.addEventListener('pointerdown', entraSchermoIntero, {once:true, passive:true});
   document.addEventListener('touchstart', entraSchermoIntero, {once:true, passive:true});
   document.addEventListener('click', entraSchermoIntero, {once:true});
+})();
+</script>
+
+
+<script>
+/* =========================================================
+   GIOCATORI = MISURA DI RIFERIMENTO
+   DIRIGENTI = STESSA IDENTICA ALTEZZA
+   Non viene modificata l'altezza dei giocatori.
+   ========================================================= */
+(function(){
+  let frame = 0;
+
+  function syncPlayersStaff(){
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(function(){
+      document.querySelectorAll('.main > .panel.team-a, .main > .panel.team-b').forEach(function(panel){
+        const players = panel.querySelector('.players');
+        const staff = panel.querySelector('.staff');
+        const staffTitle = panel.querySelector('.staff-title');
+        if(!players || !staff || !staffTitle) return;
+
+        const display = getComputedStyle(panel).display;
+        if(display !== 'grid') return;
+
+        /* Prima misuriamo il blocco GIOCATORI così com'è.
+           Questa misura NON viene calcolata né modificata. */
+        const playerHeight = Math.round(players.getBoundingClientRect().height);
+        if(playerHeight <= 0) return;
+
+        const children = Array.from(panel.children);
+        const pIndex = children.indexOf(players);
+        const sIndex = children.indexOf(staff);
+        if(pIndex < 0 || sIndex < 0) return;
+
+        /* Manteniamo esattamente le altezze di tutti gli altri
+           contenitori e sostituiamo SOLO le due righe interessate. */
+        const rows = children.map(function(child, i){
+          if(i === pIndex || i === sIndex) return playerHeight + 'px';
+          return Math.round(child.getBoundingClientRect().height) + 'px';
+        });
+
+        panel.style.gridTemplateRows = rows.join(' ');
+        staff.style.height = playerHeight + 'px';
+        staff.style.minHeight = playerHeight + 'px';
+        staff.style.maxHeight = playerHeight + 'px';
+        staff.style.flex = 'none';
+      });
+    });
+  }
+
+  window.syncPlayersStaff = syncPlayersStaff;
+
+  window.addEventListener('load', syncPlayersStaff);
+  window.addEventListener('resize', syncPlayersStaff);
+  window.addEventListener('orientationchange', function(){
+    setTimeout(syncPlayersStaff, 80);
+    setTimeout(syncPlayersStaff, 250);
+  });
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(syncPlayersStaff);
+  }
+
+  /* Dopo ogni render della gara, la misura viene ricontrollata. */
+  const oldRender = window.render;
+  if(typeof oldRender === 'function'){
+    window.render = function(){
+      const result = oldRender.apply(this, arguments);
+      syncPlayersStaff();
+      return result;
+    };
+  }
+
+  /* Se cambia il contenuto/layout del pannello, aggiorna la misura. */
+  if(window.ResizeObserver){
+    const ro = new ResizeObserver(function(){
+      syncPlayersStaff();
+    });
+    document.querySelectorAll('.main > .panel.team-a, .main > .panel.team-b').forEach(function(panel){
+      ro.observe(panel);
+    });
+  }
 })();
 </script>
 
