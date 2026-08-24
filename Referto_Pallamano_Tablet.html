@@ -91,7 +91,7 @@ button{touch-action:manipulation;cursor:pointer}
 .panel-head.a{background:#eff6ff}.panel-head.b{background:#f5f3ff}
 .team-line{display:grid;grid-template-columns:1fr auto;gap:5px;align-items:center}
 .name-input{width:100%;border:1px solid var(--line);border-radius:6px;background:#fff;padding:3px 6px;text-align:center;text-transform:uppercase;font-size:clamp(13px,1.6vw,19px);font-weight:900}
-.team-panel.b .timeout-btn{background:#16a34a}
+.team-panel.b .timeout-btn{background:var(--team-away)}
 .timeout-btn{min-height:35px;border:0;border-radius:7px;background:var(--cyan);color:#fff;padding:4px 12px;font-size:clamp(10px,1.2vw,13px);font-weight:900}
 .timeout-btn:disabled{background:#94a3b8}
 .team-counters{display:flex;justify-content:center;gap:10px;margin-top:3px;font-size:10px;font-weight:900}
@@ -176,8 +176,8 @@ function eventAction(type){
   font-weight:900;touch-action:manipulation;
 }
 .player-event-btn:active{transform:scale(.97)}
-.team-panel.b .player-event-btn{background:#16a34a}
-.team-panel.b .staff-event-btn{background:#16a34a}
+.team-panel.b .player-event-btn{background:var(--team-away)}
+.team-panel.b .staff-event-btn{background:var(--team-away)}
 
 
 
@@ -248,7 +248,7 @@ function closePenalty(){
 .bottom{flex:0 0 35px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px}
 .bottom .left{text-align:left}.bottom .center{text-align:center}.bottom .right{text-align:right}
 
-/* MODIFICA SQUADRE */
+/* CONFIGURAZIONE */
 .edit-teams-modal{
   width:min(760px,96vw);
   max-height:92vh;
@@ -278,6 +278,25 @@ function closePenalty(){
   background:#fff;text-align:center;font-weight:900;padding:4px 2px;
 }
 .edit-player-input{font-size:12px}.edit-staff-input{font-size:12px;text-transform:uppercase}
+.edit-player-input{appearance:textfield;-moz-appearance:textfield}
+.edit-player-input::-webkit-outer-spin-button,.edit-player-input::-webkit-inner-spin-button{
+  -webkit-appearance:none;margin:0;
+}
+.edit-player-input.number-error{border:2px solid #dc2626!important;background:#fee2e2!important;color:#991b1b!important}
+.edit-number-error-msg{display:none;margin:7px 0;padding:7px;border:1px solid #fca5a5;border-radius:7px;background:#fee2e2;color:#991b1b;font-size:10px;font-weight:900;text-align:center}
+.edit-number-error-msg.show{display:block}
+.edit-staff-row{display:grid;grid-template-columns:38px minmax(0,1fr);gap:3px;align-items:center}
+.edit-staff-fixed{height:29px;border:1px solid #cbd5e1;border-radius:5px;background:#e2e8f0;color:#111827;display:flex;align-items:center;justify-content:center;font-weight:900}
+.edit-staff-name{min-width:0}
+.edit-mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.edit-mode-card{border:2px solid #cbd5e1;border-radius:8px;background:#fff;padding:8px;cursor:pointer;text-align:left}
+.edit-mode-card.selected{border-color:#2563eb;background:#eff6ff}
+.edit-mode-card strong{display:block;font-size:11px;text-transform:uppercase}
+.edit-mode-card span{display:block;margin-top:3px;font-size:9px;color:#475569;line-height:1.25}
+.edit-duration-box{margin-top:9px;border:2px solid #93c5fd;border-radius:8px;padding:8px;background:#eff6ff}
+.edit-duration-box input{width:70px;height:32px;border:2px solid #93c5fd;border-radius:6px;text-align:center;font-size:17px;font-weight:900}
+.edit-restore{margin-top:8px}
+
 .edit-teams-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 @media(max-width:600px){
   .edit-teams-grid{grid-template-columns:1fr}
@@ -4697,7 +4716,7 @@ tr.team-b td,
 
 :root{
   --team-home:#2563eb;
-  --team-away:#16a34a;
+  --team-away:#6d28d9;
 }
 
 /* NOMI SQUADRE */
@@ -5024,6 +5043,110 @@ tr.team-b td,
 }
 </style>
 
+
+<style id="phase-score-container-final">
+.phase.phase-box{
+  min-height:31px;
+  margin:2px auto 1px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  width:min(310px,42vw);
+  box-sizing:border-box;
+}
+.phase.phase-box #phaseScore{
+  width:100%;
+  min-height:13px;
+  box-sizing:border-box;
+  padding:1px 8px;
+  border:1px solid #cbd5e1;
+  border-radius:6px 6px 3px 3px;
+  background:#f8fafc;
+  color:#475569;
+  text-align:center;
+  font-size:9px;
+  line-height:12px;
+  font-weight:900;
+  white-space:normal;
+  overflow:hidden;
+  
+}
+.phase.phase-box #phase{
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  padding:2px 8px;
+  border:1px solid var(--line);
+  border-radius:3px 3px 6px 6px;
+  background:#eef2f7;
+  text-align:center;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+@media screen and (max-width:1100px){
+  .phase.phase-box{width:min(310px,58vw);min-height:29px}
+  .phase.phase-box #phaseScore{font-size:8px}
+  .phase.phase-box #phase{font-size:9px}
+}
+</style>
+
+
+<style id="staff-config-final">
+.edit-staff-grid{
+  display:grid !important;
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:4px !important;
+  align-items:start;
+}
+.edit-staff-item{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.edit-staff-letter{
+  width:100%;
+  height:30px;
+  box-sizing:border-box;
+  border:1px solid #cbd5e1;
+  border-radius:5px;
+  background:#fff;
+  color:#111827;
+  text-align:center;
+  font-size:12px;
+  font-weight:900;
+  padding:2px;
+  cursor:text;
+}
+.edit-staff-letter:focus{
+  outline:2px solid #93c5fd;
+}
+.edit-staff-item.deleted .edit-staff-letter{
+  background:#f1f5f9;
+  color:#94a3b8;
+}
+.edit-staff-input{
+  width:100%;
+  box-sizing:border-box;
+  min-width:0;
+  height:28px;
+  font-size:10px !important;
+  text-align:center;
+  text-transform:uppercase;
+}
+</style>
+
+<style id="staff-letter-fixed-final">
+.edit-staff-letter{caret-color:transparent!important;cursor:default!important}
+.edit-staff-letter:focus{outline:none!important;box-shadow:none!important}
+.edit-staff-input::placeholder{color:transparent!important}
+</style>
 </head>
 
 <body>
@@ -5035,8 +5158,7 @@ tr.team-b td,
     <div class="score-row">
       <div class="header-side left">
         <div class="header-controls">
-          <button id="editTeamsBtn" class="btn gray top-match-btn" onclick="openEditTeams()">MODIFICA SQUADRE</button>
-          <button id="restoreBtn" class="btn blue top-match-btn" type="button" onclick="restoreMatch()" title="Ripristina l'ultima gara salvata">RIPRISTINA</button>
+          <button id="editTeamsBtn" class="btn gray top-match-btn" onclick="openEditTeams()">CONFIGURAZIONE</button>
         </div>
         <div id="teamAHeader" class="team-title a">CASA</div>
       </div>
@@ -5047,7 +5169,10 @@ tr.team-b td,
       </div>
     </div>
 
-    <div class="phase"><span id="phase">1° TEMPO</span></div>
+    <div class="phase phase-box">
+      <div id="phaseScore" class="phase-score" style="display:none"></div>
+      <span id="phase">1° TEMPO</span>
+    </div>
 
     <div class="clock-row">
       <div class="clock-side left">
@@ -5145,8 +5270,8 @@ tr.team-b td,
 <!-- MODIFICA SQUADRE -->
 <div id="editTeamsModal" class="modal-back">
   <div class="modal edit-teams-modal">
-    <h3>MODIFICA SQUADRE</h3>
-    <p>Modifica nomi delle squadre, numeri dei giocatori e lettere dei dirigenti prima dell'avvio della gara.</p>
+    <h3>CONFIGURAZIONE</h3>
+    <p>Squadre, numeri di maglia, dirigenti, durata e modalità della gara.</p>
     <div class="edit-teams-grid">
       <section class="edit-team-box">
         <input id="editTeamAName" class="edit-team-name" value="CASA" maxlength="30">
@@ -5163,6 +5288,40 @@ tr.team-b td,
         <div id="editStaffB" class="edit-staff-grid"></div>
       </section>
     </div>
+
+    <div class="edit-number-error-msg" id="editNumberError"></div>
+
+    <div class="edit-duration-box">
+      <div class="edit-section-title" style="margin-top:0">DURATA DI OGNI TEMPO</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:7px">
+        <input id="matchDurationInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="30">
+        <strong style="font-size:11px">MINUTI</strong>
+      </div>
+    </div>
+
+    <div style="margin-top:9px">
+      <div class="edit-section-title">MODALITÀ GARA</div>
+      <input type="hidden" id="matchModeInput" value="STANDARD">
+      <div class="edit-mode-grid">
+        <div class="edit-mode-card" data-mode="STANDARD" onclick="selectMatchMode('STANDARD')">
+          <strong>Partita standard</strong>
+          <span>1° tempo + 2° tempo. Al termine della gara si conclude la partita.</span>
+        </div>
+        <div class="edit-mode-card" data-mode="SUPPLEMENTARI" onclick="selectMatchMode('SUPPLEMENTARI')">
+          <strong>Con supplementari</strong>
+          <span>In caso di parità: 2 tempi da 5' + altri 2 tempi da 5' se necessario. Poi rigori.</span>
+        </div>
+        <div class="edit-mode-card" data-mode="RIGORI" onclick="selectMatchMode('RIGORI')">
+          <strong>Con tiri di rigore</strong>
+          <span>Al termine del 2° tempo, se necessario, si passa direttamente ai rigori.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-restore">
+      <button id="restoreBtn" class="btn blue" style="width:100%;display:none" type="button" onclick="restoreMatch()">RIPRISTINA GARA SALVATA</button>
+    </div>
+
     <div class="edit-teams-actions">
       <button class="btn gray" onclick="closeEditTeams()">ANNULLA</button>
       <button class="btn blue" onclick="saveEditTeams()">SALVA MODIFICHE</button>
@@ -5216,6 +5375,18 @@ tr.team-b td,
   </div>
 </div>
 
+<!-- CONFERMA PASSAGGIO TEMPO -->
+<div id="phaseConfirmModal" class="modal-back">
+  <div class="modal phase-confirm-modal">
+    <div id="phaseConfirmTitle" style="font-size:17px;font-weight:900;text-align:center"></div>
+    <div id="phaseConfirmText" style="margin-top:8px;text-align:center;font-size:12px;font-weight:800"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="green" onclick="confirmPhaseTransition()">✓ CONFERMA</button>
+      <button class="gray" onclick="cancelPhaseTransition()">✕ ANNULLA</button>
+    </div>
+  </div>
+</div>
+
 <!-- PROVVEDIMENTO -->
 <div id="disciplineModal" class="modal-back">
   <div class="modal">
@@ -5233,10 +5404,40 @@ tr.team-b td,
 <script>
 const MAX_PLAYERS=16;
 const STAFF=['A','B','C','D','E'];
-const HALF=1800;
+const DEFAULT_HALF_MINUTES=30;
+const OVERTIME_MINUTES=5;
+const OVERTIME_COUNT=4;
+function getHalfSeconds(){
+  const m=Number(state.halfDurationMinutes ?? DEFAULT_HALF_MINUTES);
+  return Math.max(1,Math.min(45,Number.isFinite(m)?m:DEFAULT_HALF_MINUTES))*60;
+}
+function getPhaseEnd(phase){
+  const h=getHalfSeconds();
+  if(phase<=2)return phase*h;
+  return (2*h)+(phase-2)*OVERTIME_MINUTES*60;
+}
+function isOvertimePhase(phase){ return phase>=3 && phase<=6; }
+function phaseLabel(phase){
+  if(phase===1)return '1° TEMPO';
+  if(phase===2)return '2° TEMPO';
+  if(phase===3)return '1° TEMPO SUPPLEMENTARE';
+  if(phase===4)return '2° TEMPO SUPPLEMENTARE';
+  if(phase===5)return '3° TEMPO SUPPLEMENTARE';
+  if(phase===6)return '4° TEMPO SUPPLEMENTARE';
+  if(phase===7)return 'RIGORI';
+  return '1° TEMPO';
+}
 
 let state={
-  phase:1,timer:0,running:false,matchStarted:false,scoreA:0,scoreB:0,
+  phase:1,timer:0,running:false,matchStarted:false,
+  halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
+  firstHalfScoreA:0,firstHalfScoreB:0,
+  secondHalfScoreA:0,secondHalfScoreB:0,
+  overtimeSeries:0,overtimeHalf:0,
+  motivoFineGara:'',
+  phaseScores:{},
+  phaseStartScoreA:0,phaseStartScoreB:0,
+  scoreA:0,scoreB:0,
   teams:{A:'CASA',B:'OSPITI'},
   numbers:{
     A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
@@ -5247,6 +5448,7 @@ let state={
     B:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false}))
   },
   staffLetters:{A:[...STAFF],B:[...STAFF]},
+    staffNames:{A:STAFF.map(()=>''),B:STAFF.map(()=>'' )},
   staff:{
     A:STAFF.map(()=>({yellow:0,two:0,red:false})),
     B:STAFF.map(()=>({yellow:0,two:0,red:false}))
@@ -5326,6 +5528,20 @@ function restoreMatch(){
     }
 
     state=saved.state;
+    state.staffNames=state.staffNames || {A:STAFF.map(()=>''),B:STAFF.map(()=>'' )};
+
+    // Compatibilità con gare salvate con versioni precedenti.
+    state.firstHalfScoreA=Number(state.firstHalfScoreA ?? 0);
+    state.firstHalfScoreB=Number(state.firstHalfScoreB ?? 0);
+    state.secondHalfScoreA=Number(state.secondHalfScoreA ?? 0);
+    state.secondHalfScoreB=Number(state.secondHalfScoreB ?? 0);
+    state.overtimeSeries=Number(state.overtimeSeries ?? 0);
+    state.overtimeHalf=Number(state.overtimeHalf ?? 0);
+    state.motivoFineGara=state.motivoFineGara || '';
+    state.phaseScores=state.phaseScores || {};
+    state.phaseStartScoreA=Number(state.phaseStartScoreA ?? 0);
+    state.phaseStartScoreB=Number(state.phaseStartScoreB ?? 0);
+
     state.running=false;
     interval=null;
     timeoutInterval=null;
@@ -5386,7 +5602,30 @@ function render(){
   el('teamAName').value=state.teams.A;
   el('teamBName').value=state.teams.B;
   el('score').textContent=String(state.scoreA).padStart(2,'0')+' - '+String(state.scoreB).padStart(2,'0');
-  el('phase').textContent=state.phase===1?'1° TEMPO':'2° TEMPO';
+  const phaseScoreEl=el('phaseScore');
+  if(phaseScoreEl){
+    const labels={1:'1° T',2:'2° T',3:'3° T',4:'4° T',5:'5° T',6:'6° T'};
+    const righe=[];
+    for(let p=1;p<state.phase;p++){
+      const ps=state.phaseScores?.[p];
+      if(ps && Number.isFinite(Number(ps.A)) && Number.isFinite(Number(ps.B))){
+        righe.push(`<span class="phase-score-line">${labels[p] || phaseLabel(p)} ${ps.A}-${ps.B}</span>`);
+      }
+    }
+    phaseScoreEl.innerHTML=righe.join('');
+    phaseScoreEl.style.display=righe.length?'block':'none';
+  }
+  el('phase').textContent=phaseLabel(state.phase);
+  const hb=el('halfBtn');
+  const end=getPhaseEnd(state.phase);
+  const canAdvance=!state.running && state.timer===end && state.phase!==7;
+  hb.style.display=canAdvance?'block':'none';
+  hb.textContent=state.phase===1?'FINE 1° TEMPO':
+    state.phase===2?'FINE 2° TEMPO':
+    state.phase===3?'FINE 1° SUPPLEMENTARE':
+    state.phase===4?'FINE 2° SUPPLEMENTARE':
+    state.phase===5?'FINE 3° SUPPLEMENTARE':
+    'FINE 4° SUPPLEMENTARE';
   el('timer').textContent=currentTime();
 
   renderSuspensions();
@@ -5400,19 +5639,13 @@ function render(){
     const panel=el('staff'+team);
     const title=panel?.previousElementSibling;
     if(title && title.classList.contains('staff-title')){
-      const letters=STAFF.map((_,i)=>String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase() || '—');
+      const letters=STAFF.map((letter,i)=>String((state.staffLetters?.[team]?.[i]) ?? letter).trim().toUpperCase() || letter);
       title.textContent='DIRIGENTI '+letters.join(' · ');
     }
   });
 
   renderLog();
   renderCounters();
-
-  const end=state.phase===1?HALF:HALF*2;
-  const atEnd=state.timer===end && !state.running;
-
-  el('halfBtn').style.display=atEnd?'block':'none';
-  el('halfBtn').textContent=state.phase===1?'FINE 1° TEMPO':'FINE GARA';
 
   // MODIFICA SQUADRE è disponibile solo prima dell'avvio del cronometro.
   const editTeamsBtn=el('editTeamsBtn');
@@ -5426,8 +5659,12 @@ function render(){
 
   // FINE GARA / FINE 1° TEMPO is shown only with the clock stopped
   // and only at the end of the relevant half.
+  if(state.phase===7){
+    el('timer').classList.remove('blink');
+  }
+
   const endTop=el('endMatchTop');
-  if(endTop) endTop.style.display=(!state.running && state.timer>0)?'block':'none';
+  if(endTop) endTop.style.display=(!state.running && state.timer>0 && state.phase!==7 && state.scoreA!==state.scoreB && state.phase===2)?'block':'none';
 
   el('startBtn').textContent=state.running?'⏸ PAUSA':'▶ START';
   el('startBtn').className='btn '+(state.running?'orange':'green');
@@ -5819,12 +6056,30 @@ function staffAction(team,index,type){
   render();
 }
 
-/* CRONOMETRO */
-function toggleClock(){
-  const end=state.phase===1?HALF:HALF*2;
+/* =========================================================
+   CRONOMETRO + TEMPI DI GARA
+   Logica allineata al vecchio Referto Pallamano:
+   - 1° e 2° tempo
+   - 2 serie di supplementari da 2 x 5'
+   - parità dopo i supplementari -> rigori
+   - durante i rigori il cronometro NON si ferma e NON lampeggia
+   ========================================================= */
 
+function toggleClock(){
+  if(state.phase===7){
+    // Nei rigori il cronometro continua normalmente.
+    state.running=!state.running;
+    el('timer').classList.remove('blink');
+    clearInterval(interval);
+    interval=null;
+    if(state.running) interval=setInterval(tick,1000);
+    render();
+    return;
+  }
+
+  const end=getPhaseEnd(state.phase);
   if(state.timer>=end){
-    toast(state.phase===1?'Fine 1° tempo':'Fine gara');
+    toast('Fine '+phaseLabel(state.phase));
     return;
   }
 
@@ -5832,74 +6087,340 @@ function toggleClock(){
 
   if(state.running){
     state.matchStarted=true;
-    // Premendo START il lampeggio termina immediatamente.
     el('timer').classList.remove('blink');
-  }else{
-    // Dopo che il cronometro è partito, ogni pausa con timer > 0
-    // deve lasciare il tempo lampeggiante fino al successivo START.
-    if(state.timer>0){
-      el('timer').classList.add('blink');
-    }
+  }else if(state.timer>0){
+    el('timer').classList.add('blink');
   }
 
   clearInterval(interval);
-
-  if(state.running){
-    interval=setInterval(tick,1000);
-  }
-
+  interval=null;
+  if(state.running) interval=setInterval(tick,1000);
   render();
 }
 
 function tick(){
-  // Durante il running il cronometro non deve lampeggiare.
-  el('timer').classList.remove('blink');
+  if(state.phase===7){
+    // RIGORI: il tempo continua a scorrere senza lampeggio e senza fine automatica.
+    el('timer').classList.remove('blink');
+    state.timer++;
+    renderSuspensions();
+    render();
+    return;
+  }
 
+  el('timer').classList.remove('blink');
   state.timer++;
   renderSuspensions();
 
-  const end=state.phase===1?HALF:HALF*2;
-
+  const end=getPhaseEnd(state.phase);
   if(state.timer>=end){
     state.timer=end;
     state.running=false;
     clearInterval(interval);
     interval=null;
     beep();
-    toast(state.phase===1?'FINE 1° TEMPO':'FINE GARA');
+    toast('FINE '+phaseLabel(state.phase));
   }
-
   render();
 }
 
 function adjustTimer(delta){
-  // Correzione manuale consentita anche con cronometro in movimento.
-  const current = Number.isFinite(Number(state.timer)) ? Number(state.timer) : 0;
-  const step = Number(delta) || 0;
+  const current=Number.isFinite(Number(state.timer))?Number(state.timer):0;
+  const step=Number(delta)||0;
 
-  const min = state.phase === 1 ? 0 : HALF;
-  const max = state.phase === 1 ? HALF : HALF * 2;
+  if(state.phase===7){
+    state.timer=Math.max(getPhaseEnd(6),current+step);
+    el('timer').classList.remove('blink');
+    render();
+    return;
+  }
 
-  state.timer = Math.max(min, Math.min(max, current + step));
+  const min=state.phase===1?0:getPhaseEnd(state.phase-1);
+  const max=getPhaseEnd(state.phase);
+  state.timer=Math.max(min,Math.min(max,current+step));
+  render();
+}
 
-  // Aggiorna subito cronometro e countdown delle esclusioni.
+let pendingPhaseTransition=null;
+
+function rememberCompletedPhase(phase){
+  const a=Number(state.scoreA||0)-Number(state.phaseStartScoreA||0);
+  const b=Number(state.scoreB||0)-Number(state.phaseStartScoreB||0);
+  state.phaseScores[phase]={A:a,B:b};
+}
+
+function setPhaseStartScore(){
+  state.phaseStartScoreA=Number(state.scoreA||0);
+  state.phaseStartScoreB=Number(state.scoreB||0);
+}
+
+function showPhaseTransition(title,text,nextFn){
+  pendingPhaseTransition=nextFn;
+  el('phaseConfirmTitle').textContent=title;
+  el('phaseConfirmText').textContent=text || '';
+  el('phaseConfirmModal').style.display='flex';
+}
+
+function confirmPhaseTransition(){
+  const fn=pendingPhaseTransition;
+  pendingPhaseTransition=null;
+  el('phaseConfirmModal').style.display='none';
+  if(typeof fn==='function') fn();
+}
+
+function cancelPhaseTransition(){
+  pendingPhaseTransition=null;
+  el('phaseConfirmModal').style.display='none';
+  state.running=false;
   render();
 }
 
 function finishHalf(){
   if(state.running)return;
 
-  if(state.phase===1 && state.timer===HALF){
-    state.phase=2;
-    state.timer=HALF;
-    addEvent('—','—','SYSTEM','INIZIO 2° TEMPO');
-    render();
+  const end=getPhaseEnd(state.phase);
+  if(state.timer!==end)return;
+
+  const phase=state.phase;
+  rememberCompletedPhase(phase);
+
+  /* 1° TEMPO */
+  if(phase===1){
+    state.firstHalfScoreA=state.scoreA;
+    state.firstHalfScoreB=state.scoreB;
+
+    showPhaseTransition(
+      'INIZIO 2° TEMPO',
+      `Parziale 1° tempo: ${state.scoreA} - ${state.scoreB}`,
+      ()=>{
+        state.phase=2;
+        state.timer=getPhaseEnd(1);
+        state.running=false;
+        setPhaseStartScore();
+        addEvent('—','—','SYSTEM','INIZIO 2° TEMPO');
+        render();
+        saveRecovery();
+      }
+    );
     return;
   }
 
-  if(state.phase===2 && state.timer===HALF*2){
+  /* FINE 2° TEMPO */
+  if(phase===2){
+    state.secondHalfScoreA=state.scoreA-state.firstHalfScoreA;
+    state.secondHalfScoreB=state.scoreB-state.firstHalfScoreB;
+
+    if(state.scoreA!==state.scoreB){
+      state.motivoFineGara='TEMPI_REGOLAMENTARI';
+      endMatch();
+      return;
+    }
+
+    if(state.matchMode==='SUPPLEMENTARI'){
+      showPhaseTransition(
+        'INIZIO 1° TEMPO SUPPLEMENTARE',
+        `Risultato dopo 2 tempi: ${state.scoreA} - ${state.scoreB}`,
+        startFirstOvertime
+      );
+      return;
+    }
+
+    if(state.matchMode==='RIGORI'){
+      state.motivoFineGara='RIGORI';
+      showPhaseTransition(
+        'INIZIO TIRI DI RIGORE',
+        `Risultato dopo 2 tempi: ${state.scoreA} - ${state.scoreB}`,
+        startPenaltyShootout
+      );
+      return;
+    }
+
+    state.motivoFineGara='TEMPI_REGOLAMENTARI';
     endMatch();
+    return;
   }
+
+  /* 1° SUPPLEMENTARE */
+  if(phase===3){
+    showPhaseTransition(
+      'INIZIO 2° TEMPO SUPPLEMENTARE',
+      `Parziale 1° supplementare: ${state.phaseScores[3].A} - ${state.phaseScores[3].B}`,
+      startSecondOvertime
+    );
+    return;
+  }
+
+  /* 2° SUPPLEMENTARE */
+  if(phase===4){
+    if(state.scoreA!==state.scoreB){
+      state.motivoFineGara='2_TEMPI_SUPPLEMENTARI';
+      endMatch();
+      return;
+    }
+
+    showPhaseTransition(
+      'INIZIO 3° TEMPO SUPPLEMENTARE',
+      `Parità ${state.scoreA} - ${state.scoreB}: iniziano altri 2 tempi da 5'.`,
+      startThirdOvertime
+    );
+    return;
+  }
+
+  /* 3° SUPPLEMENTARE */
+  if(phase===5){
+    showPhaseTransition(
+      'INIZIO 4° TEMPO SUPPLEMENTARE',
+      `Parziale 3° supplementare: ${state.phaseScores[5].A} - ${state.phaseScores[5].B}`,
+      startFourthOvertime
+    );
+    return;
+  }
+
+  /* 4° SUPPLEMENTARE */
+  if(phase===6){
+    if(state.scoreA!==state.scoreB){
+      state.motivoFineGara='4_TEMPI_SUPPLEMENTARI';
+      endMatch();
+      return;
+    }
+
+    state.motivoFineGara='RIGORI';
+    showPhaseTransition(
+      'INIZIO TIRI DI RIGORE',
+      `Ancora parità ${state.scoreA} - ${state.scoreB}.`,
+      startPenaltyShootout
+    );
+  }
+}
+
+function startFirstOvertime(){
+  state.overtimeSeries=1;
+  state.overtimeHalf=1;
+  state.phase=3;
+  state.timer=getPhaseEnd(2);
+  state.running=false;
+  setPhaseStartScore();
+  addEvent('—','—','SYSTEM','INIZIO 1° TEMPO SUPPLEMENTARE');
+  render();
+  saveRecovery();
+}
+
+function startSecondOvertime(){
+  state.overtimeSeries=1;
+  state.overtimeHalf=2;
+  state.phase=4;
+  state.timer=getPhaseEnd(3);
+  state.running=false;
+  setPhaseStartScore();
+  addEvent('—','—','SYSTEM','INIZIO 2° TEMPO SUPPLEMENTARE');
+  render();
+  saveRecovery();
+}
+
+function startThirdOvertime(){
+  state.overtimeSeries=2;
+  state.overtimeHalf=1;
+  state.phase=5;
+  state.timer=getPhaseEnd(4);
+  state.running=false;
+  setPhaseStartScore();
+  addEvent('—','—','SYSTEM','INIZIO 3° TEMPO SUPPLEMENTARE');
+  render();
+  saveRecovery();
+}
+
+function startFourthOvertime(){
+  state.overtimeSeries=2;
+  state.overtimeHalf=2;
+  state.phase=6;
+  state.timer=getPhaseEnd(5);
+  state.running=false;
+  setPhaseStartScore();
+  addEvent('—','—','SYSTEM','INIZIO 4° TEMPO SUPPLEMENTARE');
+  render();
+  saveRecovery();
+}
+
+
+function startPenaltyShootout(){
+  clearInterval(interval);
+  interval=null;
+
+  state.phase=7;
+  state.timer=getPhaseEnd(6);
+  state.rigoriStarted=true;
+  state.running=true;
+
+  // FONDAMENTALE: durante i rigori il cronometro scorre.
+  el('timer').classList.remove('blink');
+
+  addEvent('—','—','SYSTEM','INIZIO TIRI DI RIGORE');
+
+  interval=setInterval(tick,1000);
+  render();
+  toast('TIRI DI RIGORE · CRONOMETRO ATTIVO');
+}
+
+/* =========================================================
+   CARTELLINO: il provvedimento ferma il cronometro.
+   La scelta di stampare NON riavvia il cronometro.
+   ========================================================= */
+
+/* TIME OUT: nei supplementari è vietato. */
+function requestTimeout(team){
+  if(isOvertimePhase(state.phase)){
+    toast('Nei tempi supplementari non è possibile richiedere Time-Out.');
+    return;
+  }
+
+  if(!state.running){
+    toast('Il time-out è disponibile solo con il cronometro in corso');
+    return;
+  }
+
+  if(state.timeouts[team]>=3){
+    toast('Time-out esauriti');
+    return;
+  }
+
+  snapshot();
+
+  state.timeouts[team]++;
+  addEvent(team,'—','TIMEOUT','TIME OUT');
+
+  state.running=false;
+  clearInterval(interval);
+  interval=null;
+
+  if(state.timer>0) el('timer').classList.add('blink');
+
+  let left=60;
+  el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;
+  el('timeoutCountdown').textContent='01:00';
+  el('timeoutModal').classList.remove('team-a','team-b');
+  el('timeoutModal').classList.add(team==='A'?'team-a':'team-b');
+  el('timeoutModal').style.display='flex';
+
+  clearInterval(timeoutInterval);
+  timeoutInterval=setInterval(()=>{
+    left--;
+    el('timeoutCountdown').textContent=
+      String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    if(left<=0)closeTimeout();
+  },1000);
+
+  render();
+}
+
+function closeTimeout(){
+  clearInterval(timeoutInterval);
+  timeoutInterval=null;
+  el('timeoutModal').style.display='none';
+
+  // Il timeout non fa ripartire automaticamente la gara.
+  state.running=false;
+  if(state.phase!==7 && state.timer>0) el('timer').classList.add('blink');
+  render();
 }
 
 /* =========================================================
@@ -5995,6 +6516,7 @@ function preparaRefertoFIGH(){
       currentRosterA: {
         players: playerData('A'),
         officials: (state.staffLetters?.A || []).map((letter,i)=>({
+          nome: state.staffNames?.A?.[i] || '',
           role: String(letter ?? '').trim().toUpperCase(),
           name: "",
           yellow: Number(state.staff?.A?.[i]?.yellow ?? 0),
@@ -6006,6 +6528,7 @@ function preparaRefertoFIGH(){
       currentRosterB: {
         players: playerData('B'),
         officials: (state.staffLetters?.B || []).map((letter,i)=>({
+          nome: state.staffNames?.B?.[i] || '',
           role: String(letter ?? '').trim().toUpperCase(),
           name: "",
           yellow: Number(state.staff?.B?.[i]?.yellow ?? 0),
@@ -6018,6 +6541,7 @@ function preparaRefertoFIGH(){
       teamB: state.teams?.B || "",
 
       matchNumber: "",
+      modalitaGara: state.matchMode || 'STANDARD',
       league: "",
       group: "",
       season: "",
@@ -6034,6 +6558,13 @@ function preparaRefertoFIGH(){
       secretary: "",
 
       eventi: eventi,
+
+      modalitaGara: state.matchMode || 'STANDARD',
+      statoGara: state.phase === 7 ? 'RIGORI' : phaseLabel(state.phase),
+      motivoFineGara: state.motivoFineGara || '',
+      overtimeSeries: Number(state.overtimeSeries || 0),
+      overtimeHalf: Number(state.overtimeHalf || 0),
+      phaseScores: JSON.parse(JSON.stringify(state.phaseScores || {})),
 
       risultati: {
         primoTempo: {A:firstA, B:firstB},
@@ -6189,19 +6720,14 @@ function stopForDisciplinary(team,num,text){
 
 function closeDiscipline(){
   el('disciplineModal').style.display='none';
-
-  // Il provvedimento può essere chiuso senza far ripartire il gioco:
-  // in quel caso il timer continua a lampeggiare finché non viene premuto START.
-  if(!state.running && state.timer>0){
-    el('timer').classList.add('blink');
-  }else{
-    el('timer').classList.remove('blink');
-  }
-
+  state.running=false;
+  clearInterval(interval);
+  interval=null;
+  if(state.timer>0 && state.phase!==7) el('timer').classList.add('blink');
   render();
 }
 
-/* MODIFICA SQUADRE */
+/* CONFIGURAZIONE */
 function openEditTeams(){
   if(state.matchStarted || state.running){
     toast('Modifica squadre disponibile solo prima dello START');
@@ -6209,54 +6735,167 @@ function openEditTeams(){
   }
 
   ['A','B'].forEach(team=>{
-    el('editTeam'+team+'Name').value=state.teams[team] || '';
+    const teamNameInput=el('editTeam'+team+'Name');
+    teamNameInput.value=state.teams[team] || '';
+    teamNameInput.onfocus=function(){
+      if(!this.dataset.touched){
+        this.select();
+        this.dataset.touched='1';
+      }
+    };
 
     const playersBox=el('editPlayers'+team);
     playersBox.innerHTML=state.numbers[team].map((num,i)=>`
       <input class="edit-player-input" data-team="${team}" data-index="${i}"
-             type="number" min="1" max="99" inputmode="numeric"
+             type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2"
              value="${String(num ?? '').replace(/"/g,'&quot;')}" placeholder="${i+1}">
     `).join('');
 
     const staffBox=el('editStaff'+team);
-    staffBox.innerHTML=STAFF.map((_,i)=>{
-      const letter=String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase();
-      return `<input class="edit-staff-input" data-team="${team}" data-index="${i}"
-              type="text" maxlength="1" inputmode="text"
-              value="${letter.replace(/"/g,'&quot;')}" placeholder="—">`;
+    staffBox.innerHTML=STAFF.map((letter,i)=>{
+      const nome=String((state.staffNames?.[team]?.[i]) ?? '');
+      const attiva=String((state.staffLetters?.[team]?.[i]) ?? letter).trim() !== '';
+      return `<div class="edit-staff-item ${attiva?'':'deleted'}">
+        <input class="edit-staff-letter"
+               data-team="${team}" data-index="${i}"
+               value="${attiva?letter:''}"
+               maxlength="1"
+               inputmode="text"
+               aria-label="Lettera dirigente ${letter}"
+               ${attiva?'':'disabled'}>
+        <input class="edit-staff-input"
+               data-team="${team}" data-index="${i}"
+               type="text" maxlength="40"
+               value="${nome.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}"
+               placeholder=""
+               ${attiva?'':'disabled'}>
+      </div>`;
     }).join('');
   });
 
-  /* Quando si seleziona un campo GIOCATORE o DIRIGENTE nel popup,
-     il valore precedente viene cancellato immediatamente, così si può
-     digitare direttamente il nuovo numero/lettera. */
-  document.querySelectorAll('#editTeamsModal .edit-player-input, #editTeamsModal .edit-staff-input')
-    .forEach(inp=>{
-      inp.addEventListener('focus', function(){
-        if(this.dataset.cleared !== '1'){
-          this.value='';
-          this.dataset.cleared='1';
-        }
-      });
-      inp.addEventListener('click', function(){
-        if(this.dataset.cleared !== '1'){
-          this.value='';
-          this.dataset.cleared='1';
-        }
-      });
-    });
+  /* Nei numeri di maglia si digita direttamente dalla tastiera.
+     I dirigenti hanno lettere fisse A-B-C-D-E e possono solo essere cancellati. */
 
+  document.querySelectorAll('#editTeamsModal .edit-staff-letter').forEach(inp=>{
+    inp.addEventListener('keydown',function(ev){
+      // La lettera è fissa: è consentito solo cancellarla.
+      if(ev.key==='Backspace' || ev.key==='Delete'){
+        ev.preventDefault();
+        this.value='';
+        const item=this.closest('.edit-staff-item');
+        const name=item?.querySelector('.edit-staff-input');
+        if(name) name.disabled=true;
+        this.disabled=false;
+        item?.classList.add('deleted');
+        return;
+      }
+      if(ev.key==='Tab' || ev.key==='ArrowLeft' || ev.key==='ArrowRight' ||
+         ev.key==='Home' || ev.key==='End'){
+        return;
+      }
+      ev.preventDefault();
+    });
+    inp.addEventListener('input',function(){
+      // Non permettere sostituzioni: solo valore vuoto o lettera originaria.
+      const index=Number(this.dataset.index);
+      const expected=STAFF[index];
+      if(this.value && this.value!==expected) this.value=expected;
+    });
+  });
+
+  document.querySelectorAll('#editTeamsModal .edit-player-input').forEach(inp=>{
+    inp.addEventListener('focus', function(){
+      if(!this.dataset.touched){
+        this.select();
+        this.dataset.touched='1';
+      }
+    });
+    inp.addEventListener('input', function(){
+      this.value=this.value.replace(/\D/g,'').slice(0,2);
+      this.classList.remove('number-error');
+    });
+  });
+
+  const durationInput=el('matchDurationInput');
+  if(durationInput)durationInput.value=String(state.halfDurationMinutes ?? 30);
+  const modeInput=el('matchModeInput');
+  if(modeInput)modeInput.value=state.matchMode || 'STANDARD';
+  const msg=el('editNumberError');
+  if(msg)msg.classList.remove('show');
+  const rb=el('restoreBtn');
+  if(rb)rb.style.display=hasRecovery()?'block':'none';
+  updateConfigModeUI();
   el('editTeamsModal').style.display='flex';
+
 }
 
 function closeEditTeams(){
   el('editTeamsModal').style.display='none';
 }
 
+
+function selectMatchMode(mode){
+  const input=el('matchModeInput');
+  if(input)input.value=mode;
+  updateConfigModeUI();
+}
+
+function updateConfigModeUI(){
+  const mode=el('matchModeInput')?.value || state.matchMode || 'STANDARD';
+  document.querySelectorAll('.edit-mode-card').forEach(c=>{
+    c.classList.toggle('selected',c.dataset.mode===mode);
+  });
+}
+
 function saveEditTeams(){
   if(state.matchStarted || state.running){
-    closeEditTeams();
-    toast('La gara è già iniziata');
+    toast('La configurazione è modificabile solo prima dello START');
+    return;
+  }
+
+  let valido=true, firstError=null;
+  document.querySelectorAll('#editTeamsModal .edit-player-input').forEach(inp=>{
+    inp.classList.remove('number-error');
+  });
+
+  ['A','B'].forEach(team=>{
+    const inputs=[...document.querySelectorAll(`#editPlayers${team} .edit-player-input`)];
+    const seen=new Map();
+
+    inputs.forEach(inp=>{
+      const raw=inp.value.trim();
+      if(raw==='')return;
+      const n=Number(raw);
+      if(!Number.isInteger(n) || n<0 || n>99){
+        valido=false;inp.classList.add('number-error');if(!firstError)firstError=inp;return;
+      }
+      if(!seen.has(n))seen.set(n,[]);
+      seen.get(n).push(inp);
+    });
+
+    seen.forEach(list=>{
+      if(list.length>1){
+        valido=false;
+        list.forEach(inp=>{inp.classList.add('number-error');if(!firstError)firstError=inp;});
+      }
+    });
+  });
+
+  const durationInput=el('matchDurationInput');
+  const duration=Number(durationInput?.value);
+  if(!Number.isInteger(duration)||duration<1||duration>45){
+    valido=false;
+    if(durationInput){durationInput.style.borderColor='#dc2626';if(!firstError)firstError=durationInput;}
+  }
+
+  if(!valido){
+    const msg=el('editNumberError');
+    if(msg){
+      msg.textContent='CORREGGI I DATI EVIDENZIATI: numeri da 0 a 99, tutti diversi nella stessa squadra.';
+      msg.classList.add('show');
+    }
+    firstError?.focus();
+    toast('Configurazione non valida');
     return;
   }
 
@@ -6268,18 +6907,28 @@ function saveEditTeams(){
 
     document.querySelectorAll(`#editPlayers${team} .edit-player-input`).forEach(inp=>{
       const raw=inp.value.trim();
-      state.numbers[team][+inp.dataset.index]=raw==='' ? '' : Math.max(1,Math.min(99,parseInt(raw,10)||1));
+      state.numbers[team][+inp.dataset.index]=raw===''?'':Number(raw);
     });
+  });
 
-    document.querySelectorAll(`#editStaff${team} .edit-staff-input`).forEach(inp=>{
-      state.staffLetters[team][+inp.dataset.index]=inp.value.trim().slice(0,1).toUpperCase();
-    });
+  state.halfDurationMinutes=duration;
+  state.matchMode=el('matchModeInput')?.value || 'STANDARD';
+
+  // Le lettere sono esclusivamente A-B-C-D-E e non sono modificabili.
+  // L'unica operazione consentita è lasciare vuoto il nome del dirigente.
+  ['A','B'].forEach(team=>{
+    if(!state.staffLetters[team]) state.staffLetters[team]=[...STAFF];
+    if(!state.staffNames[team]) state.staffNames[team]=STAFF.map(()=> '');
+    const letters=[...document.querySelectorAll(`#editStaff${team} .edit-staff-letter`)];
+    const inputs=[...document.querySelectorAll(`#editStaff${team} .edit-staff-input`)];
+    state.staffLetters[team]=STAFF.map((letter,i)=>letters[i]?.value.trim() ? letter : '');
+    state.staffNames[team]=STAFF.map((letter,i)=>letters[i]?.value.trim() ? (inputs[i]?.value.trim() || '') : '');
   });
 
   closeEditTeams();
   render();
+  saveRecovery();
 }
-
 /* NUMERI */
 function toggleNumbers(){
   ['A','B'].forEach(t=>{
@@ -6335,7 +6984,15 @@ function resetMatch(){
   window.suspensionWatcher=null;
 
   state={
-    phase:1,timer:0,running:false,matchStarted:false,scoreA:0,scoreB:0,
+    phase:1,timer:0,running:false,matchStarted:false,
+    halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
+    firstHalfScoreA:0,firstHalfScoreB:0,
+    secondHalfScoreA:0,secondHalfScoreB:0,
+    overtimeSeries:0,overtimeHalf:0,
+    motivoFineGara:'',
+    phaseScores:{},
+    phaseStartScoreA:0,phaseStartScoreB:0,
+    scoreA:0,scoreB:0,
     teams:{A:'CASA',B:'OSPITI'},
     numbers:{
       A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
@@ -6394,6 +7051,21 @@ function changePlayerNumber(input){
   render();
 }
 
+/* F9 = porta il cronometro esattamente alla fine della fase corrente.
+   Non avvia automaticamente la fase successiva: serve il comando Fine Tempo. */
+document.addEventListener('keydown', function(ev){
+  if(ev.key !== 'F9') return;
+  ev.preventDefault();
+  if(state.phase===7) return;
+  state.running=false;
+  clearInterval(interval);
+  interval=null;
+  state.timer=getPhaseEnd(state.phase);
+  el('timer').classList.remove('blink');
+  render();
+  toast('TEMPO PORTATO ALLA FINE · PREMERE FINE TEMPO');
+});
+
 /* Controlli touch: funzionano su iPad/tablet e anche con mouse.
    Il cronometro può essere avviato sia dal tasto START sia toccando direttamente il tempo. */
 function installTouchControls(){
@@ -6420,24 +7092,7 @@ installTouchControls();
 render();
 </script>
 
-<script>
-/* FULLSCREEN TABLET - solo comportamento dello schermo */
-(function(){
-  let richiesto=false;
-
-  function entraSchermoIntero(){
-    if(richiesto || document.fullscreenElement) return;
-    const root=document.documentElement;
-    if(!root.requestFullscreen) return;
-    richiesto=true;
-    root..catch(()=>{richiesto=false;});
-  }
-
-  document.addEventListener('pointerdown', entraSchermoIntero, {once:true, passive:true});
-  document.addEventListener('touchstart', entraSchermoIntero, {once:true, passive:true});
-  document.addEventListener('click', entraSchermoIntero, {once:true});
-})();
-</script>
+<script>/* Fullscreen disabilitato: il file resta nella normale finestra del browser. */</script>
 
 
 <script>
