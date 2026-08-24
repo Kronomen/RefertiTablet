@@ -5938,7 +5938,11 @@ function preparaRefertoFIGH(){
       currentRosterA: {
         players: (state.numbers?.A || []).map((num,i)=>({
           num: num ?? "",
-          name: ""
+          name: "",
+          goals: Number(state.discipline?.A?.[i]?.goals ?? 0),
+          yellow: Number(state.discipline?.A?.[i]?.yellow ?? 0),
+          two: Number(state.discipline?.A?.[i]?.two ?? 0),
+          red: Boolean(state.discipline?.A?.[i]?.red)
         })),
         officials: (state.staffLetters?.A || []).map(()=>({
           role: "",
@@ -5949,7 +5953,11 @@ function preparaRefertoFIGH(){
       currentRosterB: {
         players: (state.numbers?.B || []).map((num,i)=>({
           num: num ?? "",
-          name: ""
+          name: "",
+          goals: Number(state.discipline?.B?.[i]?.goals ?? 0),
+          yellow: Number(state.discipline?.B?.[i]?.yellow ?? 0),
+          two: Number(state.discipline?.B?.[i]?.two ?? 0),
+          red: Boolean(state.discipline?.B?.[i]?.red)
         })),
         officials: (state.staffLetters?.B || []).map(()=>({
           role: "",

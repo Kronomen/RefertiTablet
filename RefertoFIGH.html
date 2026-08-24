@@ -1259,6 +1259,47 @@ const dirigentiB =
 
 console.log("GIOCATORI B =", giocatoriB);
 console.log("DIRIGENTI B =", dirigentiB);
+/* RETI GIOCATORI — compatibilità con gare salvate prima del campo "goals". */
+function integraRetiDaEventi(lista, squadra){
+    const eventi = partita.eventi || partita.events || [];
+    const conteggio = {};
+
+    eventi.forEach(e => {
+        if(!e || e.team !== squadra) return;
+
+        const tipo = String(e.type || "").toUpperCase();
+        const testo = String(e.text || e.event || "").toUpperCase();
+
+        const realizzato =
+            tipo === "GOAL" ||
+            (tipo === "PENALTY" &&
+             (testo.includes("REALIZZATO") || testo.includes("RIGORE REALIZZATO")));
+
+        if(!realizzato) return;
+
+        const num = String(e.num ?? "").trim();
+        if(!num || num === "—") return;
+
+        conteggio[num] = (conteggio[num] || 0) + 1;
+    });
+
+    lista.forEach(player => {
+        if(!player) return;
+
+        const num = String(player.num ?? player.number ?? "").trim();
+        const salvato = Number(player.goals);
+
+        player.goals =
+            Number.isFinite(salvato) && salvato > 0
+            ? salvato
+            : (conteggio[num] || 0);
+    });
+}
+
+integraRetiDaEventi(giocatoriA, "A");
+integraRetiDaEventi(giocatoriB, "B");
+
+
 
 creaTabella(
     bodyB,
@@ -1370,9 +1411,17 @@ console.log("Dirigenti:", dirigenti.length);
     r.id = squadra + "_" + numero;
 
 
+const reti = Number(
+    player.goals ??
+    player.goal ??
+    player.reti ??
+    player.goalsScored ??
+    0
+);
+
 creaCella(r,"col-num",numero);
 creaCella(r,"col-name",nome);
-creaCella(r,"col-goals");
+creaCella(r,"col-goals", reti > 0 ? reti : "");
 creaCella(r,"col-yellow");
 creaCella(r,"col2a");
 creaCella(r,"col2b");
