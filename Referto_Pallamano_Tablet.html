@@ -98,10 +98,21 @@ button{touch-action:manipulation;cursor:pointer}
 
 
 function openEventMenu(kind,team,index){
+  const identifier = kind==='PLAYER'
+    ? state.numbers[team][index]
+    : String((state.staffLetters?.[team]?.[index]) ?? '').trim();
+
   if(kind==='PLAYER' && state.discipline[team]?.[index]?.red){
     toast('Giocatore espulso: nessuna azione disponibile');
     return;
   }
+
+  if(kind==='STAFF' && state.staff[team]?.[index]?.red){
+    toast('Dirigente espulso: nessuna azione disponibile');
+    return;
+  }
+
+  const activeTwo=isActiveSuspension(team,identifier);
 
   selected={kind,team,index};
   const isPlayer=kind==='PLAYER';
@@ -110,30 +121,71 @@ function openEventMenu(kind,team,index){
     : `DIRIGENTE ${String((state.staffLetters?.[team]?.[index]) ?? '').trim()}`;
 
   el('eventTitle').textContent='SELEZIONA EVENTO';
-  el('eventSubtitle').textContent=`${state.teams[team]} · ${label}`;
+  el('eventSubtitle').textContent=
+    `${state.teams[team]} · ${label}` +
+    (activeTwo ? ' · 2\' IN CORSO' : '');
+
   el('eventPlayerActions').style.display=isPlayer?'grid':'none';
   el('eventStaffActions').style.display=isPlayer?'none':'grid';
   el('eventModal').classList.remove('team-a','team-b');
   el('eventModal').classList.add(team==='A'?'team-a':'team-b');
   el('eventModal').style.display='flex';
-}
 
+  // Durante i 2' goal e rigore non sono consentiti.
+  // Gli altri provvedimenti disciplinari restano disponibili:
+  // ammonizione, altro 2' e espulsione.
+  if(isPlayer){
+    const goalBtn=el('eventPlayerActions').querySelector('[onclick*="GOAL"]');
+    const penaltyBtn=el('eventPlayerActions').querySelector('[onclick*="PENALTY"]');
+
+    [goalBtn,penaltyBtn].forEach(btn=>{
+      if(!btn)return;
+      btn.disabled=activeTwo;
+      btn.style.opacity=activeTwo?'0.35':'1';
+      btn.style.pointerEvents=activeTwo?'none':'auto';
+    });
+  }
+}
 function closeEventModal(){
   selected=null;
   el('eventModal').style.display='none';
 }
 
 function eventAction(type){
-  if(selected?.kind==='PLAYER' &&
-     state.discipline[selected.team]?.[selected.index]?.red){
+  if(!selected)return;
+
+  const s=selected;
+  const identifier=s.kind==='PLAYER'
+    ? state.numbers[s.team][s.index]
+    : String((state.staffLetters?.[s.team]?.[s.index]) ?? '').trim();
+
+  if(s.kind==='PLAYER' &&
+     state.discipline[s.team]?.[s.index]?.red){
     selected=null;
     closeEventModal();
     toast('Giocatore espulso: nessuna azione disponibile');
     return;
   }
 
-  if(!selected)return;
-  const s=selected;
+  if(s.kind==='STAFF' &&
+     state.staff[s.team]?.[s.index]?.red){
+    selected=null;
+    closeEventModal();
+    toast('Dirigente espulso: nessuna azione disponibile');
+    return;
+  }
+
+  // Durante un'esclusione di 2' il soggetto non può segnare o tirare un rigore,
+  // ma può ricevere un nuovo provvedimento disciplinare.
+  if(type==='GOAL' || type==='PENALTY'){
+    if(s.kind==='PLAYER' && isActiveSuspension(s.team,identifier)){
+      closeEventModal();
+      selected=null;
+      toast('2\' in corso: goal e rigore non consentiti');
+      return;
+    }
+  }
+
   closeEventModal();
 
   if(s.kind==='PLAYER'){
@@ -142,7 +194,6 @@ function eventAction(type){
     staffAction(s.team,s.index,type);
   }
 }
-
 /* GIOCATORI */
 .players-caption{flex:0 0 auto;text-align:center;font-size:8px;font-weight:900;color:#64748b;padding:1px 0}
 .players{flex:1;min-height:0;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:6px}
@@ -5699,6 +5750,58 @@ tr.team-b td,
 }
 </style>
 
+
+<style id="discipline-halo-final">
+/* 2' ATTIVO: alone rosso solo durante il countdown */
+.player-card.suspended,
+.staff-card.staff-suspended{
+  box-shadow:
+    0 0 0 3px rgba(220,38,38,.95),
+    0 0 12px 4px rgba(220,38,38,.45) !important;
+}
+
+/* ESPULSIONE / 3° 2': alone rosso permanente fino a fine gara */
+.player-card.expelled,
+.staff-card.staff-expelled{
+  box-shadow:
+    0 0 0 4px rgba(220,38,38,1),
+    0 0 16px 6px rgba(220,38,38,.60) !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+}
+
+/* Il pulsante del dirigente/giocatore espulso resta disabilitato. */
+.staff-card.staff-expelled .staff-label,
+.player-card.expelled .player-number{
+  pointer-events:none !important;
+  cursor:not-allowed !important;
+}
+</style>
+
+
+<style id="suspension-actions-final">
+#eventPlayerActions button:disabled{
+  opacity:.35 !important;
+  filter:grayscale(1) !important;
+  cursor:not-allowed !important;
+}
+</style>
+
+
+<style id="phase-transition-enhancement">
+.phase-confirm-modal{
+  width:min(430px,94vw);
+  border:3px solid #2563eb;
+}
+.phase-confirm-modal #phaseConfirmTitle{
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+.phase-confirm-modal #phaseConfirmText{
+  line-height:1.35;
+}
+</style>
+
 </head>
 
 <body>
@@ -6026,6 +6129,22 @@ let undoStack=[];
 
 function el(id){return document.getElementById(id)}
 
+function isActiveSuspension(team, identifier){
+  const key=String(identifier ?? '');
+  return Array.isArray(state.activeSuspensions) &&
+    state.activeSuspensions.some(x =>
+      x.team===team && String(x.num)===key && state.timer < Number(x.endGameTime)
+    );
+}
+
+function clearActiveSuspension(team, identifier){
+  const key=String(identifier ?? '');
+  state.activeSuspensions=(state.activeSuspensions||[]).filter(x =>
+    !(x.team===team && String(x.num)===key)
+  );
+}
+
+
 /* =========================================================
    RECUPERO AUTOMATICO DELLA GARA
    La gara viene conservata nel browser anche se la pagina viene
@@ -6276,9 +6395,10 @@ function renderPlayers(team){
     const hasNumber=String(num ?? '').trim()!=='';
     const card=document.createElement('div');
 
+    const activeTwo=isActiveSuspension(team,num);
     let cls='player-card';
     if(d.red)cls+=' expelled';
-    else if(d.two)cls+=' suspended';
+    else if(activeTwo)cls+=' suspended';
     else if(d.yellow)cls+=' yellow';
 
     card.className=cls;
@@ -6338,8 +6458,11 @@ function renderStaff(team){
   STAFF.forEach((_,i)=>{
     const letter=String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase();
     const d=state.staff[team][i];
+    const activeTwo=isActiveSuspension(team,letter);
     const card=document.createElement('div');
     card.className='staff-card';
+    if(d.red) card.classList.add('staff-expelled');
+    else if(activeTwo) card.classList.add('staff-suspended');
 
     // Ogni card occupa esattamente 1/5 della riga.
     card.style.setProperty('display','block','important');
@@ -6506,6 +6629,11 @@ function playerAction(team,index,type){
   const d=state.discipline[team][index];
   const num=state.numbers[team][index];
 
+  if((type==='GOAL' || type==='PENALTY') && isActiveSuspension(team,num)){
+    toast('2\' in corso: goal e rigore non consentiti');
+    return;
+  }
+
   snapshot();
 
   if(type==='PENALTY'){
@@ -6567,13 +6695,13 @@ function playerAction(team,index,type){
     if(d.two===3){
       d.red=true;
 
-      // Sul registro il 3° 2' genera DUE registrazioni:
-      // 1) il normale 2'
-      // 2) l'esclusione definitiva per 3x2'
+      // Il 3° 2' comporta espulsione definitiva.
+      // L'alone rosso non dipende più dal countdown.
+      clearActiveSuspension(team,num);
+
       addEvent(team,num,'TWO',"2'");
       addEvent(team,num,'RED',"ESCLUSIONE PER 3x2'");
 
-      startSuspension(team,num);
       stopForDisciplinary(team,num,'ESCLUSIONE PER 3x2\'');
     }else{
       addEvent(team,num,'TWO',"2'");
@@ -6587,8 +6715,11 @@ function playerAction(team,index,type){
 
   if(type==='RED'){
     d.red=true;
+
+    // Espulsione diretta: alone rosso permanente fino alla fine della gara.
+    clearActiveSuspension(team,num);
+
     addEvent(team,num,'RED','ESPULSIONE DIRETTA');
-    startSuspension(team,num);
     stopForDisciplinary(team,num,'ESPULSIONE DIRETTA');
     render();
   }
@@ -6649,7 +6780,7 @@ function staffAction(team,index,type){
     /* Un dirigente riceve un solo 2'. Il successivo provvedimento è direttamente espulsione. */
     if(d.two >= 1){
       d.red=true;
-      state.activeSuspensions = state.activeSuspensions.filter(x => !(x.team===team && String(x.num)===letter));
+      clearActiveSuspension(team,letter);
       addEvent(team,letter,'RED','ESPULSIONE');
       stopForDisciplinary(team,letter,'ESPULSIONE');
     }else{
@@ -6662,7 +6793,7 @@ function staffAction(team,index,type){
 
   if(type==='RED'){
     d.red=true;
-    state.activeSuspensions = state.activeSuspensions.filter(x => !(x.team===team && String(x.num)===letter));
+    clearActiveSuspension(team,letter);
     addEvent(team,letter,'RED','ESPULSIONE');
     stopForDisciplinary(team,letter,'ESPULSIONE');
   }
@@ -6788,10 +6919,26 @@ function confirmPhaseTransition(){
 
 function cancelPhaseTransition(){
   pendingPhaseTransition=null;
+  pendingEndPhase=null;
   el('phaseConfirmModal').style.display='none';
   state.running=false;
   render();
+  saveRecovery();
 }
+
+/*
+  GESTIONE FINE / INIZIO PERIODO
+  Adeguata alla logica del Referto Pallamano:
+  - a fine tempo il cronometro resta fermo;
+  - compare un popup che chiede conferma della FINE del periodo;
+  - solo dopo la conferma vengono memorizzati i dati del periodo;
+  - se è previsto un periodo successivo, compare un secondo popup
+    che chiede di confermare l'INIZIO del periodo successivo;
+  - annullando la richiesta la gara resta ferma sul periodo appena concluso;
+  - non viene modificata la logica di punteggio, eventi, supplementari o rigori.
+*/
+
+let pendingEndPhase=null;
 
 function finishHalf(){
   if(state.running)return;
@@ -6800,6 +6947,25 @@ function finishHalf(){
   if(state.timer!==end)return;
 
   const phase=state.phase;
+  const scoreA=Number(state.scoreA||0);
+  const scoreB=Number(state.scoreB||0);
+
+  // Primo popup: conferma della fine del periodo.
+  showPhaseTransition(
+    'FINE '+phaseLabel(phase),
+    `Risultato al termine del periodo: ${scoreA} - ${scoreB}`,
+    ()=>{
+      pendingEndPhase=null;
+      processFinishedPhase(phase);
+    }
+  );
+
+  pendingEndPhase=phase;
+  saveRecovery();
+}
+
+function processFinishedPhase(phase){
+  // Il periodo viene memorizzato SOLO dopo la conferma della sua fine.
   rememberCompletedPhase(phase);
 
   /* 1° TEMPO */
@@ -6808,13 +6974,14 @@ function finishHalf(){
     state.firstHalfScoreB=state.scoreB;
 
     showPhaseTransition(
-      'INIZIO 2° TEMPO',
-      `Parziale 1° tempo: ${state.scoreA} - ${state.scoreB}`,
+      'INIZIARE IL 2° TEMPO?',
+      `1° tempo terminato: ${state.scoreA} - ${state.scoreB}`,
       ()=>{
         state.phase=2;
         state.timer=getPhaseEnd(1);
         state.running=false;
         setPhaseStartScore();
+        addEvent('—','—','SYSTEM','FINE 1° TEMPO');
         addEvent('—','—','SYSTEM','INIZIO 2° TEMPO');
         render();
         saveRecovery();
@@ -6825,8 +6992,12 @@ function finishHalf(){
 
   /* FINE 2° TEMPO */
   if(phase===2){
-    state.secondHalfScoreA=state.scoreA-state.firstHalfScoreA;
-    state.secondHalfScoreB=state.scoreB-state.firstHalfScoreB;
+    // Manteniamo anche i dati storici già usati dal referto.
+    // Il contenitore dei parziali visualizza invece il punteggio totale.
+    state.secondHalfScoreA=state.scoreA;
+    state.secondHalfScoreB=state.scoreB;
+
+    addEvent('—','—','SYSTEM','FINE 2° TEMPO');
 
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='TEMPI_REGOLAMENTARI';
@@ -6836,8 +7007,8 @@ function finishHalf(){
 
     if(state.matchMode==='SUPPLEMENTARI'){
       showPhaseTransition(
-        'INIZIO 1° TEMPO SUPPLEMENTARE',
-        `Risultato dopo 2 tempi: ${state.scoreA} - ${state.scoreB}`,
+        'INIZIARE IL 1° TEMPO SUPPLEMENTARE?',
+        `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
         startFirstOvertime
       );
       return;
@@ -6846,8 +7017,8 @@ function finishHalf(){
     if(state.matchMode==='RIGORI'){
       state.motivoFineGara='RIGORI';
       showPhaseTransition(
-        'INIZIO TIRI DI RIGORE',
-        `Risultato dopo 2 tempi: ${state.scoreA} - ${state.scoreB}`,
+        'INIZIARE I TIRI DI RIGORE?',
+        `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
         startPenaltyShootout
       );
       return;
@@ -6858,17 +7029,17 @@ function finishHalf(){
     return;
   }
 
-  /* 1° SUPPLEMENTARE */
+  /* 1° TEMPO SUPPLEMENTARE */
   if(phase===3){
     showPhaseTransition(
-      'INIZIO 2° TEMPO SUPPLEMENTARE',
-      `Parziale 1° supplementare: ${state.phaseScores[3].A} - ${state.phaseScores[3].B}`,
+      'INIZIARE IL 2° TEMPO SUPPLEMENTARE?',
+      `1° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
       startSecondOvertime
     );
     return;
   }
 
-  /* 2° SUPPLEMENTARE */
+  /* 2° TEMPO SUPPLEMENTARE */
   if(phase===4){
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='2_TEMPI_SUPPLEMENTARI';
@@ -6877,24 +7048,24 @@ function finishHalf(){
     }
 
     showPhaseTransition(
-      'INIZIO 3° TEMPO SUPPLEMENTARE',
-      `Parità ${state.scoreA} - ${state.scoreB}: iniziano altri 2 tempi da 5'.`,
+      'INIZIARE IL 3° TEMPO SUPPLEMENTARE?',
+      `Ancora parità: ${state.scoreA} - ${state.scoreB}.`,
       startThirdOvertime
     );
     return;
   }
 
-  /* 3° SUPPLEMENTARE */
+  /* 3° TEMPO SUPPLEMENTARE */
   if(phase===5){
     showPhaseTransition(
-      'INIZIO 4° TEMPO SUPPLEMENTARE',
-      `Parziale 3° supplementare: ${state.phaseScores[5].A} - ${state.phaseScores[5].B}`,
+      'INIZIARE IL 4° TEMPO SUPPLEMENTARE?',
+      `3° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
       startFourthOvertime
     );
     return;
   }
 
-  /* 4° SUPPLEMENTARE */
+  /* 4° TEMPO SUPPLEMENTARE */
   if(phase===6){
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='4_TEMPI_SUPPLEMENTARI';
@@ -6904,10 +7075,11 @@ function finishHalf(){
 
     state.motivoFineGara='RIGORI';
     showPhaseTransition(
-      'INIZIO TIRI DI RIGORE',
-      `Ancora parità ${state.scoreA} - ${state.scoreB}.`,
+      'INIZIARE I TIRI DI RIGORE?',
+      `Ancora parità dopo i tempi supplementari: ${state.scoreA} - ${state.scoreB}.`,
       startPenaltyShootout
     );
+    return;
   }
 }
 
@@ -7313,7 +7485,10 @@ function startSuspensionWatcher(){
       return state.timer < x.endGameTime;
     });
 
-    if(before!==state.activeSuspensions.length)render();
+    if(before!==state.activeSuspensions.length){
+      render();
+      saveRecovery();
+    }
     renderSuspensions();
 
     if(!state.activeSuspensions.length){
