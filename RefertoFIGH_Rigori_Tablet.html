@@ -63,7 +63,174 @@
 }
 
 
-    </style>
+    
+/* =========================================================
+   GIOCATORI RIGORI - CONTENITORI 4 x 4
+   Layout ispirato al Referto Pallamano Tablet
+   ========================================================= */
+.players-rigori-grid{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-rows:repeat(4,minmax(0,1fr));
+    gap:5px;
+    padding:2px;
+    overflow:hidden;
+}
+
+.rigori-player-card{
+    min-width:0;
+    min-height:0;
+    height:100%;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    background:#f8fafc;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 1px 2px #0001;
+    box-sizing:border-box;
+    user-select:none;
+}
+
+.players-rigori-grid-a .rigori-player-card{
+    border-color:#bfdbfe;
+    background:#f8fbff;
+}
+.players-rigori-grid-b .rigori-player-card{
+    border-color:#ddd6fe;
+    background:#fbf9ff;
+}
+
+.rigori-player-card.available{
+    box-shadow:0 1px 3px #0002;
+}
+.rigori-player-card.available:hover{
+    transform:translateY(-1px);
+}
+.rigori-player-card.waiting{
+    opacity:.72;
+}
+.rigori-player-card.already-shot{
+    opacity:.62;
+    background:#f1f5f9;
+}
+.rigori-player-card.expelled{
+    background:#fef2f2;
+    border-color:#fca5a5;
+}
+
+.rigori-player-top{
+    height:26px;
+    min-height:26px;
+    flex:0 0 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:2px;
+    padding:1px 3px 0;
+    box-sizing:border-box;
+}
+
+.rigori-player-number{
+    min-width:40px;
+    height:22px;
+    line-height:22px;
+    border-radius:5px;
+    color:white;
+    text-align:center;
+    font-family:monospace;
+    font-size:16px;
+    font-weight:900;
+}
+
+.players-rigori-grid-a .rigori-player-number{
+    background:#0759a5;
+}
+.players-rigori-grid-b .rigori-player-number{
+    background:#6d28d9;
+}
+
+.rigori-player-goals{
+    font-size:9px;
+    font-weight:900;
+    color:#111827;
+    white-space:nowrap;
+}
+
+.rigori-player-name{
+    min-width:0;
+    height:18px;
+    flex:0 0 18px;
+    line-height:18px;
+    padding:0 3px;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:8px;
+    font-weight:900;
+    color:#334155;
+    text-transform:uppercase;
+}
+
+.rigori-player-stats{
+    height:16px;
+    flex:0 0 16px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:2px;
+    padding:1px 3px 3px;
+    box-sizing:border-box;
+}
+
+.rigori-player-stats span{
+    min-width:0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-align:center;
+    line-height:12px;
+    height:12px;
+    border-radius:3px;
+    background:#e2e8f0;
+    color:#475569;
+    font-size:6px;
+    font-weight:900;
+}
+
+.rigori-player-stats .yellow-active{
+    background:#fef3c7;
+    color:#92400e;
+}
+.rigori-player-stats .two-active{
+    background:#ffedd5;
+    color:#9a3412;
+}
+.rigori-player-stats .red-active{
+    background:#fecaca;
+    color:#b91c1c;
+}
+
+/* Colori coerenti con il Tablet: CASA blu, OSPITI viola */
+#panel-title-b{
+    color:#6d28d9 !important;
+}
+#panel-title-a{
+    color:#0759a5 !important;
+}
+
+@media (max-width:1100px){
+    .players-rigori-grid{gap:3px;padding:1px}
+    .rigori-player-top{height:24px;min-height:24px;flex-basis:24px;padding:1px 2px 0}
+    .rigori-player-number{min-width:34px;height:20px;line-height:20px;font-size:14px}
+    .rigori-player-goals{font-size:8px}
+    .rigori-player-name{height:16px;flex-basis:16px;line-height:16px;font-size:7px}
+    .rigori-player-stats{height:14px;flex-basis:14px;padding:1px 2px 2px}
+    .rigori-player-stats span{height:11px;line-height:11px;font-size:5.5px}
+}
+
+</style>
 </head>
 
     <!-- SCHERMATA COMPILAZIONE DISTINTE (SETUP) -->
@@ -437,25 +604,7 @@ DASHBOARD GARA
     </div>
 
 </div>
-                    <table class="w-full text-[11px] text-left border-collapse bg-white rounded-xl overflow-hidden">
-
-<thead>
-<tr class="bg-slate-100 text-slate-700 uppercase text-[10px] border-b border-slate-300">
-
-<th class="p-0.5 w-6 text-center">N°</th>
-<th class="p-0.5">Nominativo</th>
-
-<th class="p-0.5 w-6 text-center text-blue-400">G</th>
-<th class="p-0.5 w-6 text-center text-yellow-500">A</th>
-<th class="p-0.5 w-8 text-center text-orange-500">2'</th>
-<th class="p-0.5 w-5 text-center text-red-600">R</th>
-<th class="p-0.5 w-12 text-center">Tira</th>
-
-</tr>
-</thead>
-
-                        <tbody id="table-body-a" class="divide-y divide-slate-200"></tbody>
-                    </table>
+<div class="players-rigori-grid players-rigori-grid-a" id="players-rigori-a"></div>
                 </div>
             </div>
 
@@ -595,23 +744,7 @@ DASHBOARD GARA
 
     </div>
             </div>
-                    <table class="w-full text-[11px] text-left border-collapse bg-white rounded-xl overflow-hidden">
-                        <thead>
-<tr class="bg-slate-100 text-slate-700 uppercase text-[10px] border-b border-slate-300">
-
-<th class="p-0.5 w-6 text-center">N°</th>
-<th class="p-0.5">Nominativo</th>
-
-<th class="p-0.5 w-6 text-center text-blue-400">G</th>
-<th class="p-0.5 w-6 text-center text-yellow-500">A</th>
-<th class="p-0.5 w-8 text-center text-orange-500">2'</th>
-<th class="p-0.5 w-5 text-center text-red-600">R</th>
-<th class="p-0.5 w-12 text-center">Tira</th>
-
-</tr>
-</thead>
-                        <tbody id="table-body-b" class="divide-y divide-slate-200"></tbody>
-                    </table>
+<div class="players-rigori-grid players-rigori-grid-b" id="players-rigori-b"></div>
                 </div>
             </div>
 
@@ -1352,70 +1485,62 @@ function renderTable(team){
         ? currentRosterA.players
         : currentRosterB.players;
 
-    const tbody = document.getElementById(`table-body-${team.toLowerCase()}`);
+    const box = document.getElementById(`players-rigori-${team.toLowerCase()}`);
+    if(!box) return;
 
-    tbody.innerHTML = "";
+    box.innerHTML = "";
 
     roster
-    .sort((a, b) => (parseInt(a.num) || 999) - (parseInt(b.num) || 999))
-    .forEach(item => {
+      .slice()
+      .sort((a,b)=>(parseInt(a.num)||999)-(parseInt(b.num)||999))
+      .forEach(item => {
 
-            if(item.canShoot===undefined)
-                item.canShoot = !item.red;
+        if(item.canShoot===undefined)
+            item.canShoot = !item.red;
 
-            if(item.penaltyTaken===undefined)
-                item.penaltyTaken = false;
+        if(item.penaltyTaken===undefined)
+            item.penaltyTaken = false;
 
-            tbody.innerHTML += `
+        const canShoot = !!item.canShoot && !item.penaltyTaken && !item.red;
+        const card = document.createElement("div");
 
-<tr class="border-b border-slate-200">
+        let cls = "rigori-player-card";
+        if(item.red) cls += " expelled";
+        else if(item.penaltyTaken) cls += " already-shot";
+        else if(!item.canShoot) cls += " waiting";
+        else cls += " available";
 
-<td class="p-1 text-center font-black font-mono">
-${item.num}
-</td>
+        card.className = cls;
 
-<td class="p-1 font-semibold">
-${item.name}
-</td>
+        const safeName = String(item.name || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-<td class="p-1 text-center">
-${item.goals||0}
-</td>
+        card.innerHTML = `
+          <div class="rigori-player-top">
+            <div class="rigori-player-number">${item.num ?? "—"}</div>
+            <div class="rigori-player-goals">⚽ ${item.goals || 0}</div>
+          </div>
 
-<td class="p-1 text-center">
-${item.yellows||0}
-</td>
+          <div class="rigori-player-name">${safeName}</div>
 
-<td class="p-1 text-center">
-${item.suspensions||0}
-</td>
+          <div class="rigori-player-stats">
+            <span class="${item.yellows ? "yellow-active" : ""}">A ${item.yellows || 0}</span>
+            <span class="${item.suspensions ? "two-active" : ""}">2' ${item.suspensions || 0}/3</span>
+            <span class="${item.red ? "red-active" : ""}">${item.red ? "E" : "R"}</span>
+          </div>
+        `;
 
-<td class="p-1 text-center">
-${item.red ? "🟥" : ""}
-</td>
+        // Come nel referto Tablet: il contenitore del giocatore è il touch target.
+        if(canShoot){
+            card.addEventListener("click", function(){
+                handlePenalty7mPlayer(team, item.id);
+            });
+            card.style.cursor = "pointer";
+            card.style.touchAction = "manipulation";
+            card.title = "Tira il rigore";
+        }
 
-<td class="p-1 text-center">
-
-<button
-onclick="handlePenalty7mPlayer('${team}','${item.id}')"
-${(!item.canShoot || item.penaltyTaken) ? "disabled" : ""}
-class="px-2 py-1 rounded text-[10px] font-bold
-${(!item.canShoot || item.penaltyTaken)
-? "bg-slate-400 text-slate-700 cursor-not-allowed"
-: "bg-blue-700 hover:bg-blue-600 text-white"}">
-
-${item.penaltyTaken ? "✔" : "TIRA"}
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-        });
-
+        box.appendChild(card);
+      });
 }
 
 //=========================================
