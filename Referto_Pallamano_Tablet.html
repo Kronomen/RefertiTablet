@@ -5179,10 +5179,7 @@ tr.team-b td,
 .edit-staff-letter:focus{
   outline:2px solid #93c5fd;
 }
-.edit-staff-item.deleted .edit-staff-letter{
-  background:#f1f5f9;
-  color:#94a3b8;
-}
+.edit-staff-item.deleted .edit-staff-letter{background:#f1f5f9;color:#94a3b8}
 /* Il nominativo/cella sotto la lettera non viene più visualizzato. */
 .edit-staff-input{display:none !important}
 </style>
@@ -7564,6 +7561,9 @@ function openEditTeams(){
      Per i dirigenti compare esclusivamente la cella A-B-C-D-E: la lettera è fissa e può solo essere cancellata. */
 
   document.querySelectorAll('#editTeamsModal .edit-staff-letter').forEach(inp=>{
+    inp.addEventListener('click',function(){
+      this.select();
+    });
     inp.addEventListener('keydown',function(ev){
       // La lettera è fissa: è consentito solo cancellarla.
       if(ev.key==='Backspace' || ev.key==='Delete'){
@@ -7587,6 +7587,7 @@ function openEditTeams(){
       if(this.value && this.value!==expected) this.value=expected;
     });
   });
+
 
   document.querySelectorAll('#editTeamsModal .edit-player-input').forEach(inp=>{
     inp.addEventListener('focus', function(){
@@ -7706,8 +7707,7 @@ function saveEditTeams(){
     if(!state.staffNames[team]) state.staffNames[team]=STAFF.map(()=> '');
     const letters=[...document.querySelectorAll(`#editStaff${team} .edit-staff-letter`)];
     state.staffLetters[team]=STAFF.map((letter,i)=>letters[i]?.value.trim() ? letter : '');
-    /* I nominativi non sono più modificati da questo popup. Manteniamo
-       l'array solo per compatibilità con i dati già salvati. */
+    /* I nominativi non sono modificati da questo popup. */
     state.staffNames[team]=STAFF.map((letter,i)=>state.staffNames[team]?.[i] || '');
   });
 
