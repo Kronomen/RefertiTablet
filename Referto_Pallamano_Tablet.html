@@ -153,6 +153,11 @@ function closeEventModal(){
 
 function eventAction(type){
   if(!selected)return;
+  if(state.phase===7 && selected.kind==='PLAYER' && type==='GOAL'){
+    closeEventModal();
+    toast('Durante i rigori utilizzare il pulsante TIRA');
+    return;
+  }
 
   const s=selected;
   const identifier=s.kind==='PLAYER'
@@ -194,6 +199,84 @@ function eventAction(type){
     staffAction(s.team,s.index,type);
   }
 }
+
+/* =========================================================
+   SERIE RIGORI — LOGICA INTEGRATA DA RefertoFIGH_Rigori
+   ========================================================= */
+let pendingShootout=null;
+
+function handleShootoutShot(team,index){
+  ensureShootoutState();
+  if(state.phase!==7 || !state.shootout.started || state.shootout.finished)return;
+
+  const turnTeam=shootoutTeamForTurn();
+  if(team!==turnTeam){
+    toast(`Tocca a ${state.teams[turnTeam]}`);
+    return;
+  }
+
+  const num=String(state.numbers[team][index]??'').trim();
+  const d=state.discipline[team][index];
+  if(!num || d.red || !d.canShoot)return;
+
+  pendingShootout={team,index,num};
+  el('eventModal').style.display='none';
+  el('penaltyTitle').textContent=`TIRO DA 7 METRI · ${state.teams[team]} · N° ${num}`;
+  el('penaltyText').textContent='Seleziona il risultato del tiro dai 7 metri.';
+  el('penaltyModal').classList.remove('team-a','team-b');
+  el('penaltyModal').classList.add(team==='A'?'team-a':'team-b');
+  el('penaltyModal').style.display='flex';
+}
+
+function recordShootoutShot(goal){
+  if(!pendingShootout)return;
+  const {team,index,num}=pendingShootout;
+  const d=state.discipline[team][index];
+
+  if(d.red){closePenalty();return;}
+
+  const key=team==='A'?'takenA':'takenB';
+  if(state.shootout[key].includes(num)){closePenalty();return;}
+
+  snapshot();
+
+  state.shootout[key].push(num);
+  d.canShoot=false;
+  if(goal){
+    state.shootout[team==='A'?'scoreA':'scoreB']++;
+    d.goals++;
+    if(team==='A') state.scoreA++; else state.scoreB++;
+  }
+
+  state.shootout.shots.push({
+    id:state.shootout.shots.length+1,
+    phase:state.shootout.phase,
+    round:state.shootout.turn+1,
+    team,
+    playerNumber:num,
+    playerName:String(state.playerNames?.[team]?.[index]||''),
+    goal:!!goal,
+    scoreA:state.shootout.scoreA,
+    scoreB:state.shootout.scoreB,
+    timestamp:Date.now()
+  });
+
+  addEvent(team,num,'RIGORE',goal?'RIGORE REALIZZATO':'RIGORE ERRATO',`${state.scoreA}-${state.scoreB}`);
+  pendingShootout=null;
+  closePenalty();
+
+  if(checkShootoutEnd())return;
+  nextShootoutTurn();
+}
+
+function confirmPenaltyGoal(){
+  recordShootoutShot(true);
+}
+
+function confirmPenaltyMiss(){
+  recordShootoutShot(false);
+}
+
 /* GIOCATORI */
 .players-caption{flex:0 0 auto;text-align:center;font-size:8px;font-weight:900;color:#64748b;padding:1px 0}
 .players{flex:1;min-height:0;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:6px}
@@ -5799,6 +5882,10 @@ tr.team-b td,
 }
 </style>
 
+<style id="shootout-tablet-css">
+.shootout-shoot-btn{flex:0 0 22px;height:22px;margin:1px 3px;border:0;border-radius:5px;background:#eab308;color:#111;font-size:9px;font-weight:900}
+.shootout-shoot-btn:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed}
+</style>
 </head>
 
 <body>
@@ -6020,6 +6107,18 @@ tr.team-b td,
   </div>
 </div>
 
+<!-- POPUP SCELTA PRIMO TIRATORE -->
+<div id="firstShooterModal" class="modal-back">
+  <div class="modal" style="width:min(420px,92vw)">
+    <h3>SERIE DEI RIGORI</h3>
+    <p>Quale squadra esegue il primo tiro?</p>
+    <div class="modal-actions">
+      <button class="btn blue" style="min-height:52px" onclick="chooseFirstShooter('A')">CASA</button>
+      <button class="btn" style="min-height:52px;background:var(--team-away);color:#fff" onclick="chooseFirstShooter('B')">OSPITI</button>
+    </div>
+  </div>
+</div>
+
 <!-- POPUP RIGORE -->
 <div id="penaltyModal" class="modal-back">
   <div class="modal">
@@ -6125,6 +6224,19 @@ let selectedPenalty=null;
 let undoStack=[];
 
 function el(id){return document.getElementById(id)}
+function ensureShootoutState(){
+  if(!state.shootout || typeof state.shootout!=='object'){
+    state.shootout={started:false,finished:false,firstTeam:'',turn:0,phase:1,scoreA:0,scoreB:0,shots:[],takenA:[],takenB:[]};
+  }
+  state.shootout.turn=Number(state.shootout.turn||0);
+  state.shootout.phase=Number(state.shootout.phase||1);
+  state.shootout.scoreA=Number(state.shootout.scoreA||0);
+  state.shootout.scoreB=Number(state.shootout.scoreB||0);
+  state.shootout.shots=Array.isArray(state.shootout.shots)?state.shootout.shots:[];
+  state.shootout.takenA=Array.isArray(state.shootout.takenA)?state.shootout.takenA:[];
+  state.shootout.takenB=Array.isArray(state.shootout.takenB)?state.shootout.takenB:[];
+}
+
 
 function isActiveSuspension(team, identifier){
   const key=String(identifier ?? '');
@@ -6203,6 +6315,7 @@ function restoreMatch(){
 
     state=saved.state;
     state.staffNames=state.staffNames || {A:STAFF.map(()=>''),B:STAFF.map(()=>'' )};
+    ensureShootoutState();
 
     // Compatibilità con gare salvate con versioni precedenti.
     state.firstHalfScoreA=Number(state.firstHalfScoreA ?? 0);
@@ -6311,7 +6424,12 @@ function render(){
     // esclusivamente i periodi già conclusi.
     phaseScoreEl.style.display='flex';
   }
-  el('phase').textContent=phaseLabel(state.phase);
+  el('phase').textContent=state.phase===7 ? `RIGORI · ${state.shootout?.scoreA||0}-${state.shootout?.scoreB||0}` : phaseLabel(state.phase);
+  const sb=el('startBtn');
+  if(sb){
+    const dis=state.phase===7 || state.timer>=getPhaseEnd(state.phase);
+    sb.disabled=dis; sb.style.opacity=dis?'0.45':'1'; sb.style.pointerEvents=dis?'none':'auto';
+  }
   const hb=el('halfBtn');
   const end=getPhaseEnd(state.phase);
   const canAdvance=!state.running && state.timer===end && state.phase!==7;
@@ -6355,7 +6473,7 @@ function render(){
 
   // FINE GARA / FINE 1° TEMPO is shown only with the clock stopped
   // and only at the end of the relevant half.
-  if(state.phase===7){
+  if(false && state.phase===7){
     el('timer').classList.remove('blink');
   }
 
@@ -6414,6 +6532,13 @@ function renderPlayers(team){
         <span class="stat-yellow ${yellow?'active':''}">A${yellow?' ✓':''}</span>
         <span class="stat-two">2' ${d.two}/3</span>
       </div>
+      ${state.phase===7 && state.shootout?.started ? `
+        <button type="button"
+          class="shootout-shoot-btn"
+          ${(!d.canShoot || d.red || state.shootout.finished)?'disabled':''}
+          onclick="event.stopPropagation();handleShootoutShot('${team}',${i})">
+          ${d.canShoot ? 'TIRA' : '—'}
+        </button>` : ''}
       ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
       
     `;
@@ -6508,10 +6633,12 @@ function renderCounters(){
   ['A','B'].forEach(t=>{
     const tirati=state.penalty[t]||0;
     const realizzati=state.penaltyScored[t]||0;
-
+    const shoot=state.phase===7 ? ` · SERIE ${state.shootout?.scoreA||0}-${state.shootout?.scoreB||0}` : '';
     el(t==='A'?'aTimeout':'bTimeout').textContent=`T.O. ${state.timeouts[t]}/3`;
-    el(t==='A'?'aPenalty':'bPenalty').textContent=`RIGORI ${realizzati}/${tirati}`;
-    el('timeout'+t).disabled=state.timeouts[t]>=3;
+    el(t==='A'?'aPenalty':'bPenalty').textContent=state.phase===7
+      ? `RIGORI${shoot}`
+      : `RIGORI ${realizzati}/${tirati}`;
+    el('timeout'+t).disabled=state.timeouts[t]>=3 || state.phase===7;
   });
 }
 
@@ -6808,15 +6935,9 @@ function staffAction(team,index,type){
    ========================================================= */
 
 function toggleClock(){
-  if(state.phase===7){
-    // Nei rigori il cronometro continua normalmente.
-    state.running=!state.running;
-    el('timer').classList.remove('blink');
-    clearInterval(interval);
-    interval=null;
-    if(state.running) interval=setInterval(tick,1000);
-    render();
-    return;
+  if(false && state.phase===7){
+    state.running=false; clearInterval(interval); interval=null;
+    state.timer=0; el('timer').classList.remove('blink'); render(); return;
   }
 
   const end=getPhaseEnd(state.phase);
@@ -6841,13 +6962,9 @@ function toggleClock(){
 }
 
 function tick(){
-  if(state.phase===7){
-    // RIGORI: il tempo continua a scorrere senza lampeggio e senza fine automatica.
-    el('timer').classList.remove('blink');
-    state.timer++;
-    renderSuspensions();
-    render();
-    return;
+  if(false && state.phase===7){
+    state.running=false; clearInterval(interval); interval=null;
+    state.timer=0; el('timer').classList.remove('blink'); render(); return;
   }
 
   el('timer').classList.remove('blink');
@@ -6870,11 +6987,8 @@ function adjustTimer(delta){
   const current=Number.isFinite(Number(state.timer))?Number(state.timer):0;
   const step=Number(delta)||0;
 
-  if(state.phase===7){
-    state.timer=Math.max(getPhaseEnd(6),current+step);
-    el('timer').classList.remove('blink');
-    render();
-    return;
+  if(false && state.phase===7){
+    state.timer=0; el('timer').classList.remove('blink'); render(); return;
   }
 
   const min=state.phase===1?0:getPhaseEnd(state.phase-1);
@@ -7074,7 +7188,7 @@ function processFinishedPhase(phase){
     showPhaseTransition(
       'INIZIARE I TIRI DI RIGORE?',
       `Ancora parità dopo i tempi supplementari: ${state.scoreA} - ${state.scoreB}.`,
-      startPenaltyShootout
+      openTabletShootoutFile
     );
     return;
   }
@@ -7129,23 +7243,150 @@ function startFourthOvertime(){
 }
 
 
+
+/* =========================================================
+   PASSAGGIO ALLA SERIE DEI RIGORI — FILE SEPARATO
+   ========================================================= */
+function openTabletShootoutFile(){
+  try{
+    const copy=JSON.parse(JSON.stringify(state));
+    copy.running=false;
+    copy.phase=6;
+    localStorage.setItem('RefertoFIGH_Rigori_Tablet_Handoff',JSON.stringify({
+      version:1,createdAt:Date.now(),state:copy
+    }));
+    const w=window.open('RefertoFIGH_Rigori_Tablet.html','_blank');
+    if(!w){
+      toast('Impossibile aprire RefertoFIGH_Rigori_Tablet');
+      return;
+    }
+    setTimeout(()=>{try{window.close()}catch(e){}},250);
+  }catch(e){
+    console.error(e);
+    toast('Errore nel passaggio ai tiri di rigore');
+  }
+}
+
 function startPenaltyShootout(){
-  clearInterval(interval);
-  interval=null;
+  clearInterval(interval); interval=null;
+  ensureShootoutState();
 
   state.phase=7;
-  state.timer=getPhaseEnd(6);
   state.rigoriStarted=true;
-  state.running=true;
-
-  // FONDAMENTALE: durante i rigori il cronometro scorre.
+  state.shootout={started:false,finished:false,firstTeam:'',turn:0,phase:1,scoreA:0,scoreB:0,shots:[],takenA:[],takenB:[]};
+  state.running=false;
+  state.timer=0;
   el('timer').classList.remove('blink');
 
   addEvent('—','—','SYSTEM','INIZIO TIRI DI RIGORE');
-
-  interval=setInterval(tick,1000);
+  el('firstShooterModal').style.display='flex';
   render();
-  toast('TIRI DI RIGORE · CRONOMETRO ATTIVO');
+  saveRecovery();
+}
+
+function chooseFirstShooter(team){
+  ensureShootoutState();
+  if(state.shootout.started)return;
+  state.shootout.started=true;
+  state.shootout.firstTeam=team;
+  state.shootout.turn=0;
+  state.shootout.phase=1;
+  el('firstShooterModal').style.display='none';
+  updateShootoutAvailability();
+  addEvent(team,'—','SYSTEM',`PRIMO TIRO RIGORI · ${state.teams[team]}`);
+  render();
+  saveRecovery();
+}
+
+function shootoutTeamForTurn(){
+  const first=state.shootout.firstTeam==='B'?'B':'A';
+  return state.shootout.turn%2===0 ? first : (first==='A'?'B':'A');
+}
+
+function updateShootoutAvailability(){
+  ensureShootoutState();
+  ['A','B'].forEach(t=>state.discipline[t].forEach(d=>d.canShoot=false));
+  if(!state.shootout.started || state.shootout.finished)return;
+
+  const team=shootoutTeamForTurn();
+  const key=team==='A'?'takenA':'takenB';
+  let taken=state.shootout[key];
+
+  let available=state.numbers[team].map((num,i)=>({num,index:i})).filter(p=>{
+    const n=String(p.num??'').trim();
+    const d=state.discipline[team][p.index];
+    return n!=='' && !d.red && !taken.includes(n);
+  });
+
+  // Se tutti gli eleggibili hanno già tirato, si ricomincia il giro.
+  if(!available.length){
+    state.shootout[key]=[];
+    taken=[];
+    available=state.numbers[team].map((num,i)=>({num,index:i})).filter(p=>{
+      const n=String(p.num??'').trim();
+      return n!=='' && !state.discipline[team][p.index].red;
+    });
+  }
+  available.forEach(p=>state.discipline[team][p.index].canShoot=true);
+}
+
+function checkShootoutEnd(){
+  const a=state.shootout.shots.filter(x=>x.team==='A').length;
+  const b=state.shootout.shots.filter(x=>x.team==='B').length;
+  if(a!==b)return false;
+
+  const ga=state.shootout.scoreA, gb=state.shootout.scoreB;
+
+  if(a<5){
+    if(ga>gb+(5-b) || gb>ga+(5-a)){
+      finishShootout(); return true;
+    }
+    return false;
+  }
+
+  if(a===5){
+    if(ga!==gb){ finishShootout(); return true; }
+    return false;
+  }
+
+  // Morte improvvisa: confronto solo dopo il tiro di entrambe.
+  if(state.shootout.phase===2 && ga!==gb){
+    finishShootout(); return true;
+  }
+  return false;
+}
+
+function nextShootoutTurn(){
+  if(state.shootout.finished)return;
+  state.shootout.turn++;
+
+  if(state.shootout.phase===1 && state.shootout.turn>=10){
+    if(checkShootoutEnd())return;
+    state.shootout.phase=2;
+    addEvent('—','—','SYSTEM','INIZIO MORTE IMPROVVISA RIGORI');
+  }else if(checkShootoutEnd()){
+    return;
+  }
+
+  updateShootoutAvailability();
+  render();
+  saveRecovery();
+}
+
+function finishShootout(){
+  if(state.shootout.finished)return;
+  state.shootout.finished=true;
+  state.motivoFineGara='RIGORI';
+  state.running=false;
+  clearInterval(interval); interval=null;
+
+  const winner=state.shootout.scoreA>state.shootout.scoreB?'A':'B';
+  addEvent('—','—','SYSTEM',
+    `FINE SERIE RIGORI ${state.shootout.scoreA}-${state.shootout.scoreB} · ${state.teams[winner]}`);
+
+  render();
+  saveRecovery();
+  endMatch();
 }
 
 /* =========================================================
@@ -7352,6 +7593,16 @@ function preparaRefertoFIGH(){
       overtimeSeries: Number(state.overtimeSeries || 0),
       overtimeHalf: Number(state.overtimeHalf || 0),
       phaseScores: JSON.parse(JSON.stringify(state.phaseScores || {})),
+      penaltyShootout:{
+        started:!!state.shootout?.started,
+        finished:!!state.shootout?.finished,
+        firstTeam:state.shootout?.firstTeam||'',
+        phase:Number(state.shootout?.phase||1),
+        currentTurn:Number(state.shootout?.turn||0),
+        scoreA:Number(state.shootout?.scoreA||0),
+        scoreB:Number(state.shootout?.scoreB||0),
+        shots:JSON.parse(JSON.stringify(state.shootout?.shots||[]))
+      },
 
       risultati: {
         primoTempo: {A:firstA, B:firstB},
@@ -7797,7 +8048,11 @@ function resetMatch(){
     penalty:{A:0,B:0},
     penaltyScored:{A:0,B:0},
     activeSuspensions:[],
-    events:[]
+    events:[],
+    shootout:{
+      started:false,finished:false,firstTeam:'',turn:0,phase:1,
+      scoreA:0,scoreB:0,shots:[],takenA:[],takenB:[]
+    }
   };
 
   undoStack=[];
@@ -7875,6 +8130,7 @@ function installTouchControls(){
 }
 
 installTouchControls();
+ensureShootoutState();
 render();
 </script>
 
