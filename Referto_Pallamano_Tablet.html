@@ -6455,13 +6455,17 @@ function undo(){
 }
 
 function addEvent(team,num,type,text,result=''){
+  // RIS = punteggio esatto della gara nel momento in cui viene registrato l'evento.
+  // Vale per GOAL, RIGORE, TIME OUT, AMMONIZIONE, 2', ESPULSIONE e ogni altro evento.
+  const risultatoCorrente = `${state.scoreA}-${state.scoreB}`;
+
   state.events.push({
     time:currentTime(),
     team:team,
     num:num,
     type:type,
     text:text,
-    result:result
+    result:risultatoCorrente
   });
 }
 
@@ -6754,9 +6758,13 @@ function adjustTimer(delta){
 let pendingPhaseTransition=null;
 
 function rememberCompletedPhase(phase){
-  const a=Number(state.scoreA||0)-Number(state.phaseStartScoreA||0);
-  const b=Number(state.scoreB||0)-Number(state.phaseStartScoreB||0);
-  state.phaseScores[phase]={A:a,B:b};
+  // Nei parziali sopra il tempo di gioco deve comparire il risultato
+  // TOTALE della gara raggiunto fino alla fine di quel periodo,
+  // non il parziale realizzato soltanto in quel periodo.
+  state.phaseScores[phase]={
+    A:Number(state.scoreA||0),
+    B:Number(state.scoreB||0)
+  };
 }
 
 function setPhaseStartScore(){
