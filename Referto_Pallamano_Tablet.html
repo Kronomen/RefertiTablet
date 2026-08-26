@@ -7343,10 +7343,18 @@ function undo(){
     toast('Nessuna azione da annullare');
     return;
   }
+
+  // UNDO non deve modificare lo stato del cronometro.
+  // Se il timer stava correndo, continua a correre.
+  // Se era fermo, rimane fermo.
+  const timerWasRunning=!!state.running;
+
   state=JSON.parse(undoStack.pop());
-  state.running=false;
-  clearInterval(interval);
-  interval=null;
+  state.running=timerWasRunning;
+
+  // Non fermiamo e non ricreiamo l'intervallo:
+  // quando il timer è in movimento l'intervallo già esistente
+  // continua a lavorare sulla nuova copia di state.
   render();
 }
 
