@@ -10608,3 +10608,69 @@ document.addEventListener('keydown', function(e){
 </script>
 </body>
 </html>
+
+<style id="suspensions-compact-final">
+/* ESCLUSIONI IN CORSO: recupera circa 0,5 cm di altezza. */
+@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    grid-template-rows:
+      31px 10px 20px 12px minmax(0,1fr) 14px 72px !important;
+  }
+  .suspensions-title{
+    height:10px !important;
+    min-height:10px !important;
+    line-height:10px !important;
+    font-size:7px !important;
+    padding:0 !important;
+  }
+  .suspensions{
+    height:20px !important;
+    min-height:20px !important;
+    padding:1px 3px !important;
+    gap:3px !important;
+    overflow:hidden !important;
+  }
+  .suspension-item{
+    min-height:18px !important;
+    height:18px !important;
+    padding:0 3px !important;
+  }
+  .suspension-num,.suspension-time{
+    font-size:8px !important;
+    line-height:18px !important;
+  }
+}
+
+@media screen and (orientation:portrait) and (max-width:900px){
+  .suspensions-title{
+    height:8px !important;
+    min-height:8px !important;
+    line-height:8px !important;
+    font-size:6px !important;
+    padding:0 !important;
+  }
+  .suspensions{
+    height:12px !important;
+    min-height:12px !important;
+    padding:0 2px !important;
+    gap:2px !important;
+    overflow:hidden !important;
+  }
+  .suspension-item{
+    min-height:12px !important;
+    height:12px !important;
+    padding:0 2px !important;
+  }
+  .suspension-num,.suspension-time{
+    font-size:7px !important;
+    line-height:12px !important;
+  }
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    grid-template-rows:
+      23px 8px 12px 9px minmax(0,1fr) 10px 112px !important;
+  }
+}
+</style>
+
