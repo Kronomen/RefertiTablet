@@ -6296,6 +6296,97 @@ tr.team-b td,
 }
 </style>
 
+
+<style id="registro-colori-restore-v3">
+/* Registro gare: tutta la riga segue il colore scelto in CONFIGURAZIONE. */
+#log .log-row.log-a{
+  color:var(--team-home,#2563eb) !important;
+  border-left:4px solid var(--team-home,#2563eb) !important;
+}
+#log .log-row.log-b{
+  color:var(--team-away,#7c3aed) !important;
+  border-left:4px solid var(--team-away,#7c3aed) !important;
+}
+#log .log-row.log-a *,
+#log .log-row.log-b *{
+  color:inherit !important;
+}
+#log .log-row.log-a .log-res,
+#log .log-row.log-b .log-res{
+  font-weight:900 !important;
+}
+
+/* Countdown più compatto per recuperare spazio verticale nelle card. */
+.player-card > .discipline-status.countdown,
+.staff-card > .discipline-status.countdown{
+  flex:0 0 17px !important;
+  height:17px !important;
+  min-height:17px !important;
+  max-height:17px !important;
+  margin:0 3px 1px !important;
+  padding:0 2px !important;
+  border-radius:3px !important;
+  font-size:8px !important;
+  line-height:17px !important;
+}
+</style>
+
+
+<style id="registro-title-center-v1">
+/* Titolo REGISTRO GARE centrato */
+#registroTitle,
+.registro-title,
+#logTitle{
+  text-align:center !important;
+  justify-content:center !important;
+  align-items:center !important;
+  width:100% !important;
+}
+</style>
+
+
+<style id="registro-title-center-v2">
+#logTitle,
+#eventLogTitle,
+#registroGareTitle,
+.log-title,
+.event-log-title{
+  text-align:center !important;
+}
+</style>
+
+
+<style id="registro-title-true-center-v2">
+/* REGISTRO GARA centrato realmente rispetto a tutta la larghezza del contenitore.
+   Il pulsante UNDO rimane ancorato a destra. */
+.log-head{
+  display:grid !important;
+  grid-template-columns:1fr auto 1fr !important;
+  align-items:center !important;
+  justify-content:initial !important;
+}
+.log-title{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  text-align:center !important;
+  justify-self:center !important;
+  white-space:nowrap !important;
+}
+.log-actions{
+  grid-column:3 !important;
+  grid-row:1 !important;
+  justify-self:end !important;
+}
+</style>
+
+
+<style id="log-edit-subject-v2">
+#logEditSubjectBox select{
+  background:#fff !important;
+  color:#111827 !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -6521,6 +6612,11 @@ tr.team-b td,
 
     <div id="logEditTeamInfo" style="font-weight:900;text-align:center;margin-bottom:8px"></div>
 
+    <div id="logEditSubjectBox" style="margin:0 0 8px">
+      <div id="logEditSubjectLabel" style="font-size:9px;font-weight:900;text-align:center;margin-bottom:4px"></div>
+      <select id="logEditSubject" style="width:100%;min-height:38px;border:1px solid #cbd5e1;border-radius:7px;padding:4px 8px;font-weight:900;font-size:12px"></select>
+    </div>
+
     <div id="logEditPlayerActions" class="modal-actions event-actions">
       <button class="goal-btn" onclick="applyLogEventEdit('GOAL')">GOAL</button>
       <button class="penalty-btn" onclick="applyLogEventEdit('PENALTY_SCORED')">RIGORE REALIZZATO</button>
@@ -6689,6 +6785,8 @@ let selected=null;
 let selectedPenalty=null;
 let editingLogIndex=null;
 let editingLogTeam=null;
+let editingLogKind=null;
+let editingLogSubject=null;
 let undoStack=[];
 
 function el(id){return document.getElementById(id)}
@@ -7314,23 +7412,23 @@ function renderLog(){
   box.scrollTop=0;
 
 
-  // Uniforma l'intera riga dell'evento al colore della squadra.
-  const rows=el('eventLog')?.querySelectorAll('[data-team]');
-  rows?.forEach(row=>{
-    const team=row.getAttribute('data-team');
-    row.classList.toggle('team-a',team==='A');
-    row.classList.toggle('team-b',team==='B');
-    const color=team==='A'
+  // Tutta la riga dell'evento segue il colore della squadra.
+  box.querySelectorAll('.log-row').forEach(row=>{
+    const isHome=row.classList.contains('log-a');
+    const isAway=row.classList.contains('log-b');
+    if(!isHome && !isAway)return;
+
+    const color=isHome
       ? (state.teamColors?.A || '#2563eb')
       : (state.teamColors?.B || '#7c3aed');
+
     row.style.color=color;
+    row.style.borderLeftColor=color;
     row.querySelectorAll('*').forEach(node=>{
       node.style.color=color;
     });
   });
 }
-
-  applyRegistroTeamColors();
 
 
 function snapshot(){
@@ -7383,6 +7481,8 @@ function isPlayerLogEvent(e){
 function closeLogEditModal(){
   editingLogIndex=null;
   editingLogTeam=null;
+  editingLogKind=null;
+  editingLogSubject=null;
   const m=el('logEditModal');
   if(m)m.style.display='none';
 }
@@ -7399,13 +7499,85 @@ function editLogRow(index){
   editingLogIndex=index;
   editingLogTeam=e.team;
 
+  // Determiniamo il tipo del soggetto dalla squadra originale.
+  // Così un giocatore resta un giocatore anche se, cambiando squadra,
+  // il suo numero non esiste nella nuova rosa.
+  editingLogKind=isPlayerLogEventForTeam(e,e.team)
+    ? 'PLAYER'
+    : (STAFF.includes(String(e.num??'').trim().toUpperCase()) ? 'STAFF' : 'PLAYER');
+
+  editingLogSubject=String(e.num??'').trim().toUpperCase();
+
   updateLogEditModal();
 }
 
 function changeLogEditTeam(team){
   if(editingLogIndex===null) return;
   editingLogTeam=team;
+  // Ricrea immediatamente l'elenco dei giocatori/dirigenti della squadra scelta.
   updateLogEditModal();
+}
+
+
+function renderLogEditSubjectOptions(){
+  const box=el('logEditSubjectBox');
+  const select=el('logEditSubject');
+  const label=el('logEditSubjectLabel');
+  const e=state.events?.[editingLogIndex];
+
+  if(!box || !select || !label || !e)return;
+
+  if(e.type==='TIMEOUT'){
+    box.style.display='none';
+    return;
+  }
+
+  box.style.display='block';
+  select.innerHTML='';
+
+  if(editingLogKind==='PLAYER'){
+    label.textContent='GIOCATORE';
+    const nums=Array.isArray(state.numbers?.[editingLogTeam])
+      ? state.numbers[editingLogTeam] : [];
+
+    nums.forEach((n,i)=>{
+      const value=String(n??'').trim();
+      if(!value)return;
+
+      const name=String(state.playerNames?.[editingLogTeam]?.[i]??'').trim();
+      const option=document.createElement('option');
+      option.value=value;
+      option.textContent=name ? `N° ${value} · ${name}` : `N° ${value}`;
+      select.appendChild(option);
+    });
+  }else if(editingLogKind==='STAFF'){
+    label.textContent='DIRIGENTE';
+    const letters=Array.isArray(state.staffLetters?.[editingLogTeam])
+      ? state.staffLetters[editingLogTeam] : STAFF;
+
+    letters.forEach((letter,i)=>{
+      const value=String(letter??'').trim().toUpperCase();
+      if(!value)return;
+
+      const name=String(state.staffNames?.[editingLogTeam]?.[i]??'').trim();
+      const option=document.createElement('option');
+      option.value=value;
+      option.textContent=name ? `${value} · ${name}` : value;
+      select.appendChild(option);
+    });
+  }
+
+  const wanted=String(editingLogSubject??'').trim().toUpperCase();
+  const found=[...select.options].some(o=>String(o.value).toUpperCase()===wanted);
+
+  if(found){
+    select.value=wanted;
+  }else if(select.options.length){
+    select.selectedIndex=0;
+    editingLogSubject=select.value;
+  }
+
+  select.onchange=()=>{ editingLogSubject=select.value; };
 }
 
 function updateLogEditModal(){
@@ -7413,19 +7585,22 @@ function updateLogEditModal(){
   if(!e) return;
 
   const team=editingLogTeam || e.team;
-  const player=isPlayerLogEventForTeam(e,team);
+  const player=editingLogKind==='PLAYER';
 
   el('logEditTitle').textContent='MODIFICA EVENTO';
 
-  const subject=player
-    ? `N° ${e.num}`
-    : (e.type==='TIMEOUT' ? 'TIME OUT' : `N° ${e.num}`);
+  const currentSubject=editingLogSubject || e.num;
+  const subject=e.type==='TIMEOUT'
+    ? 'TIME OUT'
+    : (player ? `N° ${currentSubject}` : `DIRIGENTE ${currentSubject}`);
 
   el('logEditSubtitle').textContent=
     `${state.teams[team]} · ${subject} · ${e.text||e.type}`;
 
   el('logEditTeamInfo').textContent=
     `SQUADRA: ${state.teams[team]}`;
+
+  renderLogEditSubjectOptions();
 
   el('logEditTeamA').style.opacity=team==='A'?'1':'0.55';
   el('logEditTeamB').style.opacity=team==='B'?'1':'0.55';
@@ -7582,6 +7757,11 @@ function applyLogEventEdit(newType){
   if(!old || old.type==='SYSTEM') return;
 
   const newTeam=editingLogTeam || old.team;
+  const newSubject=String(
+    el('logEditSubject')?.value ||
+    editingLogSubject ||
+    old.num || ''
+  ).trim();
 
   snapshot();
 
@@ -7618,11 +7798,33 @@ function applyLogEventEdit(newType){
     text=v[1];
   }
 
-  // GOAL/RIGORE richiedono un giocatore nella squadra selezionata
-  // per poter aggiornare anche il dato personale.
-  if((type==='GOAL'||type==='PENALTY') &&
-     !isPlayerLogEventForTeam(old,newTeam)){
-    toast(`Il numero ${old.num} non è presente nella squadra ${state.teams[newTeam]}. Cambiare prima il numero o scegliere la squadra corretta.`);
+  // La variazione può cambiare sia squadra sia soggetto.
+  // Un giocatore può quindi passare, per esempio, da N° 7 CASA a N° 11 OSPITI.
+  // Lo stesso vale per i dirigenti (A/B/C/D/E).
+  if(editingLogKind==='PLAYER'){
+    const exists=state.numbers?.[newTeam]?.some(
+      v=>String(v??'').trim()===newSubject
+    );
+
+    if(!exists){
+      toast(`Il giocatore N° ${newSubject} non è presente nella squadra ${state.teams[newTeam]}`);
+      undoStack.pop();
+      return;
+    }
+  }else if(editingLogKind==='STAFF'){
+    const exists=(state.staffLetters?.[newTeam]||STAFF).some(
+      v=>String(v??'').trim().toUpperCase()===newSubject.toUpperCase()
+    );
+
+    if(!exists){
+      toast(`Il dirigente ${newSubject} non è presente nella squadra ${state.teams[newTeam]}`);
+      undoStack.pop();
+      return;
+    }
+  }
+
+  if((type==='GOAL'||type==='PENALTY') && editingLogKind!=='PLAYER'){
+    toast('GOAL e RIGORE possono essere assegnati solo a un giocatore');
     undoStack.pop();
     return;
   }
@@ -7630,6 +7832,7 @@ function applyLogEventEdit(newType){
   state.events[editingLogIndex]={
     ...old,
     team:newTeam,
+    num:newSubject,
     type,
     text
   };
