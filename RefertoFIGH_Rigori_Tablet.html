@@ -231,6 +231,79 @@
 }
 
 </style>
+<style id="popup-rigori-centered-style">
+#action-panel-A,
+#action-panel-B{
+    position:fixed !important;
+    left:50% !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translate(-50%,-50%) !important;
+    width:min(320px,82vw) !important;
+    max-width:320px !important;
+    margin:0 !important;
+    padding:14px !important;
+    z-index:99999 !important;
+}
+#action-panel-A .flex,
+#action-panel-B .flex{
+    gap:10px !important;
+}
+#action-panel-A button,
+#action-panel-B button{
+    min-height:52px !important;
+    height:52px !important;
+    font-size:15px !important;
+    touch-action:manipulation !important;
+}
+#action-title-A,
+#action-title-B{
+    font-size:14px !important;
+    margin-bottom:10px !important;
+}
+</style>
+
+<style id="popup-realizzazione-rigore-grande">
+/*
+  POPUP REALIZZAZIONE RIGORE
+  Deve essere più grande del popup che chiede CASA/OSPITI.
+  Rimane sempre centrato nel video.
+*/
+#action-panel-A,
+#action-panel-B{
+    width:min(520px,90vw) !important;
+    max-width:520px !important;
+    padding:26px !important;
+    border-radius:20px !important;
+    box-sizing:border-box !important;
+}
+
+#action-panel-A .flex,
+#action-panel-B .flex{
+    gap:16px !important;
+    width:100% !important;
+}
+
+#action-panel-A button,
+#action-panel-B button{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    min-height:78px !important;
+    height:78px !important;
+    font-size:20px !important;
+    font-weight:800 !important;
+    border-radius:12px !important;
+    touch-action:manipulation !important;
+}
+
+#action-title-A,
+#action-title-B{
+    font-size:21px !important;
+    line-height:1.3 !important;
+    margin-bottom:20px !important;
+}
+</style>
+
 </head>
 
     <!-- SCHERMATA COMPILAZIONE DISTINTE (SETUP) -->
@@ -1752,9 +1825,27 @@ function showActionPanel(
     // PORTA IN PRIMO PIANO
     //---------------------------------
 
-    panel.style.position = "absolute";
+    // POPUP CENTRATO AL CENTRO DEL VIDEO
+    // Più grande e facilmente utilizzabile sul tablet.
+    panel.style.position = "fixed";
+    panel.style.left = "50%";
+    panel.style.top = "50%";
+    panel.style.right = "auto";
+    panel.style.transform = "translate(-50%, -50%)";
+    panel.style.width = "min(320px, 82vw)";
+    panel.style.maxWidth = "320px";
+    panel.style.padding = "14px";
     panel.style.zIndex = "99999";
     panel.style.pointerEvents = "auto";
+    panel.style.margin = "0";
+
+    // Pulsanti più grandi per il tocco.
+    b1.style.minHeight = "52px";
+    b1.style.height = "52px";
+    b1.style.fontSize = "15px";
+    b2.style.minHeight = "52px";
+    b2.style.height = "52px";
+    b2.style.fontSize = "15px";
 
     b1.style.pointerEvents = "auto";
     b2.style.pointerEvents = "auto";
@@ -3633,56 +3724,266 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 #action-panel-A button,#action-panel-B button{min-height:42px!important;touch-action:manipulation!important}
 </style>
 <script id="tablet-rigori-handoff-loader">
+/*
+  CARICAMENTO AUTOMATICO DATI DA REFerto_PALLAMANO_TABLET
+  Priorità:
+  1. RefertoFIGH_Rigori_Tablet_Handoff
+  2. RefertoPallamanoTablet_Ripristino_v1
+  3. RefertoFIGH
+
+  In questo modo il file dei rigori può essere aperto anche direttamente
+  e non perde squadre, giocatori, dirigenti, dati gara, eventi e parziali.
+*/
 window.addEventListener('load',function(){
-  const raw=localStorage.getItem('RefertoFIGH_Rigori_Tablet_Handoff');
-  if(!raw)return;
   try{
-    const h=JSON.parse(raw),s=h.state||h;
-    const roster=team=>{
-      const nums=s.numbers?.[team]||[],disc=s.discipline?.[team]||[],names=s.playerNames?.[team]||[];
+    const readJSON = key => {
+      try{
+        const raw=localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){
+        console.warn('JSON non valido in localStorage:',key,e);
+        return null;
+      }
+    };
+
+    const handoff=readJSON('RefertoFIGH_Rigori_Tablet_Handoff');
+    const recovery=readJSON('RefertoPallamanoTablet_Ripristino_v1');
+    const referto=readJSON('RefertoFIGH');
+
+    let source=handoff || recovery || referto;
+    if(!source){
+      console.log('Nessun dato gara del Referto Pallamano disponibile.');
+      return;
+    }
+
+    // Il nuovo handoff contiene state; il recovery contiene direttamente state;
+    // RefertoFIGH contiene già currentRosterA/currentRosterB.
+    const s=source.state || source;
+
+    const rosterFromState=team=>{
+      const nums=s.numbers?.[team] || [];
+      const disc=s.discipline?.[team] || [];
+      const names=s.playerNames?.[team] || [];
+
       return nums.map((num,i)=>{
-        const n=String(num??'').trim(),d=disc[i]||{};
-        if(!n)return null;
-        return {id:n,num:n,name:String(names[i]||''),goals:Number(d.goals||0),
-          yellows:Number(d.yellow||0),suspensions:Number(d.two||0),red:!!d.red,
-          canShoot:!d.red,penaltyTaken:false,type:'P'};
+        const n=String(num ?? '').trim();
+        if(!n) return null;
+        const d=disc[i] || {};
+        return {
+          id:n,
+          num:n,
+          name:String(names[i] || `ATLETA #${n}`).toUpperCase(),
+          goals:Number(d.goals || 0),
+          yellows:Number(d.yellow || 0),
+          suspensions:Number(d.two || 0),
+          red:!!d.red,
+          canShoot:!d.red,
+          penaltyTaken:false,
+          type:'G'
+        };
       }).filter(Boolean);
     };
-    const officials=team=>{
-      const letters=s.staffLetters?.[team]||['A','B','C','D','E'],names=s.staffNames?.[team]||[],st=s.staff?.[team]||[];
+
+    const officialsFromState=team=>{
+      const letters=s.staffLetters?.[team] || [];
+      const names=s.staffNames?.[team] || [];
+      const staff=s.staff?.[team] || [];
+
       return letters.map((letter,i)=>{
-        const L=String(letter||'').trim();if(!L)return null;const d=st[i]||{};
-        return {id:'o_'+i,num:L,name:String(names[i]||('DIRIGENTE '+L)),goals:0,
-          yellows:Number(d.yellow||0),suspensions:Number(d.two||0),red:!!d.red,type:'D'};
+        const L=String(letter || '').trim().toUpperCase();
+        if(!L) return null;
+        const d=staff[i] || {};
+        return {
+          id:'o_'+i,
+          num:L,
+          name:String(names[i] || `DIRIGENTE ${L}`),
+          goals:0,
+          yellows:Number(d.yellow || 0),
+          suspensions:Number(d.two || 0),
+          red:!!d.red,
+          type:'D'
+        };
       }).filter(Boolean);
     };
-    const ps=s.phaseScores||{};
-    const partida={
-      jsonVersion:'tablet-rigori-1',generatedBy:'Referto_Pallamano_Tablet',
-      teamA:s.teams?.A||'CASA',teamB:s.teams?.B||'OSPITI',
-      scoreA:Number(s.scoreA||0),scoreB:Number(s.scoreB||0),
-      penaltyScoredA:Number(s.penaltyScored?.A||0),penaltyTotalA:Number(s.penalty?.A||0),
-      penaltyScoredB:Number(s.penaltyScored?.B||0),penaltyTotalB:Number(s.penalty?.B||0),
-      currentHalf:2,statoGara:'RIGORI',
-      firstHalfScoreA:Number(s.firstHalfScoreA||ps[1]?.A||0),firstHalfScoreB:Number(s.firstHalfScoreB||ps[1]?.B||0),
-      secondHalfScoreA:Number(s.secondHalfScoreA||ps[2]?.A||0),secondHalfScoreB:Number(s.secondHalfScoreB||ps[2]?.B||0),
-      overtime1ScoreA:Number(ps[3]?.A||0),overtime1ScoreB:Number(ps[3]?.B||0),
-      overtime2ScoreA:Number(ps[4]?.A||0),overtime2ScoreB:Number(ps[4]?.B||0),
-      overtime3ScoreA:Number(ps[5]?.A||0),overtime3ScoreB:Number(ps[5]?.B||0),
-      overtime4ScoreA:Number(ps[6]?.A??s.scoreA??0),overtime4ScoreB:Number(ps[6]?.B??s.scoreB??0),
-      penaltyShootout:{started:false,finished:false,winner:'',scoreA:0,scoreB:0,firstTeam:'',
-        currentTurn:0,phase:1,suddenDeath:false,shotsA:0,shotsB:0,goalsA:0,goalsB:0,missedA:0,missedB:0,shots:[]},
-      currentRosterA:{players:roster('A'),officials:officials('A')},
-      currentRosterB:{players:roster('B'),officials:officials('B')},
-      logEvents:(s.events||[]).map(e=>({tempo:e.time||'00:00',fase:'GARA',squadra:e.team||'',
-        numero:e.num||'',evento:e.text||e.event||'',risultato:e.result||''})),
+
+    // Se arriva direttamente da RefertoFIGH, manteniamo il roster già pronto.
+    const currentA = source.currentRosterA?.players
+      ? source.currentRosterA
+      : {players:rosterFromState('A'),officials:officialsFromState('A')};
+
+    const currentB = source.currentRosterB?.players
+      ? source.currentRosterB
+      : {players:rosterFromState('B'),officials:officialsFromState('B')};
+
+    const phaseScores=s.phaseScores || {};
+    const partita={
+      jsonVersion:'tablet-rigori-2',
+      generatedBy:'Referto_Pallamano_Tablet',
+      teamA:s.teams?.A || source.teamA || 'CASA',
+      teamB:s.teams?.B || source.teamB || 'OSPITI',
+
+      scoreA:Number(s.scoreA ?? source.scoreA ?? 0),
+      scoreB:Number(s.scoreB ?? source.scoreB ?? 0),
+
+      penaltyScoredA:Number(s.penaltyScored?.A ?? source.penaltyScoredA ?? 0),
+      penaltyTotalA:Number(s.penalty?.A ?? source.penaltyTotalA ?? 0),
+      penaltyScoredB:Number(s.penaltyScored?.B ?? source.penaltyScoredB ?? 0),
+      penaltyTotalB:Number(s.penalty?.B ?? source.penaltyTotalB ?? 0),
+
+      timerSeconds:Number(s.timer ?? source.timerSeconds ?? 0),
+      currentHalf:Number(s.phase ?? source.currentHalf ?? 2),
+      statoGara:'RIGORI',
+
+      firstHalfScoreA:Number(s.firstHalfScoreA ?? source.firstHalfScoreA ?? phaseScores[1]?.A ?? 0),
+      firstHalfScoreB:Number(s.firstHalfScoreB ?? source.firstHalfScoreB ?? phaseScores[1]?.B ?? 0),
+      secondHalfScoreA:Number(s.secondHalfScoreA ?? source.secondHalfScoreA ?? phaseScores[2]?.A ?? 0),
+      secondHalfScoreB:Number(s.secondHalfScoreB ?? source.secondHalfScoreB ?? phaseScores[2]?.B ?? 0),
+
+      overtime1ScoreA:Number(phaseScores[3]?.A ?? source.overtime1ScoreA ?? 0),
+      overtime1ScoreB:Number(phaseScores[3]?.B ?? source.overtime1ScoreB ?? 0),
+      overtime2ScoreA:Number(phaseScores[4]?.A ?? source.overtime2ScoreA ?? 0),
+      overtime2ScoreB:Number(phaseScores[4]?.B ?? source.overtime2ScoreB ?? 0),
+      overtime3ScoreA:Number(phaseScores[5]?.A ?? source.overtime3ScoreA ?? 0),
+      overtime3ScoreB:Number(phaseScores[5]?.B ?? source.overtime3ScoreB ?? 0),
+      overtime4ScoreA:Number(phaseScores[6]?.A ?? source.overtime4ScoreA ?? 0),
+      overtime4ScoreB:Number(phaseScores[6]?.B ?? source.overtime4ScoreB ?? 0),
+
+      currentRosterA:structuredClone(currentA),
+      currentRosterB:structuredClone(currentB),
+
+      logEvents:
+        (s.events || source.logEvents || []).map(e=>({
+          tempo:e.time || e.tempo || '00:00',
+          fase:e.phase || e.fase || 'GARA',
+          squadra:e.team || e.squadra || '',
+          numero:e.num || e.numero || '',
+          evento:e.text || e.event || e.evento || '',
+          risultato:e.result || e.risultato || ''
+        })),
+
+      penaltyShootout:{
+        started:false,finished:false,winner:'',
+        scoreA:0,scoreB:0,firstTeam:'',
+        currentTurn:0,phase:1,suddenDeath:false,
+        shotsA:0,shotsB:0,goalsA:0,goalsB:0,missedA:0,missedB:0,shots:[]
+      },
       rigori:[]
     };
-    if(typeof ripristinaPartita==='function')ripristinaPartita(partita);
-    if(typeof mostraPopupPrimoRigore==='function')mostraPopupPrimoRigore();
-    localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
+
+    // Mantieni anche i dati anagrafici presenti nel RefertoFIGH, quando disponibili.
+    [
+      'matchNumber','league','season','matchDate','matchTime',
+      'city','venue','referee1','referee2','delegate1','delegate2',
+      'timekeeper','secretary'
+    ].forEach(k=>{
+      if(source[k] !== undefined) partita[k]=source[k];
+      else if(s.matchData){
+        const map={
+          matchNumber:'matchNumber', league:'championship',
+          season:'season', matchDate:'date', matchTime:'time',
+          city:'localita', venue:'venue',
+          referee1:'referee1', referee2:'referee2',
+          delegate1:'delegate1', delegate2:'delegate2',
+          timekeeper:'timekeeper', secretary:'secretary'
+        };
+        if(map[k]) partita[k]=s.matchData[map[k]] || '';
+      }
+    });
+
+    console.log('DATI REFerto PALLAMANO CARICATI PER I RIGORI:',partita);
+
+    if(typeof ripristinaPartita==='function'){
+      ripristinaPartita(partita);
+    }else{
+      throw new Error('ripristinaPartita non disponibile');
+    }
+
+    if(typeof mostraPopupPrimoRigore==='function'){
+      setTimeout(()=>mostraPopupPrimoRigore(),100);
+    }
+
+    // Il passaggio Handoff è usa-e-getta; recovery/referto invece restano
+    // disponibili per eventuale recupero della gara.
+    if(handoff){
+      localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
+    }
+
   }catch(err){
-    console.error(err);alert('Errore nel caricamento della gara per i tiri di rigore.');
+    console.error('Errore caricamento dati Referto Pallamano -> Rigori:',err);
+    alert('Errore nel caricamento dei dati della gara dal Referto Pallamano.');
   }
 });
 </script>
+
+<style id="rigore-realizzazione-triplo-definitivo">
+/*
+  POPUP REALIZZAZIONE RIGORE — GRANDE
+  Il vecchio layout era limitato a 170px.
+  Qui lo portiamo a circa 600px (oltre 3 volte), mantenendolo
+  proporzionato allo schermo del tablet.
+*/
+#action-panel-A,
+#action-panel-B{
+    position:fixed !important;
+    left:50% !important;
+    right:auto !important;
+    top:50% !important;
+    bottom:auto !important;
+    transform:translate(-50%,-50%) !important;
+
+    width:min(600px,90vw) !important;
+    max-width:600px !important;
+    min-width:510px !important;
+
+    padding:30px !important;
+    border-radius:24px !important;
+    box-sizing:border-box !important;
+    z-index:99999 !important;
+}
+
+#action-panel-A .flex,
+#action-panel-B .flex{
+    display:flex !important;
+    width:100% !important;
+    gap:22px !important;
+}
+
+#action-panel-A button,
+#action-panel-B button{
+    flex:1 1 0 !important;
+    width:50% !important;
+    min-width:0 !important;
+    min-height:100px !important;
+    height:100px !important;
+    padding:12px 20px !important;
+    font-size:26px !important;
+    font-weight:800 !important;
+    border-radius:16px !important;
+    touch-action:manipulation !important;
+}
+
+#action-title-A,
+#action-title-B{
+    font-size:26px !important;
+    line-height:1.3 !important;
+    margin:0 0 24px !important;
+}
+</style>
+
+<style id="rigore-popup-3cm-lower">
+/* Sposta il popup GOAL/ERRATO circa 3 cm più in basso
+   rispetto al centro dello schermo. */
+#action-panel-A,
+#action-panel-B{
+    top:calc(50% + 110px) !important;
+}
+</style>
+
+<style id="rigore-popup-altri-6cm">
+/* Altri 6 cm verso il basso: totale circa 9 cm sotto il centro. */
+#action-panel-A,
+#action-panel-B{
+    top:calc(50% + 330px) !important;
+}
+</style>
+

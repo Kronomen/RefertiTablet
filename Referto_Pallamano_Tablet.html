@@ -6436,64 +6436,15 @@ tr.team-b td,
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
-<style id="config-bottom-buttons-v5">
+<style id="config-bottom-five-v3-only">
 #editTeamsModal .edit-restore{
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:5px !important;
-  margin-top:10px !important;
-  padding-top:8px !important;
-  border-top:1px solid rgba(0,0,0,.12) !important;
-  order:99 !important;
-}
-#editTeamsModal .edit-restore button{
-  width:100% !important;
-  min-height:30px !important;
-  height:30px !important;
-  padding:3px 6px !important;
-  font-size:9px !important;
-  line-height:1 !important;
-  border-radius:6px !important;
-}
-#editTeamsModal #configBottomActions{
-  display:grid !important;
-  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  gap:5px !important;
-  margin-top:5px !important;
-  padding-top:0 !important;
-  border-top:0 !important;
-}
-#editTeamsModal #configBottomActions button{
-  width:100% !important;
-  min-height:30px !important;
-  height:30px !important;
-  padding:3px 6px !important;
-  font-size:9px !important;
-  line-height:1 !important;
-  border-radius:6px !important;
-}
-#editTeamsModal .edit-restore,
-#editTeamsModal #configBottomActions{
-  flex-shrink:0 !important;
-}
-</style>
-
-
-<style id="config-bottom-five-buttons-v6">
-#editTeamsModal .config-bottom-actions-v6{
   display:grid !important;
   grid-template-columns:repeat(5,minmax(0,1fr)) !important;
   gap:5px !important;
-  width:100% !important;
-  margin-top:10px !important;
-  padding-top:8px !important;
-  border-top:1px solid rgba(0,0,0,.12) !important;
   align-items:stretch !important;
+  width:100% !important;
 }
-#editTeamsModal .config-bottom-actions-v6 button{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
+#editTeamsModal .edit-restore > button{
   width:100% !important;
   min-width:0 !important;
   height:30px !important;
@@ -6501,32 +6452,229 @@ tr.team-b td,
   padding:2px 4px !important;
   font-size:8px !important;
   line-height:1 !important;
-  font-weight:900 !important;
-  border-radius:6px !important;
   white-space:nowrap !important;
 }
-#editTeamsModal .config-bottom-actions-v6 input{
-  display:none !important;
-}
-@media(max-width:520px){
-  #editTeamsModal .config-bottom-actions-v6{
-    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
-    gap:3px !important;
-  }
-  #editTeamsModal .config-bottom-actions-v6 button{
-    font-size:7px !important;
-    padding:2px !important;
-  }
+#editTeamsModal .edit-restore > #loadMatchDataBtn{
+  white-space:normal !important;
+  line-height:1.05 !important;
 }
 </style>
 
 
-<style id="carica-dati-gara-wrap-v7">
-#editTeamsModal #loadMatchDataBtn{
-  white-space:normal !important;
-  line-height:1.05 !important;
-  overflow:visible !important;
-  word-break:normal !important;
+<style id="registro-event-colors-final">
+/* REGISTRO GARE
+   Eventi normali: colore della squadra.
+   INIZIO/FINE TEMPO: testo nero. */
+.log-row.log-a:not(.system-phase-event),
+.log-row.log-a:not(.system-phase-event) .log-time,
+.log-row.log-a:not(.system-phase-event) .log-team,
+.log-row.log-a:not(.system-phase-event) .log-num,
+.log-row.log-a:not(.system-phase-event) .log-event,
+.log-row.log-a:not(.system-phase-event) .log-res {
+  color: var(--team-home, #2563eb) !important;
+}
+.log-row.log-b:not(.system-phase-event),
+.log-row.log-b:not(.system-phase-event) .log-time,
+.log-row.log-b:not(.system-phase-event) .log-team,
+.log-row.log-b:not(.system-phase-event) .log-num,
+.log-row.log-b:not(.system-phase-event) .log-event,
+.log-row.log-b:not(.system-phase-event) .log-res {
+  color: var(--team-away, #7c3aed) !important;
+}
+.log-row.system-phase-event,
+.log-row.system-phase-event .log-time,
+.log-row.system-phase-event .log-team,
+.log-row.system-phase-event .log-num,
+.log-row.system-phase-event .log-event,
+.log-row.system-phase-event .log-res {
+  color:#000 !important;
+}
+</style>
+
+
+<style id="team-colors-final-authoritative-v1">
+/*
+  COLORE SQUADRE — FONTE UNICA DI VERITÀ
+  I colori scelti in CONFIGURAZIONE devono rimanere invariati
+  entrando nel referto e per tutta la gara.
+*/
+.team-title.a,
+.panel.team-a .name-input,
+.panel.team-a .team-counters,
+.panel.team-a .players-caption,
+.panel.team-a .staff-title,
+.panel.team-a .suspensions-title,
+#eventModal.team-a #eventTitle,
+#eventModal.team-a #eventSubtitle,
+#timeoutModal.team-a #timeoutTitle,
+#timeoutModal.team-a #timeoutCountdown,
+#penaltyModal.team-a #penaltyTitle{
+  color:var(--team-home,#2563eb) !important;
+}
+
+.team-title.b,
+.panel.team-b .name-input,
+.panel.team-b .team-counters,
+.panel.team-b .players-caption,
+.panel.team-b .staff-title,
+.panel.team-b .suspensions-title,
+#eventModal.team-b #eventTitle,
+#eventModal.team-b #eventSubtitle,
+#timeoutModal.team-b #timeoutTitle,
+#timeoutModal.team-b #timeoutCountdown,
+#penaltyModal.team-b #penaltyTitle{
+  color:var(--team-away,#7c3aed) !important;
+}
+
+.panel.team-a .player-number,
+.panel.team-a .player-event-btn,
+.panel.team-a .staff-label,
+.panel.team-a .staff-event-btn,
+.panel.team-a .timeout-btn,
+#eventModal.team-a .event-actions button,
+#penaltyModal.team-a .modal-actions button,
+#logEditTeamA{
+  background:var(--team-home,#2563eb) !important;
+  background-color:var(--team-home,#2563eb) !important;
+  border-color:var(--team-home,#2563eb) !important;
+  color:#fff !important;
+}
+
+.panel.team-b .player-number,
+.panel.team-b .player-event-btn,
+.panel.team-b .staff-label,
+.panel.team-b .staff-event-btn,
+.panel.team-b .timeout-btn,
+#eventModal.team-b .event-actions button,
+#penaltyModal.team-b .modal-actions button,
+#logEditTeamB{
+  background:var(--team-away,#7c3aed) !important;
+  background-color:var(--team-away,#7c3aed) !important;
+  border-color:var(--team-away,#7c3aed) !important;
+  color:#fff !important;
+}
+
+.panel.team-a .player-card,
+.panel.team-a .staff-card{
+  border-color:var(--team-home,#2563eb) !important;
+}
+.panel.team-b .player-card,
+.panel.team-b .staff-card{
+  border-color:var(--team-away,#7c3aed) !important;
+}
+
+.panel.team-a .suspension-item,
+#suspensionsA .suspension-item{
+  background:var(--team-home,#2563eb) !important;
+}
+.panel.team-b .suspension-item,
+#suspensionsB .suspension-item{
+  background:var(--team-away,#7c3aed) !important;
+}
+
+/* Registro gara: ogni evento mantiene il colore scelto. */
+#log .log-row.log-a,
+#eventLog .log-row.team-a,
+#eventLog .event-row.team-a{
+  color:var(--team-home,#2563eb) !important;
+  border-left-color:var(--team-home,#2563eb) !important;
+}
+#log .log-row.log-a *,
+#eventLog .log-row.team-a *,
+#eventLog .event-row.team-a *{
+  color:var(--team-home,#2563eb) !important;
+}
+
+#log .log-row.log-b,
+#eventLog .log-row.team-b,
+#eventLog .event-row.team-b{
+  color:var(--team-away,#7c3aed) !important;
+  border-left-color:var(--team-away,#7c3aed) !important;
+}
+#log .log-row.log-b *,
+#eventLog .log-row.team-b *,
+#eventLog .event-row.team-b *{
+  color:var(--team-away,#7c3aed) !important;
+}
+
+/* Testate/pannelli della squadra. */
+.panel-head.a{
+  border-bottom-color:var(--team-home,#2563eb) !important;
+}
+.panel-head.b{
+  border-bottom-color:var(--team-away,#7c3aed) !important;
+}
+
+/* Variabili storiche: anche il layout iniziale resta sincronizzato. */
+:root{
+  --team-a-color:var(--team-home,#2563eb);
+  --team-b-color:var(--team-away,#7c3aed);
+}
+</style>
+
+
+<style id="config-player-number-order-v1">
+.player-card.no-number{
+  opacity:.55 !important;
+  pointer-events:none !important;
+}
+.player-card.no-number .player-number{
+  opacity:.55 !important;
+  cursor:not-allowed !important;
+}
+</style>
+
+
+<style id="discipline-ok-centered">
+/* Il popup PROVVEDIMENTO ha un solo pulsante: OK deve essere centrato. */
+#disciplineModal .discipline-actions{
+  display:grid !important;
+  grid-template-columns:minmax(0,180px) !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+#disciplineModal .discipline-actions button{
+  width:100% !important;
+  justify-self:center !important;
+}
+</style>
+
+
+<style id="phase-confirm-centered">
+/* Popup FINE/INIZIO TEMPO:
+   nessun ANNULLA; un solo pulsante CONFERMA perfettamente centrato. */
+#phaseConfirmModal .phase-confirm-actions{
+  display:grid !important;
+  grid-template-columns:minmax(0,180px) !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+#phaseConfirmModal .phase-confirm-actions button{
+  width:100% !important;
+  justify-self:center !important;
+  margin:0 !important;
+}
+</style>
+
+
+<style id="all-phases-confirm-centered">
+/*
+  INIZIO/FINE TEMPO e SUPPLEMENTARI:
+  il popup di transizione usa sempre un'unica azione CONFERMA,
+  centrata. La regola è volutamente indipendente dal nome/fase.
+*/
+#phaseConfirmModal .phase-confirm-actions{
+  display:flex !important;
+  flex-direction:row !important;
+  justify-content:center !important;
+  align-items:center !important;
+  width:100% !important;
+}
+#phaseConfirmModal .phase-confirm-actions button.green{
+  width:180px !important;
+  min-width:180px !important;
+  margin:0 auto !important;
+  justify-self:center !important;
 }
 </style>
 
@@ -6669,7 +6817,7 @@ tr.team-b td,
       <section class="edit-team-box">
         <input id="editTeamAName" class="edit-team-name" value="CASA" maxlength="30">
         <div class="team-color-section">
-          <div class="team-color-title">COLORE SQUADRA
+          <div class="team-color-title">COLORE SQUADRA</div>
           <div id="editTeamAColors" class="team-color-palette"></div>
         </div>
         <div class="edit-section-title">GIOCATORI</div>
@@ -6719,14 +6867,15 @@ tr.team-b td,
       </div>
     </div>
 
-    
-    <div class="edit-restore config-bottom-actions-v6">
-      <button id="restoreBtn" class="btn blue" type="button" onclick="restoreMatch()">RIPRISTINA</button>
-      <button id="openSavedBtn" class="btn gray" type="button" onclick="openSavedJson()">APRI</button>
-      <button id="loadMatchDataBtn" class="btn green" type="button" onclick="openMatchDataFile()">CARICA<br>DATI GARA</button>
-      <button id="closeConfigBtn" class="btn green" type="button" onclick="closeConfigAndStart()">CHIUDI</button>
-      <button id="exitConfigBtn" class="btn red" type="button" onclick="goToIndex()">ESCI</button>
-
+    <div class="edit-restore" style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <button id="restoreBtn" class="btn blue" style="width:100%;display:none" type="button" onclick="restoreMatch()">RIPRISTINA</button>
+      <button id="openSavedBtn" class="btn gray" style="width:100%" type="button" onclick="openSavedJson()">APRI</button>
+      <button id="loadMatchDataBtn" class="btn green" style="width:100%" type="button" onclick="openMatchDataFile()">CARICA DATI GARA</button>
+      
+      <button id="closeConfigBtn" class="btn green" type="button"
+              onclick="closeConfigAndStart()">REFERTO</button>
+      <button id="exitConfigBtn" class="btn red" type="button"
+              onclick="goToIndex()">ESCI</button>
       <input id="savedJsonInput" type="file" accept=".json,application/json" style="display:none" onchange="loadSavedJson(event)">
       <input id="matchDataFileInput" type="file" accept=".xlsx,.xlsm,.xls" style="display:none" onchange="loadMatchDataExcel(event)">
     </div>
@@ -6736,6 +6885,10 @@ tr.team-b td,
       
     </div>
   </div>
+
+      <div class="config-bottom-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+      </div>
+</div>
 
 <!-- TIME OUT -->
 <div id="timeoutModal" class="modal-back">
@@ -6845,9 +6998,8 @@ tr.team-b td,
   <div class="modal phase-confirm-modal">
     <div id="phaseConfirmTitle" style="font-size:17px;font-weight:900;text-align:center"></div>
     <div id="phaseConfirmText" style="margin-top:8px;text-align:center;font-size:12px;font-weight:800"></div>
-    <div class="modal-actions" style="margin-top:14px">
-      <button class="green" onclick="confirmPhaseTransition()">✓ CONFERMA</button>
-      <button class="gray" onclick="cancelPhaseTransition()">✕ ANNULLA</button>
+    <div class="modal-actions phase-confirm-actions" style="margin-top:14px">
+      <button class="green" onclick="confirmPhaseTransition()">CONFERMA</button>
     </div>
   </div>
 </div>
@@ -6857,9 +7009,8 @@ tr.team-b td,
   <div class="modal">
     <h3 id="disciplineTitle">PROVVEDIMENTO</h3>
     <p id="disciplineText"></p>
-    <div class="modal-actions">
+    <div class="modal-actions discipline-actions">
       <button class="green" onclick="closeDiscipline()">OK</button>
-      
     </div>
   </div>
 </div>
@@ -7819,6 +7970,7 @@ function renderPlayers(team){
 
     const activeTwo=isActiveSuspension(team,num);
     let cls='player-card';
+    if(!hasNumber) cls+=' no-number';
     if(d.red)cls+=' expelled';
     else if(activeTwo)cls+=' suspended';
     else if(d.yellow)cls+=' yellow';
@@ -8027,7 +8179,8 @@ function renderLog(){
   box.classList.toggle('log-editable',!state.running);
   box.innerHTML=[...events].reverse().map((e,rev)=>{
     const idx=events.length-1-rev;
-    const cls=e.team==='A'?'log-a':(e.team==='B'?'log-b':'');
+    const phaseEvent=/^(?:INIZIO|FINE)\s+(?:1°|2°|3°|4°)\s+TEMPO(?:\s+SUPPLEMENTARE)?$/.test(String(e.text||e.event||'').trim());
+    const cls=(e.team==='A'?'log-a':(e.team==='B'?'log-b':''))+(phaseEvent?' system-phase-event':'');
     let text=String(e.text||e.event||'').replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'').replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'').trim();
     const num=e.num&&e.num!=='—'?e.num:'';
     const editable=!state.running&&e.type!=='SYSTEM';
@@ -8040,6 +8193,13 @@ function renderLog(){
 
   // Tutta la riga dell'evento segue il colore della squadra.
   box.querySelectorAll('.log-row').forEach(row=>{
+    if(row.classList.contains('system-phase-event')){
+      row.style.color='#000';
+      row.style.borderLeftColor='#000';
+      row.querySelectorAll('*').forEach(node=>node.style.color='#000');
+      return;
+    }
+
     const isHome=row.classList.contains('log-a');
     const isAway=row.classList.contains('log-b');
     if(!isHome && !isAway)return;
@@ -8715,6 +8875,16 @@ function hasSystemEvent(text){
   );
 }
 
+function recordSystemPhaseEvent(text){
+  if(!text)return false;
+  if(hasSystemEvent(text))return false;
+
+  // Gli eventi di cambio periodo sono eventi reali del Registro Gare.
+  // Vengono registrati con il tempo corrente e il punteggio corrente.
+  addEvent('—','—','SYSTEM',text,`${state.scoreA}-${state.scoreB}`);
+  return true;
+}
+
 function toggleClock(){
   if(false && state.phase===7){
     state.running=false; clearInterval(interval); interval=null;
@@ -8734,9 +8904,7 @@ function toggleClock(){
     el('timer').classList.remove('blink');
 
     const startEvent=getPhaseStartEventText(state.phase);
-    if(startEvent && !hasSystemEvent(startEvent)){
-      addEvent('—','—','SYSTEM',startEvent);
-    }
+    recordSystemPhaseEvent(startEvent);
   }else if(state.timer>0){
     el('timer').classList.add('blink');
   }
@@ -8763,6 +8931,12 @@ function tick(){
     state.running=false;
     clearInterval(interval);
     interval=null;
+    const startBtn=el('startBtn');
+    if(startBtn){
+      startBtn.disabled=true;
+      startBtn.style.opacity='0.45';
+      startBtn.style.pointerEvents='none';
+    }
     beep();
     toast('FINE '+phaseLabel(state.phase));
   }
@@ -8837,6 +9011,24 @@ function cancelPhaseTransition(){
 
 let pendingEndPhase=null;
 
+
+function finishCurrentPeriodByF9(){
+  // F9 equivale a "fine tempo": porta il cronometro esattamente
+  // alla fine del periodo e passa attraverso lo stesso flusso di finishHalf().
+  if(state.running){
+    state.running=false;
+    clearInterval(interval);
+    interval=null;
+  }
+
+  const end=getPhaseEnd(state.phase);
+  state.timer=end;
+  el('timer').classList.remove('blink');
+  render();
+
+  finishHalf();
+}
+
 function finishHalf(){
   if(state.running)return;
 
@@ -8891,7 +9083,10 @@ function processFinishedPhase(phase){
         state.timer=getPhaseEnd(1);
         state.running=false;
         setPhaseStartScore();
-        if(!hasSystemEvent('FINE 1° TEMPO')) addEvent('—','—','SYSTEM','FINE 1° TEMPO');
+
+        recordSystemPhaseEvent('FINE 1° TEMPO');
+        // L'evento INIZIO 2° TEMPO viene scritto quando viene dato START,
+        // non semplicemente quando si chiude il popup di transizione.
         render();
         saveRecovery();
       }
@@ -8906,33 +9101,46 @@ function processFinishedPhase(phase){
     state.secondHalfScoreA=state.scoreA;
     state.secondHalfScoreB=state.scoreB;
 
-    if(!hasSystemEvent('FINE 2° TEMPO')) addEvent('—','—','SYSTEM','FINE 2° TEMPO');
+    recordSystemPhaseEvent('FINE 2° TEMPO');
 
-    if(state.scoreA!==state.scoreB){
+    /*
+      FINE 2° TEMPO:
+      la modalità scelta in CONFIGURAZIONE decide il proseguimento.
+      RIGORI deve portare al popup dei rigori dopo il 2° tempo
+      (se il risultato è pari), senza chiudere la gara come STANDARD.
+    */
+    if(state.matchMode==='RIGORI'){
+      if(state.scoreA===state.scoreB){
+        state.motivoFineGara='RIGORI';
+        showPhaseTransition(
+          'INIZIARE I TIRI DI RIGORE?',
+          `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
+          startPenaltyShootout
+        );
+        return;
+      }
+
       state.motivoFineGara='TEMPI_REGOLAMENTARI';
       endMatch();
       return;
     }
 
     if(state.matchMode==='SUPPLEMENTARI'){
-      showPhaseTransition(
-        'INIZIARE IL 1° TEMPO SUPPLEMENTARE?',
-        `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
-        startFirstOvertime
-      );
+      if(state.scoreA===state.scoreB){
+        showPhaseTransition(
+          'INIZIARE IL 1° TEMPO SUPPLEMENTARE?',
+          `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
+          startFirstOvertime
+        );
+        return;
+      }
+
+      state.motivoFineGara='TEMPI_REGOLAMENTARI';
+      endMatch();
       return;
     }
 
-    if(state.matchMode==='RIGORI'){
-      state.motivoFineGara='RIGORI';
-      showPhaseTransition(
-        'INIZIARE I TIRI DI RIGORE?',
-        `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
-        startPenaltyShootout
-      );
-      return;
-    }
-
+    // Modalità STANDARD.
     state.motivoFineGara='TEMPI_REGOLAMENTARI';
     endMatch();
     return;
@@ -8940,7 +9148,7 @@ function processFinishedPhase(phase){
 
   /* FINE 1° TEMPO SUPPLEMENTARE */
   if(phase===3){
-    if(!hasSystemEvent('FINE 1° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 1° TEMPO SUPPLEMENTARE');
+    recordSystemPhaseEvent('FINE 1° TEMPO SUPPLEMENTARE');
     showPhaseTransition(
       'INIZIARE IL 2° TEMPO SUPPLEMENTARE?',
       `1° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
@@ -8951,7 +9159,7 @@ function processFinishedPhase(phase){
 
   /* FINE 2° TEMPO SUPPLEMENTARE */
   if(phase===4){
-    if(!hasSystemEvent('FINE 2° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 2° TEMPO SUPPLEMENTARE');
+    recordSystemPhaseEvent('FINE 2° TEMPO SUPPLEMENTARE');
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='2_TEMPI_SUPPLEMENTARI';
       endMatch();
@@ -8968,7 +9176,7 @@ function processFinishedPhase(phase){
 
   /* FINE 3° TEMPO SUPPLEMENTARE */
   if(phase===5){
-    if(!hasSystemEvent('FINE 3° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 3° TEMPO SUPPLEMENTARE');
+    recordSystemPhaseEvent('FINE 3° TEMPO SUPPLEMENTARE');
     showPhaseTransition(
       'INIZIARE IL 4° TEMPO SUPPLEMENTARE?',
       `3° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
@@ -8979,7 +9187,7 @@ function processFinishedPhase(phase){
 
   /* FINE 4° TEMPO SUPPLEMENTARE */
   if(phase===6){
-    if(!hasSystemEvent('FINE 4° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 4° TEMPO SUPPLEMENTARE');
+    recordSystemPhaseEvent('FINE 4° TEMPO SUPPLEMENTARE');
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='4_TEMPI_SUPPLEMENTARI';
       endMatch();
@@ -9003,6 +9211,7 @@ function startFirstOvertime(){
   state.timer=getPhaseEnd(2);
   state.running=false;
   setPhaseStartScore();
+  recordSystemPhaseEvent(getPhaseStartEventText(state.phase));
   render();
   saveRecovery();
 }
@@ -9014,6 +9223,7 @@ function startSecondOvertime(){
   state.timer=getPhaseEnd(3);
   state.running=false;
   setPhaseStartScore();
+  recordSystemPhaseEvent(getPhaseStartEventText(state.phase));
   render();
   saveRecovery();
 }
@@ -9025,6 +9235,7 @@ function startThirdOvertime(){
   state.timer=getPhaseEnd(4);
   state.running=false;
   setPhaseStartScore();
+  recordSystemPhaseEvent(getPhaseStartEventText(state.phase));
   render();
   saveRecovery();
 }
@@ -9036,6 +9247,7 @@ function startFourthOvertime(){
   state.timer=getPhaseEnd(5);
   state.running=false;
   setPhaseStartScore();
+  recordSystemPhaseEvent(getPhaseStartEventText(state.phase));
   render();
   saveRecovery();
 }
@@ -9431,7 +9643,7 @@ function preparaRefertoFIGH(){
       teamB: state.teams?.B || "",
 
       matchNumber: state.matchData?.matchNumber || state.matchNumber || "",
-      modalitaGara: state.matchMode || 'STANDARD',
+      modalitaGara: String(state.matchMode || el('matchModeInput')?.value || 'STANDARD'),
       league: state.matchData?.championship || state.championship || "",
       group: "",
       season: state.matchData?.season || state.season || "",
@@ -9671,6 +9883,16 @@ function applyTeamColors(colors){
   root.style.setProperty('--team-home',c.A || '#2563eb');
   root.style.setProperty('--team-away',c.B || '#7c3aed');
 
+  // Anche le variabili storiche usate dal layout iniziale devono
+  // seguire sempre il colore scelto in CONFIGURAZIONE.
+  root.style.setProperty('--a',c.A || '#2563eb');
+  root.style.setProperty('--b',c.B || '#7c3aed');
+
+  // Alias usati dal Registro Gare: devono seguire sempre i colori
+  // scelti nella Configurazione.
+  root.style.setProperty('--team-a-color',c.A || '#2563eb');
+  root.style.setProperty('--team-b-color',c.B || '#7c3aed');
+
   try{
     root.style.setProperty(
       '--team-home-bg',
@@ -9751,7 +9973,7 @@ function openEditTeams(){
     const staffBox=el('editStaff'+team);
     staffBox.innerHTML=STAFF.map((letter,i)=>{
       const nome=String((state.staffNames?.[team]?.[i]) ?? '');
-      const attiva=String((state.staffLetters?.[team]?.[i]) ?? letter).trim() !== '';
+      const attiva=String((state.staffLetters?.[team]?.[i]) ?? '').trim() !== '';
       return `<div class="edit-staff-item ${attiva?'':'deleted'}">
         <input class="edit-staff-letter"
                data-team="${team}" data-index="${i}"
@@ -9831,16 +10053,40 @@ function openEditTeams(){
 }
 
 function closeEditTeams(){
+  if(!validateAndSortPlayerNumbers(true)){
+    toast('Numeri duplicati: correggere prima di chiudere');
+    return false;
+  }
+
+  // Le lettere dei dirigenti sono fisse. Se l'utente ne cancella una,
+  // il relativo slot deve restare vuoto e disabilitato.
+  ['A','B'].forEach(team=>{
+    if(!state.staffLetters[team]) state.staffLetters[team]=STAFF.map(()=> '');
+    const inputs=[...document.querySelectorAll(`#editStaff${team} .edit-staff-letter`)];
+    state.staffLetters[team]=STAFF.map((letter,i)=>{
+      const inp=inputs[i];
+      return inp && inp.value.trim() ? letter : '';
+    });
+  });
+
+  const selectedMatchMode=el('matchModeInput')?.value;
+  if(selectedMatchMode) state.matchMode=selectedMatchMode;
+
   ensureTeamColors();
   configTeamColors={A:state.teamColors.A,B:state.teamColors.B};
   applyTeamColors(state.teamColors);
   el('editTeamsModal').style.display='none';
+  return true;
 }
 
 
 function selectMatchMode(mode){
   const input=el('matchModeInput');
   if(input)input.value=mode;
+
+  // Mantieni immediatamente la modalità scelta anche nello state.
+  state.matchMode=mode;
+
   updateConfigModeUI();
 }
 
@@ -9851,39 +10097,92 @@ function updateConfigModeUI(){
   });
 }
 
+
+function validateAndSortPlayerNumbers(showError=true){
+  let valid=true;
+  let firstError=null;
+  const duplicateTeams=[];
+
+  ['A','B'].forEach(team=>{
+    const inputs=[...document.querySelectorAll(`#editPlayers${team} .edit-player-input`)];
+    const records=inputs.map((inp,idx)=>({index:idx,raw:inp.value.trim(),input:inp}));
+
+    records.forEach(r=>r.input.classList.remove('number-error'));
+
+    const seen=new Map();
+    records.forEach(r=>{
+      if(r.raw==='') return;
+      const n=Number(r.raw);
+      if(!Number.isInteger(n) || n<0 || n>99){
+        valid=false;
+        r.input.classList.add('number-error');
+        if(!firstError) firstError=r.input;
+        return;
+      }
+      if(!seen.has(n)) seen.set(n,[]);
+      seen.get(n).push(r);
+    });
+
+    seen.forEach(list=>{
+      if(list.length>1){
+        valid=false;
+        duplicateTeams.push(team);
+        list.forEach(r=>{
+          r.input.classList.add('number-error');
+          if(!firstError) firstError=r.input;
+        });
+      }
+    });
+
+    if(valid){
+      records.sort((a,b)=>{
+        const ae=a.raw==='', be=b.raw==='';
+        if(ae && be) return a.index-b.index;
+        if(ae) return 1;
+        if(be) return -1;
+        return Number(a.raw)-Number(b.raw);
+      });
+
+      const oldNumbers=[...(state.numbers[team]||[])];
+      const oldNames=[...(state.playerNames?.[team]||[])];
+      const oldDiscipline=[...(state.discipline?.[team]||[])];
+
+      state.numbers[team]=records.map(r=>r.raw===''?'':Number(r.raw));
+      state.playerNames[team]=records.map(r=>oldNames[r.index] ?? '');
+      state.discipline[team]=records.map(r=>oldDiscipline[r.index] ?? {goals:0,yellow:0,two:0,red:false});
+
+      const box=el('editPlayers'+team);
+      if(box){
+        box.innerHTML=state.numbers[team].map((num,i)=>`
+          <input class="edit-player-input" data-team="${team}" data-index="${i}"
+                 type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2"
+                 value="${String(num ?? '').replace(/"/g,'&quot;')}" placeholder="${i+1}">
+        `).join('');
+      }
+    }
+  });
+
+  if(!valid && showError){
+    const msg=el('editNumberError');
+    if(msg){
+      msg.textContent=duplicateTeams.length
+        ? 'NUMERI DUPLICATI: nella stessa squadra ogni numero deve essere univoco. CORREGGI I NUMERI PER CONTINUARE.'
+        : 'CORREGGI I NUMERI: sono ammessi solo numeri da 0 a 99.';
+      msg.classList.add('show');
+    }
+    firstError?.focus();
+  }
+  return valid;
+}
+
 function saveEditTeams(){
   if(state.matchStarted || state.running){
     toast('La configurazione è modificabile solo prima dello START');
     return;
   }
 
-  let valido=true, firstError=null;
-  document.querySelectorAll('#editTeamsModal .edit-player-input').forEach(inp=>{
-    inp.classList.remove('number-error');
-  });
-
-  ['A','B'].forEach(team=>{
-    const inputs=[...document.querySelectorAll(`#editPlayers${team} .edit-player-input`)];
-    const seen=new Map();
-
-    inputs.forEach(inp=>{
-      const raw=inp.value.trim();
-      if(raw==='')return;
-      const n=Number(raw);
-      if(!Number.isInteger(n) || n<0 || n>99){
-        valido=false;inp.classList.add('number-error');if(!firstError)firstError=inp;return;
-      }
-      if(!seen.has(n))seen.set(n,[]);
-      seen.get(n).push(inp);
-    });
-
-    seen.forEach(list=>{
-      if(list.length>1){
-        valido=false;
-        list.forEach(inp=>{inp.classList.add('number-error');if(!firstError)firstError=inp;});
-      }
-    });
-  });
+  let valido=validateAndSortPlayerNumbers(true);
+  let firstError=null;
 
   const durationInput=el('matchDurationInput');
   const duration=Number(durationInput?.value);
@@ -9926,10 +10225,13 @@ function saveEditTeams(){
   // Le lettere sono esclusivamente A-B-C-D-E e non sono modificabili.
   // L'unica operazione consentita è lasciare vuoto il nome del dirigente.
   ['A','B'].forEach(team=>{
-    if(!state.staffLetters[team]) state.staffLetters[team]=[...STAFF];
+    if(!state.staffLetters[team]) state.staffLetters[team]=STAFF.map(()=> '');
     if(!state.staffNames[team]) state.staffNames[team]=STAFF.map(()=> '');
     const letters=[...document.querySelectorAll(`#editStaff${team} .edit-staff-letter`)];
-    state.staffLetters[team]=STAFF.map((letter,i)=>letters[i]?.value.trim() ? letter : '');
+    state.staffLetters[team]=STAFF.map((letter,i)=>{
+      const input=letters[i];
+      return input && input.value.trim() ? letter : '';
+    });
     /* I nominativi non sono modificati da questo popup. */
     state.staffNames[team]=STAFF.map((letter,i)=>state.staffNames[team]?.[i] || '');
   });
@@ -10074,19 +10376,47 @@ function changePlayerNumber(input){
   render();
 }
 
-/* F9 = porta il cronometro esattamente alla fine della fase corrente.
-   Non avvia automaticamente la fase successiva: serve il comando Fine Tempo. */
+/* F9 = fine tempo completa:
+   registra SUBITO l'evento FINE del periodo nel Registro Gare.
+   Non richiede di premere un secondo pulsante. */
 document.addEventListener('keydown', function(ev){
   if(ev.key !== 'F9') return;
   ev.preventDefault();
+  ev.stopPropagation();
+
+  // I rigori finali sono gestiti da un file separato.
   if(state.phase===7) return;
+
   state.running=false;
   clearInterval(interval);
   interval=null;
   state.timer=getPhaseEnd(state.phase);
   el('timer').classList.remove('blink');
+
+  const phase=state.phase;
+  const endTexts={
+    1:'FINE 1° TEMPO',
+    2:'FINE 2° TEMPO',
+    3:'FINE 1° TEMPO SUPPLEMENTARE',
+    4:'FINE 2° TEMPO SUPPLEMENTARE',
+    5:'FINE 3° TEMPO SUPPLEMENTARE',
+    6:'FINE 4° TEMPO SUPPLEMENTARE'
+  };
+
+  const endText=endTexts[phase];
+  if(endText){
+    // Usa direttamente addEvent, senza passare da un controllo del
+    // popup o da una funzione di transizione.
+    const already=state.events.some(e=>String(e?.event||'')===endText);
+    if(!already){
+      addEvent('—','—','SYSTEM',endText,`${state.scoreA}-${state.scoreB}`);
+    }
+  }
+
   render();
-  toast('TEMPO PORTATO ALLA FINE · PREMERE FINE TEMPO');
+  saveRecovery();
+
+  toast(endText ? endText : 'TEMPO PORTATO ALLA FINE');
 });
 
 /* Controlli touch: funzionano su iPad/tablet e anche con mouse.
@@ -10164,30 +10494,117 @@ window.syncPlayersStaff=function(){};
 </script>
 
 
-
-
-
-<script id="config-exit-actions-v2">
+<script id="config-exit-actions">
 function goToIndex(){
-  window.location.href='index.html';
+  // ESCI: abbandona la configurazione e torna alla pagina index.
+  try{
+    window.location.href='index.html';
+  }catch(e){
+    location.assign('index.html');
+  }
 }
 
 function closeConfigAndStart(){
+  // CHIUDI: chiude soltanto CONFIGURAZIONE e apre il referto
+  // pronto per iniziare la gara.
   const modal=document.getElementById('editTeamsModal');
   if(modal) modal.style.display='none';
 
-  // Non torna a index: chiude solo la CONFIGURAZIONE.
-  // La schermata del referto rimane pronta per iniziare la gara.
+  // Se esiste la funzione nativa di chiusura, usiamola per mantenere
+  // eventuali aggiornamenti già previsti dal file.
   try{
     if(typeof closeEditTeams==='function') closeEditTeams();
   }catch(e){}
 
+  // Il referto è già la pagina di gara: aggiorniamo l'interfaccia
+  // e lasciamo il cronometro fermo.
   try{
     state.running=false;
+    state.matchStarted=false;
     if(typeof render==='function') render();
   }catch(e){}
 }
 </script>
 
+
+<script id="config-actions-v3-only">
+function goToIndex(){
+  window.location.href='index.html';
+}
+function closeConfigAndStart(){
+  if(!validateAndSortPlayerNumbers(true)){
+    toast('Impossibile aprire il referto: numeri di maglia duplicati');
+    return;
+  }
+
+  /*
+    REFERTO deve prima COMMITTARE tutti i dati presenti nel popup.
+    In particolare le lettere dei dirigenti: se una lettera è stata
+    cancellata, il valore '' deve essere scritto nello state PRIMA
+    di chiudere il popup. In precedenza REFERTO chiudeva direttamente
+    il popup senza eseguire questo salvataggio, quindi openEditTeams()
+    la ricreava alla successiva apertura.
+  */
+  ['A','B'].forEach(team=>{
+    if(!state.staffLetters[team]) state.staffLetters[team]=STAFF.map(()=> '');
+    if(!state.staffNames[team]) state.staffNames[team]=STAFF.map(()=> '');
+
+    const letters=[...document.querySelectorAll(`#editStaff${team} .edit-staff-letter`)];
+    state.staffLetters[team]=STAFF.map((letter,i)=>{
+      const input=letters[i];
+      return input && input.value.trim() ? letter : '';
+    });
+  });
+
+  // Salva anche nomi squadre e numeri correnti prima del passaggio al referto.
+  ['A','B'].forEach(team=>{
+    const nameInput=el('editTeam'+team+'Name');
+    if(nameInput){
+      state.teams[team]=nameInput.value.trim() || (team==='A'?'CASA':'OSPITI');
+    }
+  });
+
+  // IMPORTANTISSIMO: REFERTO deve usare la modalità scelta in CONFIGURAZIONE.
+  // selectMatchMode() aggiorna l'input, ma non basta da solo perché REFERTO
+  // può essere aperto senza passare da saveEditTeams().
+  const selectedMatchMode=el('matchModeInput')?.value;
+  if(selectedMatchMode){
+    state.matchMode=selectedMatchMode;
+  }
+
+  try{
+    ensureTeamColors();
+    if(configTeamColors?.A) state.teamColors.A=configTeamColors.A;
+    if(configTeamColors?.B) state.teamColors.B=configTeamColors.B;
+    configTeamColors={A:state.teamColors.A,B:state.teamColors.B};
+    applyTeamColors(state.teamColors);
+  }catch(e){
+    console.error('Errore applicazione configurazione:',e);
+  }
+
+  // Salva immediatamente lo stato configurato, comprese le lettere vuote.
+  try{ saveRecovery(); }catch(e){}
+
+  const modal=document.getElementById('editTeamsModal');
+  if(modal) modal.style.display='none';
+
+  try{
+    state.running=false;
+    if(typeof render==='function') render();
+    applyTeamColors(state.teamColors);
+  }catch(e){
+    console.error('Errore apertura referto:',e);
+  }
+}
+</script>
+
+<script id="f9-fine-tempo-handler">
+document.addEventListener('keydown', function(e){
+  if(e.key==='F9'){
+    e.preventDefault();
+    finishCurrentPeriodByF9();
+  }
+});
+</script>
 </body>
 </html>
