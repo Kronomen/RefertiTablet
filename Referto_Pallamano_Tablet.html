@@ -6435,6 +6435,101 @@ tr.team-b td,
 </style>
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
+<style id="config-bottom-buttons-v5">
+#editTeamsModal .edit-restore{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:5px !important;
+  margin-top:10px !important;
+  padding-top:8px !important;
+  border-top:1px solid rgba(0,0,0,.12) !important;
+  order:99 !important;
+}
+#editTeamsModal .edit-restore button{
+  width:100% !important;
+  min-height:30px !important;
+  height:30px !important;
+  padding:3px 6px !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  border-radius:6px !important;
+}
+#editTeamsModal #configBottomActions{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:5px !important;
+  margin-top:5px !important;
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+#editTeamsModal #configBottomActions button{
+  width:100% !important;
+  min-height:30px !important;
+  height:30px !important;
+  padding:3px 6px !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  border-radius:6px !important;
+}
+#editTeamsModal .edit-restore,
+#editTeamsModal #configBottomActions{
+  flex-shrink:0 !important;
+}
+</style>
+
+
+<style id="config-bottom-five-buttons-v6">
+#editTeamsModal .config-bottom-actions-v6{
+  display:grid !important;
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:5px !important;
+  width:100% !important;
+  margin-top:10px !important;
+  padding-top:8px !important;
+  border-top:1px solid rgba(0,0,0,.12) !important;
+  align-items:stretch !important;
+}
+#editTeamsModal .config-bottom-actions-v6 button{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  height:30px !important;
+  min-height:30px !important;
+  padding:2px 4px !important;
+  font-size:8px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  border-radius:6px !important;
+  white-space:nowrap !important;
+}
+#editTeamsModal .config-bottom-actions-v6 input{
+  display:none !important;
+}
+@media(max-width:520px){
+  #editTeamsModal .config-bottom-actions-v6{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:3px !important;
+  }
+  #editTeamsModal .config-bottom-actions-v6 button{
+    font-size:7px !important;
+    padding:2px !important;
+  }
+}
+</style>
+
+
+<style id="carica-dati-gara-wrap-v7">
+#editTeamsModal #loadMatchDataBtn{
+  white-space:normal !important;
+  line-height:1.05 !important;
+  overflow:visible !important;
+  word-break:normal !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -6574,7 +6669,7 @@ tr.team-b td,
       <section class="edit-team-box">
         <input id="editTeamAName" class="edit-team-name" value="CASA" maxlength="30">
         <div class="team-color-section">
-          <div class="team-color-title">COLORE SQUADRA</div>
+          <div class="team-color-title">COLORE SQUADRA
           <div id="editTeamAColors" class="team-color-palette"></div>
         </div>
         <div class="edit-section-title">GIOCATORI</div>
@@ -6624,20 +6719,23 @@ tr.team-b td,
       </div>
     </div>
 
-    <div class="edit-restore" style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-      <button id="restoreBtn" class="btn blue" style="width:100%;display:none" type="button" onclick="restoreMatch()">RIPRISTINA</button>
-      <button id="openSavedBtn" class="btn gray" style="width:100%" type="button" onclick="openSavedJson()">APRI</button>
-      <button id="loadMatchDataBtn" class="btn green" style="width:100%" type="button" onclick="openMatchDataFile()">CARICA DATI GARA</button>
+    
+    <div class="edit-restore config-bottom-actions-v6">
+      <button id="restoreBtn" class="btn blue" type="button" onclick="restoreMatch()">RIPRISTINA</button>
+      <button id="openSavedBtn" class="btn gray" type="button" onclick="openSavedJson()">APRI</button>
+      <button id="loadMatchDataBtn" class="btn green" type="button" onclick="openMatchDataFile()">CARICA<br>DATI GARA</button>
+      <button id="closeConfigBtn" class="btn green" type="button" onclick="closeConfigAndStart()">CHIUDI</button>
+      <button id="exitConfigBtn" class="btn red" type="button" onclick="goToIndex()">ESCI</button>
+
       <input id="savedJsonInput" type="file" accept=".json,application/json" style="display:none" onchange="loadSavedJson(event)">
       <input id="matchDataFileInput" type="file" accept=".xlsx,.xlsm,.xls" style="display:none" onchange="loadMatchDataExcel(event)">
     </div>
 
     <div class="edit-teams-actions">
-      <button class="btn red" onclick="closeEditTeams()">ESCI</button>
+      
       
     </div>
   </div>
-</div>
 
 <!-- TIME OUT -->
 <div id="timeoutModal" class="modal-back">
@@ -6761,7 +6859,7 @@ tr.team-b td,
     <p id="disciplineText"></p>
     <div class="modal-actions">
       <button class="green" onclick="closeDiscipline()">OK</button>
-      <button class="gray" onclick="closeDiscipline()">CHIUDI</button>
+      
     </div>
   </div>
 </div>
@@ -10063,6 +10161,32 @@ window.syncPlayersStaff=function(){};
     start();
   }
 })();
+</script>
+
+
+
+
+
+<script id="config-exit-actions-v2">
+function goToIndex(){
+  window.location.href='index.html';
+}
+
+function closeConfigAndStart(){
+  const modal=document.getElementById('editTeamsModal');
+  if(modal) modal.style.display='none';
+
+  // Non torna a index: chiude solo la CONFIGURAZIONE.
+  // La schermata del referto rimane pronta per iniziare la gara.
+  try{
+    if(typeof closeEditTeams==='function') closeEditTeams();
+  }catch(e){}
+
+  try{
+    state.running=false;
+    if(typeof render==='function') render();
+  }catch(e){}
+}
 </script>
 
 </body>
