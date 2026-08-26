@@ -643,10 +643,10 @@ DASHBOARD GARA
 
     <button
         id="btn-post-game"
-        onclick="stampaReferto()"
-        class="w-32 bg-blue-700 hover:bg-blue-600 text-white text-[11px] font-black py-2 rounded-lg transition hidden">
+        onclick="apriRegistroPostGara()"
+        class="w-32 bg-orange-700 hover:bg-orange-600 text-white text-[11px] font-bold py-2 rounded-lg transition hidden">
 
-        🖨 REFERTO
+        📝 Registro
 
     </button>
 
@@ -950,7 +950,6 @@ let tentativiA = 0;
 let tentativiB = 0;
 
 let serieTerminata = false;
-let jsonFinaleSalvato = false;
 
 let pendingPenalty = null;
 let rigoriAvviati = false;
@@ -1628,21 +1627,14 @@ logMatchSystem(
     }
 
     //----------------------------------
-    // SALVA LA GARA NEL BROWSER
-    // e prepara il REFERTO FIGH
+    // SALVA LA GARA
     //----------------------------------
 
     salvaPartita();
 
-    //----------------------------------
-    // SALVATAGGIO AUTOMATICO DEL JSON
-    //----------------------------------
-
-    salvaJSONFinaleAutomatico();
-
-    alert(
-        "La serie dei rigori è terminata.\n\nLa gara è stata salvata nel file JSON.\nPremere 'REFERTO' per aprire il referto FIGH."
-    );
+alert(
+    "La serie dei rigori è terminata.\n\nPremere 'Registro' per salvare il referto definitivo e aprire RefertoFIGH."
+);
 }
 
 //=========================================
@@ -2596,35 +2588,68 @@ function downloadLog(){
 // REGISTRO POST GARA
 //=========================================
 
-function apriRegistroPostGara(){
+async function apriRegistroPostGara(){
+    if(!serieTerminata && statoGara !== STATO_GARA.PARTITA_TERMINATA){
+        alert("La serie dei rigori non è ancora terminata.");
+        return;
+    }
 
     const partita = creaOggettoPartita();
 
-    localStorage.setItem(
-        "RegistroPostGara",
-        JSON.stringify(partita)
-    );
+    partita.finalScoreA = Number(partita.scoreA || 0) + Number(partita.penaltyShootout?.scoreA || 0);
+    partita.finalScoreB = Number(partita.scoreB || 0) + Number(partita.penaltyShootout?.scoreB || 0);
 
-//------------------------------------------------------
-// Apre il Registro Post Gara
-//------------------------------------------------------
+    partita.risultati = partita.risultati || {};
+    partita.risultati.rigoriFinali = {
+        A: Number(partita.penaltyShootout?.scoreA || 0),
+        B: Number(partita.penaltyShootout?.scoreB || 0)
+    };
+    partita.risultati.finale = {
+        A: partita.finalScoreA,
+        B: partita.finalScoreB
+    };
 
-const finestraRegistro = window.open(
-    "RegistroPostGara.html",
-    "_blank"
-);
+    partita.definitivo = true;
+    partita.definitiveSavedAt = new Date().toISOString();
+    partita.statoGara = STATO_GARA.SALVATA;
 
-//------------------------------------------------------
-// Se l'apertura è riuscita,
-// chiude Referto Pallamano
-//------------------------------------------------------
+    try{
+        localStorage.setItem("RefertoFIGH", JSON.stringify(partita));
+        localStorage.setItem("RegistroPostGara", JSON.stringify(partita));
+        localStorage.setItem("RefertoPallamano", JSON.stringify(partita));
+    }catch(err){
+        console.error("Errore localStorage referto definitivo:", err);
+        alert("Impossibile preparare il referto definitivo.");
+        return;
+    }
 
-if(finestraRegistro){
+    const safe = v => String(v || "")
+        .replace(/[\/:*?"<>|]/g, "_")
+        .replace(/\s+/g, "_");
 
-    window.close();
+    const nomeFile =
+        `${safe(partita.matchDate || "GARA")}_${safe(partita.teamA || "CASA")}_${safe(partita.teamB || "OSPITI")}_DEFINITIVO.json`;
 
-}
+    try{
+        const blob = new Blob([JSON.stringify(partita, null, 2)], {type:"application/json;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = nomeFile;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }catch(err){
+        console.error("Errore salvataggio JSON definitivo:", err);
+    }
 
+    statoGara = STATO_GARA.SALVATA;
+
+    const finestraReferto = window.open("RefertoFIGH.html", "_blank");
+    if(!finestraReferto){
+        alert("Referto definitivo salvato. Chrome ha bloccato l'apertura di RefertoFIGH.html: consentire i popup per questa pagina.");
+    }
 }
 
 
@@ -2861,89 +2886,27 @@ penaltyShootout:{
 
 function stampaReferto(){
 
-    if(statoGara !== STATO_GARA.PARTITA_TERMINATA || !serieTerminata){
-        alert("Il referto FIGH è disponibile al termine della serie dei rigori.");
+    //----------------------------------
+    // GARA SALVATA?
+    //----------------------------------
+
+    if(statoGara !== STATO_GARA.SALVATA){
+
+        alert("Salvare prima la gara.");
+
         return;
+
     }
 
-    const partita = creaOggettoPartita();
+    //----------------------------------
+    // APRI REFERTO FIGH
+    //----------------------------------
 
-    partita.statoGara = statoGara;
-    partita.refertoFinale = true;
-    partita.vincitoreRigori =
-        rigoriA > rigoriB ? "A" :
-        rigoriB > rigoriA ? "B" : "";
-
-    localStorage.setItem(
-        "RefertoFIGH",
-        JSON.stringify(partita)
-    );
-
-    const finestra = window.open(
-        "RefertoFIGH_FINALE.html",
+    window.open(
+        "RefertoFIGH web.html",
         "_blank"
     );
 
-    if(!finestra){
-        alert("Il browser ha bloccato l'apertura del Referto FIGH. Consenti i popup per questo file.");
-    }
-
-}
-
-//=========================================
-// SALVATAGGIO AUTOMATICO JSON A FINE GARA
-//=========================================
-function salvaJSONFinaleAutomatico(){
-
-    if(jsonFinaleSalvato) return;
-    jsonFinaleSalvato = true;
-
-    try{
-        const partita = creaOggettoPartita();
-
-        partita.statoGara = statoGara;
-        partita.refertoFinale = true;
-        partita.vincitoreRigori =
-            rigoriA > rigoriB ? "A" :
-            rigoriB > rigoriA ? "B" : "";
-
-        localStorage.setItem(
-            "RefertoFIGH",
-            JSON.stringify(partita)
-        );
-
-        const nomeCasa = (document.getElementById("team-a-name").value || "CASA")
-            .replace(/[\/:*?"<>|]/g, "_");
-
-        const nomeOspiti = (document.getElementById("team-b-name").value || "OSPITI")
-            .replace(/[\/:*?"<>|]/g, "_");
-
-        const data = document.getElementById("match-date").value || "GARA";
-        const nomeFile = `${data}_${nomeCasa}_${nomeOspiti}_RIGORI.json`;
-
-        const blob = new Blob(
-            [JSON.stringify(partita, null, 2)],
-            {type:"application/json;charset=utf-8"}
-        );
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-
-        a.href = url;
-        a.download = nomeFile;
-        a.style.display = "none";
-
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        setTimeout(()=>URL.revokeObjectURL(url),1500);
-
-    }catch(err){
-        jsonFinaleSalvato = false;
-        console.error("Errore salvataggio JSON finale:", err);
-        alert("La gara è terminata, ma il salvataggio automatico del JSON non è riuscito.");
-    }
 }
 
 //=========================================
@@ -3670,105 +3633,56 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 #action-panel-A button,#action-panel-B button{min-height:42px!important;touch-action:manipulation!important}
 </style>
 <script id="tablet-rigori-handoff-loader">
-(function(){
-  function loadShootoutHandoff(){
-    const raw=localStorage.getItem('RefertoFIGH_Rigori_Tablet_Handoff');
-    if(!raw)return;
-    try{
-      const h=JSON.parse(raw), s=h.state||h;
-
-      // Prima scelta: le rose già preparate dal Referto Pallamano Tablet.
-      // Fallback: ricostruzione dalla struttura state, per compatibilità con
-      // vecchi handoff già presenti.
-      function rosterFromHandoff(team){
-        const direct = team==='A' ? h.rosterA : h.rosterB;
-        if(Array.isArray(direct) && direct.length) return direct.map(g=>({
-          id:String(g.id ?? g.num), num:String(g.num ?? ''),
-          name:String(g.name || `ATLETA #${g.num ?? ''}`).toUpperCase(),
-          goals:Number(g.goals||0), yellows:Number(g.yellows||0),
-          suspensions:Number(g.suspensions||0), red:!!g.red,
-          canShoot:false, penaltyTaken:false, type:'G'
-        })).filter(g=>g.num.trim()!=='');
-
-        const nums=s.numbers?.[team]||[], disc=s.discipline?.[team]||[], names=s.playerNames?.[team]||[];
-        return nums.map((num,i)=>{
-          const n=String(num??'').trim(); if(!n)return null;
-          const d=disc[i]||{};
-          return {id:n,num:n,name:String(names[i]||`ATLETA #${n}`).toUpperCase(),
-            goals:Number(d.goals||0),yellows:Number(d.yellow||0),
-            suspensions:Number(d.two||0),red:!!d.red,canShoot:false,
-            penaltyTaken:false,type:'G'};
-        }).filter(Boolean);
-      }
-
-      function officialsFromState(team){
-        const letters=s.staffLetters?.[team]||['A','B','C','D','E'];
-        const names=s.staffNames?.[team]||[], st=s.staff?.[team]||[];
-        return letters.map((letter,i)=>{
-          const L=String(letter||'').trim(); if(!L)return null;
-          const d=st[i]||{};
-          return {id:'o_'+i,num:L,name:String(names[i]||('DIRIGENTE '+L)),goals:0,
-            yellows:Number(d.yellow||0),suspensions:Number(d.two||0),red:!!d.red,type:'D'};
-        }).filter(Boolean);
-      }
-
-      const ps=s.phaseScores||{};
-      const partita={
-        jsonVersion:'tablet-rigori-2',generatedBy:'Referto_Pallamano_Tablet',
-        teamA:h.teamA||s.teams?.A||'CASA', teamB:h.teamB||s.teams?.B||'OSPITI',
-        scoreA:Number(s.scoreA||0),scoreB:Number(s.scoreB||0),
-        penaltyScoredA:Number(s.penaltyScored?.A||0),penaltyTotalA:Number(s.penalty?.A||0),
-        penaltyScoredB:Number(s.penaltyScored?.B||0),penaltyTotalB:Number(s.penalty?.B||0),
-        currentHalf:2,statoGara:'RIGORI',
-        firstHalfScoreA:Number(s.firstHalfScoreA||ps[1]?.A||0),firstHalfScoreB:Number(s.firstHalfScoreB||ps[1]?.B||0),
-        secondHalfScoreA:Number(s.secondHalfScoreA||ps[2]?.A||0),secondHalfScoreB:Number(s.secondHalfScoreB||ps[2]?.B||0),
-        overtime1ScoreA:Number(ps[3]?.A||0),overtime1ScoreB:Number(ps[3]?.B||0),
-        overtime2ScoreA:Number(ps[4]?.A||0),overtime2ScoreB:Number(ps[4]?.B||0),
-        overtime3ScoreA:Number(ps[5]?.A||0),overtime3ScoreB:Number(ps[5]?.B||0),
-        overtime4ScoreA:Number(ps[6]?.A??s.scoreA??0),overtime4ScoreB:Number(ps[6]?.B??s.scoreB??0),
-        penaltyShootout:{started:false,finished:false,winner:'',scoreA:0,scoreB:0,firstTeam:'',
-          currentTurn:0,phase:1,suddenDeath:false,shotsA:0,shotsB:0,goalsA:0,goalsB:0,missedA:0,missedB:0,shots:[]},
-        currentRosterA:{players:rosterFromHandoff('A'),officials:officialsFromState('A')},
-        currentRosterB:{players:rosterFromHandoff('B'),officials:officialsFromState('B')},
-        logEvents:(s.events||[]).map(e=>({tempo:e.time||'00:00',fase:'GARA',squadra:e.team||'',numero:e.num||'',evento:e.text||e.event||'',risultato:e.result||''})),
-        rigori:[]
-      };
-
-      // Le variabili globali vengono valorizzate direttamente prima del render.
-      currentRosterA=structuredClone(partita.currentRosterA);
-      currentRosterB=structuredClone(partita.currentRosterB);
-      currentRosterA.players.forEach(g=>{g.canShoot=false;g.penaltyTaken=false});
-      currentRosterB.players.forEach(g=>{g.canShoot=false;g.penaltyTaken=false});
-
-      if(typeof ripristinaPartita==='function') ripristinaPartita(partita);
-
-      // Sicurezza: se un'altra routine avesse ricreato le rose, le rimettiamo.
-      currentRosterA=structuredClone(partita.currentRosterA);
-      currentRosterB=structuredClone(partita.currentRosterB);
-      currentRosterA.players.forEach(g=>{g.canShoot=false;g.penaltyTaken=false});
-      currentRosterB.players.forEach(g=>{g.canShoot=false;g.penaltyTaken=false});
-      renderTable('A');
-      renderTable('B');
-
-      if(typeof mostraPopupPrimoRigore==='function') mostraPopupPrimoRigore();
-      localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
-
-      console.log('HANDOFF RIGORI CARICATO',{
-        casa:currentRosterA.players.length,
-        ospiti:currentRosterB.players.length
-      });
-    }catch(err){
-      console.error('Errore handoff rigori:',err);
-      alert('Errore nel caricamento dei giocatori per i tiri di rigore.');
-    }
+window.addEventListener('load',function(){
+  const raw=localStorage.getItem('RefertoFIGH_Rigori_Tablet_Handoff');
+  if(!raw)return;
+  try{
+    const h=JSON.parse(raw),s=h.state||h;
+    const roster=team=>{
+      const nums=s.numbers?.[team]||[],disc=s.discipline?.[team]||[],names=s.playerNames?.[team]||[];
+      return nums.map((num,i)=>{
+        const n=String(num??'').trim(),d=disc[i]||{};
+        if(!n)return null;
+        return {id:n,num:n,name:String(names[i]||''),goals:Number(d.goals||0),
+          yellows:Number(d.yellow||0),suspensions:Number(d.two||0),red:!!d.red,
+          canShoot:!d.red,penaltyTaken:false,type:'P'};
+      }).filter(Boolean);
+    };
+    const officials=team=>{
+      const letters=s.staffLetters?.[team]||['A','B','C','D','E'],names=s.staffNames?.[team]||[],st=s.staff?.[team]||[];
+      return letters.map((letter,i)=>{
+        const L=String(letter||'').trim();if(!L)return null;const d=st[i]||{};
+        return {id:'o_'+i,num:L,name:String(names[i]||('DIRIGENTE '+L)),goals:0,
+          yellows:Number(d.yellow||0),suspensions:Number(d.two||0),red:!!d.red,type:'D'};
+      }).filter(Boolean);
+    };
+    const ps=s.phaseScores||{};
+    const partida={
+      jsonVersion:'tablet-rigori-1',generatedBy:'Referto_Pallamano_Tablet',
+      teamA:s.teams?.A||'CASA',teamB:s.teams?.B||'OSPITI',
+      scoreA:Number(s.scoreA||0),scoreB:Number(s.scoreB||0),
+      penaltyScoredA:Number(s.penaltyScored?.A||0),penaltyTotalA:Number(s.penalty?.A||0),
+      penaltyScoredB:Number(s.penaltyScored?.B||0),penaltyTotalB:Number(s.penalty?.B||0),
+      currentHalf:2,statoGara:'RIGORI',
+      firstHalfScoreA:Number(s.firstHalfScoreA||ps[1]?.A||0),firstHalfScoreB:Number(s.firstHalfScoreB||ps[1]?.B||0),
+      secondHalfScoreA:Number(s.secondHalfScoreA||ps[2]?.A||0),secondHalfScoreB:Number(s.secondHalfScoreB||ps[2]?.B||0),
+      overtime1ScoreA:Number(ps[3]?.A||0),overtime1ScoreB:Number(ps[3]?.B||0),
+      overtime2ScoreA:Number(ps[4]?.A||0),overtime2ScoreB:Number(ps[4]?.B||0),
+      overtime3ScoreA:Number(ps[5]?.A||0),overtime3ScoreB:Number(ps[5]?.B||0),
+      overtime4ScoreA:Number(ps[6]?.A??s.scoreA??0),overtime4ScoreB:Number(ps[6]?.B??s.scoreB??0),
+      penaltyShootout:{started:false,finished:false,winner:'',scoreA:0,scoreB:0,firstTeam:'',
+        currentTurn:0,phase:1,suddenDeath:false,shotsA:0,shotsB:0,goalsA:0,goalsB:0,missedA:0,missedB:0,shots:[]},
+      currentRosterA:{players:roster('A'),officials:officials('A')},
+      currentRosterB:{players:roster('B'),officials:officials('B')},
+      logEvents:(s.events||[]).map(e=>({tempo:e.time||'00:00',fase:'GARA',squadra:e.team||'',
+        numero:e.num||'',evento:e.text||e.event||'',risultato:e.result||''})),
+      rigori:[]
+    };
+    if(typeof ripristinaPartita==='function')ripristinaPartita(partita);
+    if(typeof mostraPopupPrimoRigore==='function')mostraPopupPrimoRigore();
+    localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
+  }catch(err){
+    console.error(err);alert('Errore nel caricamento della gara per i tiri di rigore.');
   }
-
-  // Il listener viene registrato subito: funziona sia se il documento non ha
-  // ancora emesso load, sia nel caso in cui il file venga aperto da file://.
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',loadShootoutHandoff,{once:true});
-  }else{
-    loadShootoutHandoff();
-  }
-})();
+});
 </script>

@@ -5118,6 +5118,53 @@ tr.team-b td,
 
 /* Il sincronizzatore JavaScript sotto imposta le due righe
    alla stessa misura reale. Nessuna altezza fissa per STAFF. */
+
+/* NOMINATIVO COMPATTO: resta nello stesso rigo di numero/lettera,
+   senza aumentare la dimensione dei contenitori. */
+.player-top{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  overflow:hidden;
+}
+.player-top .player-name-inline{
+  display:block;
+  min-width:0;
+  flex:1 1 auto;
+  margin-left:3px;
+  padding:0 2px;
+  font-size:7px;
+  line-height:21px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
+  text-align:left;
+}
+.staff-main-row{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  width:100%;
+  overflow:hidden;
+}
+.staff-main-row .staff-name-inline{
+  display:block;
+  min-width:0;
+  flex:1 1 auto;
+  margin-left:3px;
+  padding:0 1px;
+  font-size:7px;
+  line-height:29px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
+  text-align:left;
+}
+/* Non usiamo più il nominativo sotto al numero. */
+.player-card > .player-name{display:none!important;}
+
 </style>
 
 
@@ -6387,6 +6434,7 @@ tr.team-b td,
 }
 </style>
 
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -6576,13 +6624,17 @@ tr.team-b td,
       </div>
     </div>
 
-    <div class="edit-restore">
-      <button id="restoreBtn" class="btn blue" style="width:100%;display:none" type="button" onclick="restoreMatch()">RIPRISTINA GARA SALVATA</button>
+    <div class="edit-restore" style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <button id="restoreBtn" class="btn blue" style="width:100%;display:none" type="button" onclick="restoreMatch()">RIPRISTINA</button>
+      <button id="openSavedBtn" class="btn gray" style="width:100%" type="button" onclick="openSavedJson()">APRI</button>
+      <button id="loadMatchDataBtn" class="btn green" style="width:100%" type="button" onclick="openMatchDataFile()">CARICA DATI GARA</button>
+      <input id="savedJsonInput" type="file" accept=".json,application/json" style="display:none" onchange="loadSavedJson(event)">
+      <input id="matchDataFileInput" type="file" accept=".xlsx,.xlsm,.xls" style="display:none" onchange="loadMatchDataExcel(event)">
     </div>
 
     <div class="edit-teams-actions">
-      <button class="btn gray" onclick="closeEditTeams()">ANNULLA</button>
-      <button class="btn blue" onclick="saveEditTeams()">SALVA MODIFICHE</button>
+      <button class="btn red" onclick="closeEditTeams()">ESCI</button>
+      
     </div>
   </div>
 </div>
@@ -6755,6 +6807,12 @@ let state={
   scoreA:0,scoreB:0,
   teams:{A:'CASA',B:'OSPITI'},
   teamColors:{A:'#2563eb',B:'#7c3aed'},
+  matchData:{
+    matchNumber:'',date:'',time:'',championship:'',localita:'',venue:'',
+    season:'',referee1:'',referee2:'',delegate1:'',delegate2:'',
+    timekeeper:'',secretary:''
+  },
+  playerNames:{A:Array(MAX_PLAYERS).fill(''),B:Array(MAX_PLAYERS).fill('')},
   numbers:{
     A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
     B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)
@@ -6874,7 +6932,7 @@ function hasRecovery(){
 function updateRestoreButton(){
   const b=el('restoreBtn');
   if(!b)return;
-  // RIPRISTINA compare solo se esiste una gara in memoria e il cronometro
+  // RIPRISTINA compare solo se esiste una gara nel salvataggio automatico del browser e il cronometro
   // non è mai stato avviato nella gara corrente. Dopo START non ricompare.
   const visible=hasRecovery() && !state.matchStarted;
   b.style.display=visible?'block':'none';
@@ -6938,6 +6996,477 @@ function clearRecovery(){
   try{localStorage.removeItem(RECOVERY_KEY)}catch(e){}
   updateRestoreButton();
 }
+
+
+/* =========================================================
+   APRI GARA SALVATA DA FILE JSON
+   - RIPRISTINA = recupera esclusivamente il salvataggio automatico
+     presente nel browser.
+   - APRI = apre esclusivamente un file JSON scelto dall'utente.
+   ========================================================= */
+
+
+function openMatchDataFile(){
+  const input=el('matchDataFileInput');
+  if(!input)return;
+  input.value='';
+  input.click();
+}
+
+function excelCell(ws, addr){
+  const v=ws?.[addr]?.v;
+  return v===undefined || v===null ? '' : String(v).trim();
+}
+
+function excelDateValue(v){
+  if(v instanceof Date) return v.toISOString().slice(0,10);
+  if(typeof v==='number' && window.XLSX?.SSF){
+    try{
+      const d=window.XLSX.SSF.parse_date_code(v);
+      if(d) return `${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y}`;
+    }catch(e){}
+  }
+  return String(v??'').trim();
+}
+
+function loadMatchDataExcel(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+
+  if(!window.XLSX){
+    toast('Lettore Excel non disponibile');
+    return;
+  }
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    try{
+      const data=new Uint8Array(reader.result);
+      const wb=window.XLSX.read(data,{type:'array',cellDates:true});
+
+      const ws=wb.Sheets['Gara'] || wb.Sheets[wb.SheetNames[0]];
+      if(!ws)throw new Error('Foglio Gara non trovato');
+
+      // DATI GARA dal foglio "Gara", colonne A-C.
+      const matchData={
+        matchNumber:excelCell(ws,'C4'),
+        date:excelDateValue(ws['C5']?.v),
+        time:excelCell(ws,'C6'),
+        championship:excelCell(ws,'C7'),
+        localita:excelCell(ws,'C8'),
+        venue:excelCell(ws,'C9'),
+        season:excelCell(ws,'C10'),
+        referee1:excelCell(ws,'C12'),
+        referee2:excelCell(ws,'C13'),
+        delegate1:excelCell(ws,'C14'),
+        delegate2:excelCell(ws,'C15'),
+        timekeeper:excelCell(ws,'C16'),
+        secretary:excelCell(ws,'C17')
+      };
+
+      const teamA=excelCell(ws,'G5');
+      const teamB=excelCell(ws,'K5');
+
+      if(teamA)state.teams.A=teamA;
+      if(teamB)state.teams.B=teamB;
+
+      // Azzera e carica i giocatori.
+      state.numbers={A:Array(MAX_PLAYERS).fill(''),B:Array(MAX_PLAYERS).fill('')};
+      state.playerNames={A:Array(MAX_PLAYERS).fill(''),B:Array(MAX_PLAYERS).fill('')};
+
+      // PLAYER_A in E/F/G e PLAYER_B in I/J/K.
+      for(let r=6;r<=21;r++){
+        const typeA=excelCell(ws,`E${r}`);
+        const numA=excelCell(ws,`F${r}`);
+        const nameA=excelCell(ws,`G${r}`);
+        if(typeA==='PLAYER_A' && numA){
+          const idx=state.numbers.A.findIndex(v=>String(v)==='');
+          if(idx>=0){
+            state.numbers.A[idx]=numA;
+            state.playerNames.A[idx]=nameA;
+          }
+        }
+
+        const typeB=excelCell(ws,`I${r}`);
+        const numB=excelCell(ws,`J${r}`);
+        const nameB=excelCell(ws,`K${r}`);
+        if(typeB==='PLAYER_B' && numB){
+          const idx=state.numbers.B.findIndex(v=>String(v)==='');
+          if(idx>=0){
+            state.numbers.B[idx]=numB;
+            state.playerNames.B[idx]=nameB;
+          }
+        }
+      }
+
+      // Dirigenti: OFFICIAL_A / OFFICIAL_B nelle righe 22-25.
+      state.staffLetters={A:Array(STAFF.length).fill(''),B:Array(STAFF.length).fill('')};
+      state.staffNames={A:Array(STAFF.length).fill(''),B:Array(STAFF.length).fill('')};
+
+      for(let r=22;r<=26;r++){
+        const typeA=excelCell(ws,`E${r}`);
+        const roleA=excelCell(ws,`F${r}`).toUpperCase();
+        const nameA=excelCell(ws,`G${r}`);
+        if(typeA==='OFFICIAL_A' && roleA){
+          const idx=STAFF.indexOf(roleA);
+          if(idx>=0){
+            state.staffLetters.A[idx]=roleA;
+            state.staffNames.A[idx]=nameA;
+          }
+        }
+
+        const typeB=excelCell(ws,`I${r}`);
+        const roleB=excelCell(ws,`J${r}`).toUpperCase();
+        const nameB=excelCell(ws,`K${r}`);
+        if(typeB==='OFFICIAL_B' && roleB){
+          const idx=STAFF.indexOf(roleB);
+          if(idx>=0){
+            state.staffLetters.B[idx]=roleB;
+            state.staffNames.B[idx]=nameB;
+          }
+        }
+      }
+
+      // Mantiene le lettere standard disponibili se il foglio non le compila.
+      ['A','B'].forEach(team=>{
+        STAFF.forEach((role,i)=>{
+          if(!state.staffLetters[team][i]) state.staffLetters[team][i]=role;
+        });
+      });
+
+      state.matchData=matchData;
+
+      // Se il foglio contiene dati gara, li rendiamo disponibili anche
+      // alle strutture usate dal referto finale.
+      state.matchNumber=matchData.matchNumber;
+      state.matchDate=matchData.date;
+      state.matchTime=matchData.time;
+      state.championship=matchData.championship;
+      state.season=matchData.season;
+      state.city=matchData.localita;
+      state.venue=matchData.venue;
+      state.referee1=matchData.referee1;
+      state.referee2=matchData.referee2;
+      state.delegate1=matchData.delegate1;
+      state.delegate2=matchData.delegate2;
+      state.timekeeper=matchData.timekeeper;
+      state.secretary=matchData.secretary;
+
+      render();
+
+      // Se CONFIGURAZIONE è già aperta, ricostruisce immediatamente
+      // giocatori, dirigenti e colori senza chiuderla.
+      if(typeof openEditTeams==='function'){
+        openEditTeams();
+      }
+
+      toast(`DATI GARA CARICATI · ${state.teams.A} - ${state.teams.B}`);
+    }catch(err){
+      console.error('Errore caricamento Excel:',err);
+      toast('File Excel non compatibile o dati gara non trovati');
+    }
+  };
+
+  reader.onerror=()=>{
+    toast('Impossibile leggere il file Excel');
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+function openSavedJson(){
+  const input=el('savedJsonInput');
+  if(!input)return;
+  input.value='';
+  input.click();
+}
+
+function buildStateFromSavedReferto(data){
+  // 1) Formato nativo del tablet / handoff: contiene direttamente state.
+  if(data && data.state && typeof data.state==='object'){
+    return data.state;
+  }
+
+  // 2) Formato RefertoFIGH/JSON definitivo: ricostruisce lo stato
+  //    necessario al tablet senza alterare il file JSON originale.
+  if(!data || !data.currentRosterA || !data.currentRosterB){
+    return null;
+  }
+
+  const s=JSON.parse(JSON.stringify(state));
+
+  s.teams={
+    A:String(data.teamA || s.teams.A || 'CASA'),
+    B:String(data.teamB || s.teams.B || 'OSPITI')
+  };
+
+  s.scoreA=Number(data.scoreA ?? 0);
+  s.scoreB=Number(data.scoreB ?? 0);
+  s.timer=Number(data.timerSeconds ?? 0);
+  s.phase=Number(data.currentHalf ?? 2);
+  s.matchStarted=!!(data.matchStarted ?? true);
+  s.running=false;
+  s.matchMode=String(data.modalitaGara || s.matchMode || 'STANDARD');
+
+  s.numbers={A:[],B:[]};
+  s.playerNames={A:[],B:[]};
+  s.discipline={A:[],B:[]};
+
+  ['A','B'].forEach(team=>{
+    const roster=data['currentRoster'+team]?.players || [];
+
+    for(let i=0;i<MAX_PLAYERS;i++){
+      const p=roster[i] || {};
+      const num=String(p.num ?? p.numero ?? '').trim();
+
+      s.numbers[team].push(num);
+      s.playerNames[team].push(String(p.nome || p.name || '').trim());
+      s.discipline[team].push({
+        goals:Number(p.goals ?? p.reti ?? 0),
+        yellow:Number(p.yellow ?? p.yellows ?? 0),
+        two:Number(p.two ?? p.suspensions ?? 0),
+        red:Boolean(p.red),
+        canShoot:!Boolean(p.red)
+      });
+    }
+
+    // Se il JSON contiene meno di 16 giocatori, manteniamo comunque
+    // la struttura prevista dal tablet.
+    while(s.numbers[team].length<MAX_PLAYERS){
+      const i=s.numbers[team].length;
+      s.numbers[team].push('');
+      s.playerNames[team].push('');
+      s.discipline[team].push({
+        goals:0,yellow:0,two:0,red:false,canShoot:true
+      });
+    }
+  });
+
+  s.staffLetters={A:[...STAFF],B:[...STAFF]};
+  s.staffNames={A:STAFF.map(()=>''),B:STAFF.map(()=> '')};
+  s.staff={A:STAFF.map(()=>({yellow:0,two:0,red:false})),
+           B:STAFF.map(()=>({yellow:0,two:0,red:false}))};
+
+  ['A','B'].forEach(team=>{
+    const officials=data['currentRoster'+team]?.officials || [];
+    officials.forEach((o,i)=>{
+      if(i>=STAFF.length)return;
+      s.staffLetters[team][i]=String(o.role || STAFF[i]).trim().toUpperCase();
+      s.staffNames[team][i]=String(o.nome || o.name || '').trim();
+      s.staff[team][i]={
+        yellow:Number(o.yellow || 0),
+        two:Number(o.two || 0),
+        red:Boolean(o.red)
+      };
+    });
+  });
+
+  // REGISTRO GARA:
+  // i file prodotti dalle varie fasi possono chiamare l'array in modi
+  // diversi. Recuperiamo SEMPRE la prima lista eventi realmente presente.
+  function extractSavedEvents(obj){
+    const candidates=[
+      obj?.eventi,
+      obj?.events,
+      obj?.registroGara,
+      obj?.registro?.eventi,
+      obj?.registro?.events,
+      obj?.partita?.eventi,
+      obj?.partita?.events,
+      obj?.gara?.eventi,
+      obj?.gara?.events,
+      obj?.state?.events
+    ];
+
+    for(const candidate of candidates){
+      let list=candidate;
+
+      // Alcuni JSON possono contenere l'array serializzato come stringa.
+      if(typeof list==='string'){
+        try{ list=JSON.parse(list); }catch(e){ list=null; }
+      }
+
+      if(Array.isArray(list)) return JSON.parse(JSON.stringify(list));
+    }
+
+    return [];
+  }
+
+  function normalizeSavedEvent(e){
+    if(!e || typeof e!=='object')return null;
+
+    const teamRaw=String(e.team ?? e.squadra ?? e.SQ ?? '').trim().toUpperCase();
+    const team=
+      teamRaw==='A' || teamRaw==='CASA' ? 'A' :
+      teamRaw==='B' || teamRaw==='OSPITI' || teamRaw==='OSPITE' ? 'B' :
+      (teamRaw==='—' || teamRaw==='-' || teamRaw==='SYSTEM') ? '—' :
+      (e.type==='SYSTEM' ? '—' : teamRaw);
+
+    const type=String(e.type ?? e.tipo ?? '').trim().toUpperCase();
+    const text=String(
+      e.text ??
+      e.event ??
+      e.evento ??
+      e.descrizione ??
+      ''
+    ).trim();
+
+    const num=String(
+      e.num ??
+      e.numero ??
+      e.playerNumber ??
+      e.giocatore ??
+      ''
+    ).trim();
+
+    const time=String(
+      e.time ??
+      e.tempo ??
+      e.clock ??
+      ''
+    ).trim();
+
+    const result=String(
+      e.result ??
+      e.ris ??
+      e.RIS ??
+      e.punteggio ??
+      ''
+    ).trim();
+
+    return {
+      ...e,
+      time,
+      team,
+      num,
+      type:type || (text.toUpperCase().includes('TIME OUT') ? 'TIMEOUT' : 'EVENT'),
+      text,
+      result
+    };
+  }
+
+  const savedEvents=extractSavedEvents(data);
+  s.events=savedEvents.map(normalizeSavedEvent).filter(Boolean);
+
+  // Manteniamo anche eventuali registri contenuti nel JSON definitivo.
+  s.phaseScores=JSON.parse(JSON.stringify(
+    data.phaseScores ||
+    data.risultati?.phaseScores ||
+    data.partita?.phaseScores ||
+    {}
+  ));
+  s.motivoFineGara=String(
+    data.motivoFineGara ||
+    data.partita?.motivoFineGara ||
+    ''
+  );
+
+  s.penalty={
+    A:Number(data.penaltyTotalA ?? data.risultati?.setteMetri?.tiriA ?? 0),
+    B:Number(data.penaltyTotalB ?? data.risultati?.setteMetri?.tiriB ?? 0)
+  };
+  s.penaltyScored={
+    A:Number(data.penaltyScoredA ?? data.risultati?.setteMetri?.retiA ?? 0),
+    B:Number(data.penaltyScoredB ?? data.risultati?.setteMetri?.retiB ?? 0)
+  };
+
+  const ps=data.penaltyShootout || {};
+  s.shootout={
+    started:Boolean(ps.started),
+    finished:Boolean(ps.finished),
+    firstTeam:String(ps.firstTeam || ''),
+    turn:Number(ps.currentTurn ?? ps.turn ?? 0),
+    phase:Number(ps.phase || 1),
+    scoreA:Number(ps.scoreA || 0),
+    scoreB:Number(ps.scoreB || 0),
+    shots:JSON.parse(JSON.stringify(ps.shots || [])),
+    takenA:Array.isArray(ps.takenA)?ps.takenA.slice():[],
+    takenB:Array.isArray(ps.takenB)?ps.takenB.slice():[]
+  };
+
+  s.activeSuspensions=[];
+  s.timeouts=s.timeouts || {A:0,B:0};
+  s.timeoutsFirstHalf=s.timeoutsFirstHalf || {A:0,B:0};
+  s.timeoutsSecondHalf=s.timeoutsSecondHalf || {A:0,B:0};
+  s.timeoutsSecondHalfLimit=s.timeoutsSecondHalfLimit || {A:2,B:2};
+
+  return s;
+}
+
+function loadSavedJson(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(String(reader.result || ''));
+      const imported=buildStateFromSavedReferto(data);
+
+      if(!imported){
+        toast('JSON non riconosciuto: impossibile aprire la gara');
+        return;
+      }
+
+      if(imported.matchStarted || imported.running){
+        // Un file salvato può essere riaperto, ma il cronometro parte sempre fermo.
+        imported.running=false;
+      }
+
+      clearInterval(interval);
+      clearInterval(timeoutInterval);
+      if(window.suspensionWatcher){
+        clearInterval(window.suspensionWatcher);
+        window.suspensionWatcher=null;
+      }
+
+      state=imported;
+
+      // Il JSON appena aperto è la fonte di verità: non mantenere eventi
+      // residui della gara precedente.
+      state.events=Array.isArray(imported.events) ? imported.events : [];
+      state.running=false;
+      state.matchStarted=Boolean(state.matchStarted);
+      state.playerNames=state.playerNames || {
+        A:Array(MAX_PLAYERS).fill(''),
+        B:Array(MAX_PLAYERS).fill('')
+      };
+
+      ensureTeamColors();
+      ensureTimeoutState();
+      ensureShootoutState();
+
+      selected=null;
+      selectedPenalty=null;
+      editingLogIndex=null;
+      editingLogTeam=null;
+      editingLogKind=null;
+      editingLogSubject=null;
+      undoStack=[];
+
+      render();
+      closeEditTeams();
+
+      if(state.events.length){
+        toast(`GARA APERTA DAL FILE JSON · ${state.events.length} EVENTI CARICATI`);
+      }else{
+        toast('GARA APERTA DAL FILE JSON · NESSUN EVENTO NEL FILE');
+      }
+    }catch(err){
+      console.error('Errore apertura JSON:',err);
+      toast('File JSON non valido o non compatibile');
+    }
+  };
+
+  reader.onerror=()=>{
+    toast('Impossibile leggere il file JSON');
+  };
+
+  reader.readAsText(file);
+}
+
 
 window.addEventListener('beforeunload',saveRecovery);
 window.addEventListener('pagehide',saveRecovery);
@@ -7222,12 +7751,11 @@ function renderPlayers(team){
       <div class="player-top">
         <button class="player-number player-touch" type="button"
                 ${(!hasNumber || d.red)?'disabled':''}>${hasNumber ? num : '—'}</button>
+        ${String(state.playerNames?.[team]?.[i] ?? '').trim()
+          ? `<span class="player-name-inline" title="${String(state.playerNames[team][i]).replace(/"/g,'&quot;')}">${String(state.playerNames[team][i]).replace(/[&<>"]/g,'')}</span>`
+          : ''}
         <span class="player-goals">⚽ ${d.goals}</span>
       </div>
-
-      ${String(state.playerNames?.[team]?.[i] ?? '').trim()
-        ? `<div class="player-name">${String(state.playerNames[team][i]).replace(/[&<>"]/g,'')}</div>`
-        : ''}
 
       <div class="discipline-row">
         <span class="discipline-cell ${yellow?'yellow-active':''}">A</span>
@@ -7322,7 +7850,7 @@ function renderStaff(team){
       <div class="staff-main-row">
         <button class="staff-label staff-touch" type="button"
           ${(!letter || d.red)?'disabled':''}>${letter}</button>
-        <span class="staff-name">${displayName}</span>
+        ${savedName ? `<span class="staff-name-inline" title="${savedName.replace(/"/g,'&quot;')}">${savedName.replace(/[&<>"]/g,'')}</span>` : ''}
       </div>
 
       <div class="discipline-row">
@@ -8073,6 +8601,22 @@ function staffAction(team,index,type){
    - durante i rigori il cronometro NON si ferma e NON lampeggia
    ========================================================= */
 
+function getPhaseStartEventText(phase){
+  if(phase===1)return 'INIZIO 1° TEMPO';
+  if(phase===2)return 'INIZIO 2° TEMPO';
+  if(phase===3)return 'INIZIO 1° TEMPO SUPPLEMENTARE';
+  if(phase===4)return 'INIZIO 2° TEMPO SUPPLEMENTARE';
+  if(phase===5)return 'INIZIO 3° TEMPO SUPPLEMENTARE';
+  if(phase===6)return 'INIZIO 4° TEMPO SUPPLEMENTARE';
+  return '';
+}
+
+function hasSystemEvent(text){
+  return (state.events||[]).some(e =>
+    e && e.type==='SYSTEM' && String(e.text||'').toUpperCase()===String(text||'').toUpperCase()
+  );
+}
+
 function toggleClock(){
   if(false && state.phase===7){
     state.running=false; clearInterval(interval); interval=null;
@@ -8090,6 +8634,11 @@ function toggleClock(){
   if(state.running){
     state.matchStarted=true;
     el('timer').classList.remove('blink');
+
+    const startEvent=getPhaseStartEventText(state.phase);
+    if(startEvent && !hasSystemEvent(startEvent)){
+      addEvent('—','—','SYSTEM',startEvent);
+    }
   }else if(state.timer>0){
     el('timer').classList.add('blink');
   }
@@ -8244,8 +8793,7 @@ function processFinishedPhase(phase){
         state.timer=getPhaseEnd(1);
         state.running=false;
         setPhaseStartScore();
-        addEvent('—','—','SYSTEM','FINE 1° TEMPO');
-        addEvent('—','—','SYSTEM','INIZIO 2° TEMPO');
+        if(!hasSystemEvent('FINE 1° TEMPO')) addEvent('—','—','SYSTEM','FINE 1° TEMPO');
         render();
         saveRecovery();
       }
@@ -8260,7 +8808,7 @@ function processFinishedPhase(phase){
     state.secondHalfScoreA=state.scoreA;
     state.secondHalfScoreB=state.scoreB;
 
-    addEvent('—','—','SYSTEM','FINE 2° TEMPO');
+    if(!hasSystemEvent('FINE 2° TEMPO')) addEvent('—','—','SYSTEM','FINE 2° TEMPO');
 
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='TEMPI_REGOLAMENTARI';
@@ -8292,8 +8840,9 @@ function processFinishedPhase(phase){
     return;
   }
 
-  /* 1° TEMPO SUPPLEMENTARE */
+  /* FINE 1° TEMPO SUPPLEMENTARE */
   if(phase===3){
+    if(!hasSystemEvent('FINE 1° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 1° TEMPO SUPPLEMENTARE');
     showPhaseTransition(
       'INIZIARE IL 2° TEMPO SUPPLEMENTARE?',
       `1° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
@@ -8302,8 +8851,9 @@ function processFinishedPhase(phase){
     return;
   }
 
-  /* 2° TEMPO SUPPLEMENTARE */
+  /* FINE 2° TEMPO SUPPLEMENTARE */
   if(phase===4){
+    if(!hasSystemEvent('FINE 2° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 2° TEMPO SUPPLEMENTARE');
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='2_TEMPI_SUPPLEMENTARI';
       endMatch();
@@ -8318,8 +8868,9 @@ function processFinishedPhase(phase){
     return;
   }
 
-  /* 3° TEMPO SUPPLEMENTARE */
+  /* FINE 3° TEMPO SUPPLEMENTARE */
   if(phase===5){
+    if(!hasSystemEvent('FINE 3° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 3° TEMPO SUPPLEMENTARE');
     showPhaseTransition(
       'INIZIARE IL 4° TEMPO SUPPLEMENTARE?',
       `3° tempo supplementare terminato: ${state.scoreA} - ${state.scoreB}`,
@@ -8328,8 +8879,9 @@ function processFinishedPhase(phase){
     return;
   }
 
-  /* 4° TEMPO SUPPLEMENTARE */
+  /* FINE 4° TEMPO SUPPLEMENTARE */
   if(phase===6){
+    if(!hasSystemEvent('FINE 4° TEMPO SUPPLEMENTARE')) addEvent('—','—','SYSTEM','FINE 4° TEMPO SUPPLEMENTARE');
     if(state.scoreA!==state.scoreB){
       state.motivoFineGara='4_TEMPI_SUPPLEMENTARI';
       endMatch();
@@ -8353,7 +8905,6 @@ function startFirstOvertime(){
   state.timer=getPhaseEnd(2);
   state.running=false;
   setPhaseStartScore();
-  addEvent('—','—','SYSTEM','INIZIO 1° TEMPO SUPPLEMENTARE');
   render();
   saveRecovery();
 }
@@ -8365,7 +8916,6 @@ function startSecondOvertime(){
   state.timer=getPhaseEnd(3);
   state.running=false;
   setPhaseStartScore();
-  addEvent('—','—','SYSTEM','INIZIO 2° TEMPO SUPPLEMENTARE');
   render();
   saveRecovery();
 }
@@ -8377,7 +8927,6 @@ function startThirdOvertime(){
   state.timer=getPhaseEnd(4);
   state.running=false;
   setPhaseStartScore();
-  addEvent('—','—','SYSTEM','INIZIO 3° TEMPO SUPPLEMENTARE');
   render();
   saveRecovery();
 }
@@ -8389,7 +8938,6 @@ function startFourthOvertime(){
   state.timer=getPhaseEnd(5);
   state.running=false;
   setPhaseStartScore();
-  addEvent('—','—','SYSTEM','INIZIO 4° TEMPO SUPPLEMENTARE');
   render();
   saveRecovery();
 }
@@ -8695,7 +9243,7 @@ function preparaRefertoFIGH(){
         const d = state.discipline?.[team]?.[i] || {};
         const p = {
           num: num ?? "",
-          name: "",
+          name: String(state.playerNames?.[team]?.[i] || '').trim(),
           goals: Number(d.goals ?? 0),
           yellow: Number(d.yellow ?? 0),
           two: Number(d.two ?? 0),
@@ -8784,22 +9332,22 @@ function preparaRefertoFIGH(){
       teamA: state.teams?.A || "",
       teamB: state.teams?.B || "",
 
-      matchNumber: "",
+      matchNumber: state.matchData?.matchNumber || state.matchNumber || "",
       modalitaGara: state.matchMode || 'STANDARD',
-      league: "",
+      league: state.matchData?.championship || state.championship || "",
       group: "",
-      season: "",
-      matchDate: "",
-      matchTime: "",
-      city: "",
-      venue: "",
+      season: state.matchData?.season || state.season || "",
+      matchDate: state.matchData?.date || state.matchDate || "",
+      matchTime: state.matchData?.time || state.matchTime || "",
+      city: state.matchData?.localita || state.city || "",
+      venue: state.matchData?.venue || state.venue || "",
 
-      referee1: "",
-      referee2: "",
-      delegate1: "",
-      delegate2: "",
-      timekeeper: "",
-      secretary: "",
+      referee1: state.matchData?.referee1 || state.referee1 || "",
+      referee2: state.matchData?.referee2 || state.referee2 || "",
+      delegate1: state.matchData?.delegate1 || state.delegate1 || "",
+      delegate2: state.matchData?.delegate2 || state.delegate2 || "",
+      timekeeper: state.matchData?.timekeeper || state.timekeeper || "",
+      secretary: state.matchData?.secretary || state.secretary || "",
 
       eventi: eventi,
 
@@ -9171,6 +9719,14 @@ function openEditTeams(){
   if(msg)msg.classList.remove('show');
   const rb=el('restoreBtn');
   if(rb)rb.style.display=hasRecovery()?'block':'none';
+
+  const ab=el('openSavedBtn');
+  if(ab){
+    ab.style.display='block';
+    ab.disabled=false;
+    ab.style.opacity='1';
+  }
+
   updateConfigModeUI();
   el('editTeamsModal').style.display='flex';
 
@@ -9350,6 +9906,12 @@ function resetMatch(){
     scoreA:0,scoreB:0,
     teams:{A:'CASA',B:'OSPITI'},
     teamColors:{A:'#2563eb',B:'#7c3aed'},
+    matchData:{
+      matchNumber:'',date:'',time:'',championship:'',localita:'',venue:'',
+      season:'',referee1:'',referee2:'',delegate1:'',delegate2:'',
+      timekeeper:'',secretary:''
+    },
+    playerNames:{A:Array(MAX_PLAYERS).fill(''),B:Array(MAX_PLAYERS).fill('')},
     numbers:{
       A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
       B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)
@@ -9462,6 +10024,45 @@ render();
 <script>
 /* Layout compatto definitivo: non forza più GIOCATORI e DIRIGENTI alla stessa altezza. */
 window.syncPlayersStaff=function(){};
+</script>
+
+
+
+
+
+
+
+
+<script id="auto-open-config-after-init">
+(function(){
+  function apriConfigurazioneDopoInit(){
+    try{
+      // IMPORTANTISSIMO: non mostrare semplicemente il DIV.
+      // openEditTeams() costruisce giocatori, dirigenti, numeri e palette colori.
+      if(typeof window.openEditTeams === 'function'){
+        window.openEditTeams();
+        return;
+      }
+
+      const modal=document.getElementById('editTeamsModal');
+      if(modal) modal.style.display='flex';
+    }catch(err){
+      console.error('Apertura automatica CONFIGURAZIONE:',err);
+    }
+  }
+
+  function start(){
+    // Il file ha già inizializzato state, installato i controlli
+    // e chiamato render() prima di questo script.
+    setTimeout(apriConfigurazioneDopoInit,120);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
+  }
+})();
 </script>
 
 </body>
