@@ -6100,9 +6100,209 @@ tr.team-b td,
 .panel.team-b .timeout-btn{background:var(--team-away) !important;color:#fff !important}
 </style>
 
+
+<style id="discipline-countdown-v1">
+.discipline-status.countdown{
+  background:#dc2626 !important;
+  color:#fff !important;
+  font-size:9px !important;
+  font-variant-numeric:tabular-nums;
+}
+</style>
+
+
+<style id="log-edit-team-colors-v1">
+#logEditTeamA{
+  background:var(--team-home,#2563eb) !important;
+  color:#fff !important;
+  border-color:var(--team-home,#2563eb) !important;
+}
+#logEditTeamB{
+  background:var(--team-away,#7c3aed) !important;
+  color:#fff !important;
+  border-color:var(--team-away,#7c3aed) !important;
+}
+</style>
+
+
+<style id="tablet-discipline-status-v2">
+/* Sul tablet la riga sotto A / 2' / E è sempre realmente visibile. */
+.player-card,
+.staff-card{
+  overflow:visible !important;
+}
+
+.player-card > .discipline-status,
+.staff-card > .discipline-status{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  flex:0 0 22px !important;
+  height:22px !important;
+  min-height:22px !important;
+  max-height:22px !important;
+  margin:0 3px 2px !important;
+  box-sizing:border-box !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:4px !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  overflow:visible !important;
+}
+
+.player-card > .discipline-status.empty,
+.staff-card > .discipline-status.empty{
+  background:#f1f5f9 !important;
+  color:transparent !important;
+  border:1px solid #e2e8f0 !important;
+}
+
+.player-card > .discipline-status.excluded,
+.player-card > .discipline-status.expelled,
+.staff-card > .discipline-status.excluded,
+.staff-card > .discipline-status.expelled{
+  background:#fff !important;
+  color:#dc2626 !important;
+  border:1px solid #fecaca !important;
+}
+
+/* Il contenitore della card ha abbastanza spazio verticale per la riga. */
+@media (max-width:1100px){
+  .players-grid .player-card{
+    min-height:0 !important;
+    height:auto !important;
+  }
+  .staff-card{
+    min-height:0 !important;
+    height:auto !important;
+  }
+}
+
+/* Pulsante fullscreen */
+#fullscreenBtn{
+  position:fixed;
+  right:10px;
+  top:10px;
+  z-index:99990;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:8px;
+  background:#111827;
+  color:#fff;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:0 2px 8px #0005;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+#fullscreenBtn:active{transform:scale(.94)}
+:fullscreen #fullscreenBtn{background:#334155}
+</style>
+
+
+<style id="direct-red-countdown-v2">
+.player-card > .discipline-status.countdown,
+.staff-card > .discipline-status.countdown{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  background:#dc2626 !important;
+  color:#fff !important;
+  border:1px solid #b91c1c !important;
+  font-size:9px !important;
+  font-weight:900 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+</style>
+
+
+<style id="direct-red-e-and-countdown-final">
+.player-card.expelled .discipline-cell.red-active,
+.staff-card.staff-expelled .discipline-cell.red-active{
+  background:#dc2626 !important;
+  color:#fff !important;
+}
+.player-card > .discipline-status.countdown,
+.staff-card > .discipline-status.countdown{
+  background:#dc2626 !important;
+  color:#fff !important;
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+</style>
+
+
+<style id="registro-team-colors-v1">
+/* Registro gare: usa sempre i colori scelti in CONFIGURAZIONE. */
+#eventLog .log-row.team-a,
+#eventLog .event-row.team-a{
+  border-left:4px solid var(--team-home,#2563eb) !important;
+}
+#eventLog .log-row.team-b,
+#eventLog .event-row.team-b{
+  border-left:4px solid var(--team-away,#7c3aed) !important;
+}
+
+#eventLog .log-team-a,
+#eventLog .event-team-a,
+#eventLog .team-a-label{
+  color:var(--team-home,#2563eb) !important;
+  font-weight:900 !important;
+}
+#eventLog .log-team-b,
+#eventLog .event-team-b,
+#eventLog .team-b-label{
+  color:var(--team-away,#7c3aed) !important;
+  font-weight:900 !important;
+}
+
+/* Quando il registro mostra pulsanti/etichette CASA e OSPITI. */
+#logEditTeamA{
+  background:var(--team-home,#2563eb) !important;
+  color:#fff !important;
+}
+#logEditTeamB{
+  background:var(--team-away,#7c3aed) !important;
+  color:#fff !important;
+}
+</style>
+
+
+<style id="registro-full-row-team-colors-v2">
+/* TUTTO l'evento del Registro Gare segue il colore della squadra:
+   TEMPO + SQ + EVENTO + RIS. */
+#eventLog .log-row.team-a,
+#eventLog .event-row.team-a{
+  color:var(--team-home,#2563eb) !important;
+  border-left-color:var(--team-home,#2563eb) !important;
+}
+#eventLog .log-row.team-b,
+#eventLog .event-row.team-b{
+  color:var(--team-away,#7c3aed) !important;
+  border-left-color:var(--team-away,#7c3aed) !important;
+}
+#eventLog .log-row.team-a *,
+#eventLog .event-row.team-a *{
+  color:var(--team-home,#2563eb) !important;
+}
+#eventLog .log-row.team-b *,
+#eventLog .event-row.team-b *{
+  color:var(--team-away,#7c3aed) !important;
+}
+</style>
+
 </head>
 
 <body>
+
+<button id="fullscreenBtn" type="button" aria-label="Schermo intero"
+        title="Schermo intero" onclick="toggleTabletFullscreen()">⛶</button>
+
 <div id="app">
 
   <section class="top">
@@ -6676,10 +6876,77 @@ function renderSuspensions(){
   });
 }
 
+
+function isTabletFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+async function toggleTabletFullscreen(){
+  try{
+    if(isTabletFullscreen()){
+      if(document.exitFullscreen) await document.exitFullscreen();
+      else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+      return;
+    }
+
+    const target=document.documentElement;
+    if(target.requestFullscreen){
+      await target.requestFullscreen({navigationUI:'hide'});
+    }else if(target.webkitRequestFullscreen){
+      target.webkitRequestFullscreen();
+    }else{
+      toast('Schermo intero non supportato da questo browser');
+    }
+  }catch(err){
+    toast('Premi nuovamente il pulsante per attivare lo schermo intero');
+  }
+}
+
+function updateFullscreenButton(){
+  const b=el('fullscreenBtn');
+  if(!b)return;
+  b.textContent=isTabletFullscreen()?'⛶':'⛶';
+  b.title=isTabletFullscreen()?'Esci da schermo intero':'Schermo intero';
+}
+
+document.addEventListener('fullscreenchange',updateFullscreenButton);
+document.addEventListener('webkitfullscreenchange',updateFullscreenButton);
+
+
+function applyRegistroTeamColors(){
+  ensureTeamColors();
+  const root=document.documentElement;
+  root.style.setProperty('--registro-home',state.teamColors.A || '#2563eb');
+  root.style.setProperty('--registro-away',state.teamColors.B || '#7c3aed');
+
+  // Colora le righe del registro in base alla squadra indicata nei dati DOM.
+  document.querySelectorAll('#eventLog [data-team]').forEach(row=>{
+    const t=row.getAttribute('data-team');
+    row.style.borderLeft='4px solid '+(t==='A'?state.teamColors.A:state.teamColors.B);
+  });
+}
+
+
+function applyRegistroFullRowColors(){
+  ensureTeamColors();
+  const rows=el('eventLog')?.querySelectorAll('[data-team]');
+  rows?.forEach(row=>{
+    const team=row.getAttribute('data-team');
+    if(team!=='A' && team!=='B') return;
+    const color=team==='A' ? state.teamColors.A : state.teamColors.B;
+    row.classList.toggle('team-a',team==='A');
+    row.classList.toggle('team-b',team==='B');
+    row.style.color=color;
+    row.querySelectorAll('*').forEach(node=>node.style.color=color);
+  });
+}
+
 function render(){
   ensureTimeoutState();
   ensureTeamColors();
   applyTeamColors(state.teamColors);
+  applyRegistroTeamColors();
+  applyRegistroFullRowColors();
   el('teamAHeader').textContent=state.teams.A;
   el('teamBHeader').textContent=state.teams.B;
   el('teamAName').value=state.teams.A;
@@ -6782,6 +7049,28 @@ function render(){
   updateRestoreButton();
 }
 
+
+function disciplineCountdownText(team,num){
+  const list=Array.isArray(state.activeSuspensions)?state.activeSuspensions:[];
+  const s=list.find(x=>
+    x.team===team &&
+    String(x.num)===String(num) &&
+    Number(state.timer||0) < Number(x.endGameTime||0)
+  );
+  if(!s) return '';
+
+  const left=Math.max(
+    0,
+    Number(s.endGameTime||0)-Number(state.timer||0)
+  );
+
+  if(left<=0) return '';
+
+  const mm=String(Math.floor(left/60)).padStart(2,'0');
+  const ss=String(Math.floor(left%60)).padStart(2,'0');
+  return `${mm}:${ss}`;
+}
+
 function renderPlayers(team){
   const box=el('players'+team);
   box.innerHTML='';
@@ -6820,11 +7109,15 @@ function renderPlayers(team){
       twoCount>=3 ? 'two-red' :
       twoCount>0 ? 'two-active' : '';
 
+    // Anche l'espulsione diretta deve mostrare il countdown dei 2'
+    // nella riga sottostante. Il simbolo E resta rosso.
+    const countdown=disciplineCountdownText(team,num);
     const statusText=
-      excluded ? 'ESCLUSO' :
-      directRed ? 'ESPULSO' : '';
+      countdown || (excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '');
 
     const statusClass=
+      countdown ? 'countdown' :
       statusText ? (excluded?'excluded':'expelled') : 'empty';
 
     card.innerHTML=`
@@ -6897,11 +7190,14 @@ function renderStaff(team){
       twoCount>=3 ? 'two-red' :
       twoCount>0 ? 'two-active' : '';
 
+    // Anche l'espulsione diretta del dirigente deve mostrare il countdown.
+    const countdown=disciplineCountdownText(team,letter);
     const statusText=
-      excluded ? 'ESCLUSO' :
-      directRed ? 'ESPULSO' : '';
+      countdown || (excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '');
 
     const statusClass=
+      countdown ? 'countdown' :
       statusText ? (excluded?'excluded':'expelled') : 'empty';
 
     const card=document.createElement('div');
@@ -7016,7 +7312,26 @@ function renderLog(){
       `<div class="log-num">${num}</div><div class="log-event">${text}</div><div class="log-res">${e.result||''}</div></div>`;
   }).join('');
   box.scrollTop=0;
+
+
+  // Uniforma l'intera riga dell'evento al colore della squadra.
+  const rows=el('eventLog')?.querySelectorAll('[data-team]');
+  rows?.forEach(row=>{
+    const team=row.getAttribute('data-team');
+    row.classList.toggle('team-a',team==='A');
+    row.classList.toggle('team-b',team==='B');
+    const color=team==='A'
+      ? (state.teamColors?.A || '#2563eb')
+      : (state.teamColors?.B || '#7c3aed');
+    row.style.color=color;
+    row.querySelectorAll('*').forEach(node=>{
+      node.style.color=color;
+    });
+  });
 }
+
+  applyRegistroTeamColors();
+
 
 function snapshot(){
   undoStack.push(JSON.stringify(state));
@@ -7445,8 +7760,12 @@ function playerAction(team,index,type){
   if(type==='RED'){
     d.red=true;
 
-    // Espulsione diretta: alone rosso permanente fino alla fine della gara.
-    clearActiveSuspension(team,num);
+    // Espulsione diretta:
+    // - E resta rossa per tutta la gara;
+    // - il giocatore riceve comunque il countdown dei 2' visibile;
+    // - allo scadere dei 2' scompare SOLO il countdown;
+    // - il giocatore resta inibito fino alla fine della gara.
+    startSuspension(team,num);
 
     addEvent(team,num,'RED','ESPULSIONE DIRETTA');
     stopForDisciplinary(team,num,'ESPULSIONE DIRETTA');
@@ -7522,7 +7841,11 @@ function staffAction(team,index,type){
 
   if(type==='RED'){
     d.red=true;
-    clearActiveSuspension(team,letter);
+
+    // Anche il dirigente espulso direttamente mostra il countdown dei 2'.
+    // Dopo i 2' resta comunque espulso/inibito fino alla fine della gara.
+    startSuspension(team,letter);
+
     addEvent(team,letter,'RED','ESPULSIONE');
     stopForDisciplinary(team,letter,'ESPULSIONE');
   }
@@ -8505,9 +8828,13 @@ function applyTeamColors(colors){
   // I popup che mostrano la squadra mantengono lo stesso colore.
   document.querySelectorAll('.team-a .btn.blue').forEach(x=>{
     x.style.backgroundColor=c.A || '#2563eb';
+    x.style.color='#fff';
   });
   document.querySelectorAll('.team-b .btn').forEach(x=>{
-    if(!x.classList.contains('gray'))x.style.backgroundColor=c.B || '#7c3aed';
+    if(!x.classList.contains('gray')){
+      x.style.backgroundColor=c.B || '#7c3aed';
+      x.style.color='#fff';
+    }
   });
 }
 
