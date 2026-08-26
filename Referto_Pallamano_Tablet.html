@@ -5886,6 +5886,220 @@ tr.team-b td,
 .shootout-shoot-btn{flex:0 0 22px;height:22px;margin:1px 3px;border:0;border-radius:5px;background:#eab308;color:#111;font-size:9px;font-weight:900}
 .shootout-shoot-btn:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed}
 </style>
+
+<style id="discipline-row-v30">
+/* Riga A / 2' / E nei contenitori giocatore e dirigente */
+.discipline-row{
+  flex:0 0 24px;
+  height:24px;
+  min-height:24px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:3px;
+  padding:2px 4px;
+  box-sizing:border-box;
+}
+.discipline-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  border-radius:4px;
+  background:#e2e8f0;
+  color:#64748b;
+  font-size:9px;
+  line-height:1;
+  font-weight:900;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.discipline-cell.yellow-active{
+  background:#facc15;
+  color:#111827;
+}
+.discipline-cell.two-active{
+  background:#f97316;
+  color:#fff;
+}
+.discipline-cell.two-red{
+  background:#dc2626;
+  color:#fff;
+}
+.discipline-cell.red-active{
+  background:#dc2626;
+  color:#fff;
+}
+.discipline-status{
+  flex:0 0 20px;
+  height:20px;
+  min-height:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 4px 3px;
+  border-radius:4px;
+  font-size:9px;
+  line-height:1;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.discipline-status.empty{
+  background:transparent;
+  color:transparent;
+}
+.discipline-status.excluded,
+.discipline-status.expelled{
+  background:transparent;
+  color:#dc2626;
+}
+</style>
+
+
+<style id="discipline-row-final-override">
+.player-card > .discipline-row,
+.staff-card > .discipline-row{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  flex:0 0 24px !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+}
+.player-card > .discipline-status,
+.staff-card > .discipline-status{
+  display:flex !important;
+  flex:0 0 20px !important;
+  height:20px !important;
+  min-height:20px !important;
+  max-height:20px !important;
+}
+.staff-card > .discipline-row{
+  width:100% !important;
+}
+</style>
+
+
+<style id="two-minutes-count-final">
+.player-card .discipline-row .discipline-cell{
+  font-size:8px !important;
+  white-space:nowrap !important;
+}
+</style>
+
+
+<style id="log-edit-away-purple">
+#logEditTeamB{
+  background:#6d28d9 !important;
+  color:#fff !important;
+  border-color:#6d28d9 !important;
+  font-weight:900 !important;
+}
+#logEditTeamB:active{
+  background:#5b21b6 !important;
+  color:#fff !important;
+}
+</style>
+
+
+<style id="team-color-config-v1">
+.team-color-section{
+  margin-top:7px;
+  padding:5px 6px;
+  border:1px solid #cbd5e1;
+  border-radius:7px;
+  background:#fff;
+}
+.team-color-title{
+  text-align:center;
+  font-size:8px;
+  font-weight:900;
+  color:#475569;
+  margin-bottom:5px;
+}
+.team-color-palette{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:5px;
+}
+.team-color-swatch{
+  width:100%;
+  aspect-ratio:1/1;
+  min-height:20px;
+  border:2px solid transparent;
+  border-radius:5px;
+  cursor:pointer;
+  box-sizing:border-box;
+  touch-action:manipulation;
+  box-shadow:0 1px 2px #0003;
+}
+.team-color-swatch.selected{
+  border-color:#fff;
+  outline:3px solid #0f172a;
+  outline-offset:1px;
+}
+.team-color-swatch:active{transform:scale(.94)}
+
+:root{
+  --team-home-bg:#eff6ff;
+  --team-away-bg:#f5f3ff;
+}
+
+.panel-head.a{
+  background:var(--team-home-bg) !important;
+  border-bottom-color:var(--team-home) !important;
+}
+.panel-head.b{
+  background:var(--team-away-bg) !important;
+  border-bottom-color:var(--team-away) !important;
+}
+.panel.team-a .players-caption,
+.panel.team-a .staff-title{
+  border-color:color-mix(in srgb,var(--team-home) 35%,#cbd5e1) !important;
+}
+.panel.team-b .players-caption,
+.panel.team-b .staff-title{
+  border-color:color-mix(in srgb,var(--team-away) 35%,#cbd5e1) !important;
+}
+.panel.team-a .player-card{
+  border-color:color-mix(in srgb,var(--team-home) 40%,#cbd5e1) !important;
+  background:color-mix(in srgb,var(--team-home) 6%,white) !important;
+}
+.panel.team-b .player-card{
+  border-color:color-mix(in srgb,var(--team-away) 40%,#cbd5e1) !important;
+  background:color-mix(in srgb,var(--team-away) 6%,white) !important;
+}
+.panel.team-a .staff-card{
+  border-color:color-mix(in srgb,var(--team-home) 40%,#cbd5e1) !important;
+  background:color-mix(in srgb,var(--team-home) 6%,white) !important;
+}
+.panel.team-b .staff-card{
+  border-color:color-mix(in srgb,var(--team-away) 40%,#cbd5e1) !important;
+  background:color-mix(in srgb,var(--team-away) 6%,white) !important;
+}
+.team-title.a,.panel.team-a .name-input,.panel.team-a .team-counters,
+.panel.team-a .players-caption,.panel.team-a .staff-title{
+  color:var(--team-home) !important;
+}
+.team-title.b,.panel.team-b .name-input,.panel.team-b .team-counters,
+.panel.team-b .players-caption,.panel.team-b .staff-title{
+  color:var(--team-away) !important;
+}
+.panel.team-a .player-number,.panel.team-a .player-event-btn,
+.panel.team-a .staff-label{
+  background:var(--team-home) !important;
+  background-color:var(--team-home) !important;
+  color:#fff !important;
+}
+.panel.team-b .player-number,.panel.team-b .player-event-btn,
+.panel.team-b .staff-label{
+  background:var(--team-away) !important;
+  background-color:var(--team-away) !important;
+  color:#fff !important;
+}
+.panel.team-a .timeout-btn{background:var(--team-home) !important;color:#fff !important}
+.panel.team-b .timeout-btn{background:var(--team-away) !important;color:#fff !important}
+</style>
+
 </head>
 
 <body>
@@ -6020,6 +6234,10 @@ tr.team-b td,
     <div class="edit-teams-grid">
       <section class="edit-team-box">
         <input id="editTeamAName" class="edit-team-name" value="CASA" maxlength="30">
+        <div class="team-color-section">
+          <div class="team-color-title">COLORE SQUADRA</div>
+          <div id="editTeamAColors" class="team-color-palette"></div>
+        </div>
         <div class="edit-section-title">GIOCATORI</div>
         <div id="editPlayersA" class="edit-players-grid"></div>
         <div class="edit-section-title">DIRIGENTI</div>
@@ -6027,6 +6245,10 @@ tr.team-b td,
       </section>
       <section class="edit-team-box">
         <input id="editTeamBName" class="edit-team-name" value="OSPITI" maxlength="30">
+        <div class="team-color-section">
+          <div class="team-color-title">COLORE SQUADRA</div>
+          <div id="editTeamBColors" class="team-color-palette"></div>
+        </div>
         <div class="edit-section-title">GIOCATORI</div>
         <div id="editPlayersB" class="edit-players-grid"></div>
         <div class="edit-section-title">DIRIGENTI</div>
@@ -6086,6 +6308,46 @@ tr.team-b td,
 
 
 
+<!-- POPUP MODIFICA REGISTRO -->
+<div id="logEditModal" class="modal-back">
+  <div class="modal event-modal">
+    <h3 id="logEditTitle">MODIFICA EVENTO</h3>
+    <p id="logEditSubtitle">Seleziona la variazione.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px">
+      <button id="logEditTeamA" class="btn blue" onclick="changeLogEditTeam('A')">CASA</button>
+      <button id="logEditTeamB" class="btn purple" onclick="changeLogEditTeam('B')">OSPITI</button>
+    </div>
+
+    <div id="logEditTeamInfo" style="font-weight:900;text-align:center;margin-bottom:8px"></div>
+
+    <div id="logEditPlayerActions" class="modal-actions event-actions">
+      <button class="goal-btn" onclick="applyLogEventEdit('GOAL')">GOAL</button>
+      <button class="penalty-btn" onclick="applyLogEventEdit('PENALTY_SCORED')">RIGORE REALIZZATO</button>
+      <button class="gray" onclick="applyLogEventEdit('PENALTY_MISSED')">RIGORE ERRATO</button>
+      <button class="yellow-btn" onclick="applyLogEventEdit('YELLOW')">A · AMMONIZIONE</button>
+      <button class="two-btn" onclick="applyLogEventEdit('TWO')">2'</button>
+      <button class="red-btn" onclick="applyLogEventEdit('RED')">E · ESPULSIONE</button>
+    </div>
+
+    <div id="logEditStaffActions" class="modal-actions event-actions" style="display:none">
+      <button class="yellow-btn" onclick="applyLogEventEdit('YELLOW')">A · AMMONIZIONE</button>
+      <button class="two-btn" onclick="applyLogEventEdit('TWO')">2'</button>
+      <button class="red-btn" onclick="applyLogEventEdit('RED')">E · ESPULSIONE</button>
+    </div>
+
+    <div id="logEditTimeoutActions" class="modal-actions event-actions" style="display:none">
+      <button class="btn orange" style="grid-column:1/-1" onclick="applyLogEventEdit('TIMEOUT')">TIME OUT</button>
+    </div>
+
+    <button class="gray" style="width:100%;margin-top:8px;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900" onclick="closeLogEditModal()">ANNULLA</button>
+  </div>
+</div>
+<style>
+#log.log-editable .log-row{cursor:pointer;touch-action:manipulation}
+#log.log-editable .log-row:active{filter:brightness(.94);transform:scale(.995)}
+#logEditTeamA,#logEditTeamB{font-weight:900}
+</style>
 <!-- POPUP SCELTA EVENTO -->
 <div id="eventModal" class="modal-back">
   <div class="modal event-modal">
@@ -6196,6 +6458,7 @@ let state={
   phaseStartScoreA:0,phaseStartScoreB:0,
   scoreA:0,scoreB:0,
   teams:{A:'CASA',B:'OSPITI'},
+  teamColors:{A:'#2563eb',B:'#7c3aed'},
   numbers:{
     A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
     B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)
@@ -6211,6 +6474,9 @@ let state={
     B:STAFF.map(()=>({yellow:0,two:0,red:false}))
   },
   timeouts:{A:0,B:0},
+  timeoutsFirstHalf:{A:0,B:0},
+  timeoutsSecondHalf:{A:0,B:0},
+  timeoutsSecondHalfLimit:{A:2,B:2},
   penalty:{A:0,B:0},
   penaltyScored:{A:0,B:0},
   activeSuspensions:[],
@@ -6221,9 +6487,35 @@ let interval=null;
 let timeoutInterval=null;
 let selected=null;
 let selectedPenalty=null;
+let editingLogIndex=null;
+let editingLogTeam=null;
 let undoStack=[];
 
 function el(id){return document.getElementById(id)}
+
+function ensureTimeoutState(){
+  if(!state.timeouts || typeof state.timeouts!=='object') state.timeouts={A:0,B:0};
+  if(!state.timeoutsFirstHalf || typeof state.timeoutsFirstHalf!=='object')
+    state.timeoutsFirstHalf={A:0,B:0};
+  if(!state.timeoutsSecondHalf || typeof state.timeoutsSecondHalf!=='object')
+    state.timeoutsSecondHalf={A:0,B:0};
+  if(!state.timeoutsSecondHalfLimit || typeof state.timeoutsSecondHalfLimit!=='object')
+    state.timeoutsSecondHalfLimit={A:2,B:2};
+
+  ['A','B'].forEach(t=>{
+    state.timeouts[t]=Number(state.timeouts[t]||0);
+    state.timeoutsFirstHalf[t]=Number(state.timeoutsFirstHalf[t]||0);
+    state.timeoutsSecondHalf[t]=Number(state.timeoutsSecondHalf[t]||0);
+    state.timeoutsSecondHalfLimit[t]=Number(state.timeoutsSecondHalfLimit[t] ?? 2);
+
+    // Vecchi salvataggi: se siamo ancora nel 1° tempo possiamo ricostruire
+    // almeno il conteggio del 1° tempo dal totale.
+    if(state.phase===1 && state.timeoutsFirstHalf[t]===0 && state.timeouts[t]>0){
+      state.timeoutsFirstHalf[t]=Math.min(2,state.timeouts[t]);
+    }
+  });
+}
+
 function ensureShootoutState(){
   if(!state.shootout || typeof state.shootout!=='object'){
     state.shootout={started:false,finished:false,firstTeam:'',turn:0,phase:1,scoreA:0,scoreB:0,shots:[],takenA:[],takenB:[]};
@@ -6314,6 +6606,7 @@ function restoreMatch(){
     }
 
     state=saved.state;
+    ensureTeamColors();
     state.staffNames=state.staffNames || {A:STAFF.map(()=>''),B:STAFF.map(()=>'' )};
     ensureShootoutState();
 
@@ -6384,6 +6677,9 @@ function renderSuspensions(){
 }
 
 function render(){
+  ensureTimeoutState();
+  ensureTeamColors();
+  applyTeamColors(state.teamColors);
   el('teamAHeader').textContent=state.teams.A;
   el('teamBHeader').textContent=state.teams.B;
   el('teamAName').value=state.teams.A;
@@ -6490,10 +6786,6 @@ function renderPlayers(team){
   const box=el('players'+team);
   box.innerHTML='';
 
-  /* Sul referto i giocatori vengono sempre visualizzati in ordine
-     numerico crescente. L'indice originale resta associato alla relativa
-     disciplina, quindi goal/sanzioni non vengono persi quando si riordinano
-     i numeri. Le posizioni senza numero vengono messe in fondo. */
   const playerOrder = state.numbers[team]
     .map((num,i)=>({num,i}))
     .sort((a,b)=>{
@@ -6508,6 +6800,7 @@ function renderPlayers(team){
   playerOrder.forEach(({num,i})=>{
     const d=state.discipline[team][i];
     const hasNumber=String(num ?? '').trim()!=='';
+
     const card=document.createElement('div');
 
     const activeTwo=isActiveSuspension(team,num);
@@ -6519,19 +6812,40 @@ function renderPlayers(team){
     card.className=cls;
 
     const yellow=d.yellow>0;
-    const expelled=d.red;
+    const twoCount=Number(d.two||0);
+    const directRed=!!d.red && twoCount<3;
+    const excluded=twoCount>=3;
+
+    const twoClass=
+      twoCount>=3 ? 'two-red' :
+      twoCount>0 ? 'two-active' : '';
+
+    const statusText=
+      excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '';
+
+    const statusClass=
+      statusText ? (excluded?'excluded':'expelled') : 'empty';
 
     card.innerHTML=`
       <div class="player-top">
         <button class="player-number player-touch" type="button"
-                ${(!hasNumber || expelled)?'disabled':''}>${hasNumber ? num : '—'}</button>
+                ${(!hasNumber || d.red)?'disabled':''}>${hasNumber ? num : '—'}</button>
         <span class="player-goals">⚽ ${d.goals}</span>
       </div>
-      ${String(state.playerNames?.[team]?.[i] ?? '').trim() ? `<div class="player-name">${String(state.playerNames[team][i]).replace(/[&<>"]/g,'')}</div>` : ''}
-      <div class="player-stats">
-        <span class="stat-yellow ${yellow?'active':''}">A${yellow?' ✓':''}</span>
-        <span class="stat-two">2' ${d.two}/3</span>
+
+      ${String(state.playerNames?.[team]?.[i] ?? '').trim()
+        ? `<div class="player-name">${String(state.playerNames[team][i]).replace(/[&<>"]/g,'')}</div>`
+        : ''}
+
+      <div class="discipline-row">
+        <span class="discipline-cell ${yellow?'yellow-active':''}">A</span>
+        <span class="discipline-cell ${twoClass}">2' ${twoCount}/3</span>
+        <span class="discipline-cell ${directRed?'red-active':''}">E</span>
       </div>
+
+      <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
+
       ${state.phase===7 && state.shootout?.started ? `
         <button type="button"
           class="shootout-shoot-btn"
@@ -6539,13 +6853,9 @@ function renderPlayers(team){
           onclick="event.stopPropagation();handleShootoutShot('${team}',${i})">
           ${d.canShoot ? 'TIRA' : '—'}
         </button>` : ''}
-      ${expelled ? '<div class="player-expelled">ESPULSO</div>' : ''}
-      
     `;
-    /* L'intera scheda del giocatore è il touch target del popup.
-       Un numero mancante o un giocatore già espulso resta completamente
-       non cliccabile, come richiesto. */
-    if(hasNumber && !expelled){
+
+    if(hasNumber && !d.red){
       card.classList.add('player-card-touch');
       card.addEventListener('click', function(){
         openEventMenu('PLAYER', team, i);
@@ -6557,13 +6867,10 @@ function renderPlayers(team){
     box.appendChild(card);
   });
 }
-
 function renderStaff(team){
   const box=el('staff'+team);
   box.innerHTML='';
 
-  // FORZATURA LAYOUT: i 5 dirigenti sono SEMPRE affiancati
-  // orizzontalmente, esattamente come i 4 giocatori per riga.
   box.style.setProperty('display','flex','important');
   box.style.setProperty('flex-direction','row','important');
   box.style.setProperty('flex-wrap','nowrap','important');
@@ -6580,14 +6887,31 @@ function renderStaff(team){
   STAFF.forEach((_,i)=>{
     const letter=String((state.staffLetters?.[team]?.[i]) ?? '').trim().toUpperCase();
     const d=state.staff[team][i];
+
     const activeTwo=isActiveSuspension(team,letter);
+    const twoCount=Number(d.two||0);
+    const directRed=!!d.red && twoCount<3;
+    const excluded=twoCount>=3;
+
+    const twoClass=
+      twoCount>=3 ? 'two-red' :
+      twoCount>0 ? 'two-active' : '';
+
+    const statusText=
+      excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '';
+
+    const statusClass=
+      statusText ? (excluded?'excluded':'expelled') : 'empty';
+
     const card=document.createElement('div');
     card.className='staff-card';
+
     if(d.red) card.classList.add('staff-expelled');
     else if(activeTwo) card.classList.add('staff-suspended');
 
-    // Ogni card occupa esattamente 1/5 della riga.
-    card.style.setProperty('display','block','important');
+    card.style.setProperty('display','flex','important');
+    card.style.setProperty('flex-direction','column','important');
     card.style.setProperty('flex','1 1 0','important');
     card.style.setProperty('width','0','important');
     card.style.setProperty('min-width','0','important');
@@ -6597,9 +6921,6 @@ function renderStaff(team){
     card.style.setProperty('box-sizing','border-box','important');
     card.style.setProperty('height','auto','important');
 
-    // Il nominativo non viene richiesto nella configurazione attuale.
-    // Se in futuro è presente nei dati, viene mostrato; altrimenti
-    // viene usata soltanto la dicitura DIRIGENTE A/B/C/D/E.
     const savedName=String(state.staffNames?.[team]?.[i] ?? '').trim();
     const displayName=savedName || (letter ? `DIRIGENTE ${letter}` : '');
 
@@ -6609,11 +6930,14 @@ function renderStaff(team){
           ${(!letter || d.red)?'disabled':''}>${letter}</button>
         <span class="staff-name">${displayName}</span>
       </div>
-      <div class="staff-stats">
-        <span class="staff-yellow ${d.yellow ? 'active' : ''}">A ${d.yellow || 0}</span>
-        <span class="staff-two ${d.two ? 'active' : ''}">2' ${d.two || 0}</span>
-        <span class="staff-red ${d.red ? 'active' : ''}">${d.red ? 'E' : 'E'}</span>
+
+      <div class="discipline-row">
+        <span class="discipline-cell ${d.yellow?'yellow-active':''}">A</span>
+        <span class="discipline-cell ${twoClass}">2'</span>
+        <span class="discipline-cell ${directRed?'red-active':''}">E</span>
       </div>
+
+      <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
     `;
 
     if(letter && !d.red){
@@ -6628,60 +6952,70 @@ function renderStaff(team){
     box.appendChild(card);
   });
 }
-
 function renderCounters(){
+  ensureTimeoutState();
+
   ['A','B'].forEach(t=>{
     const tirati=state.penalty[t]||0;
     const realizzati=state.penaltyScored[t]||0;
     const shoot=state.phase===7 ? ` · SERIE ${state.shootout?.scoreA||0}-${state.shootout?.scoreB||0}` : '';
-    el(t==='A'?'aTimeout':'bTimeout').textContent=`T.O. ${state.timeouts[t]}/3`;
+
+    let timeoutDisplay=state.timeouts[t] || 0;
+
+    if(state.phase===1){
+      // Nel 1° tempo visualizziamo sempre il totale su 3.
+      timeoutDisplay=state.timeoutsFirstHalf[t];
+    }else if(state.phase===2){
+      // Nel passaggio al 2° tempo il primo posto viene perso.
+      // Esempi:
+      // 0 T.O. nel 1° tempo -> 1/3
+      // 1 T.O. nel 1° tempo -> 2/3
+      // 2 T.O. nel 1° tempo -> 2/3
+      const base=Math.min(2,state.timeoutsFirstHalf[t]+1);
+      timeoutDisplay=Math.min(3,base+state.timeoutsSecondHalf[t]);
+    }
+
+    // Negli ultimi 5 minuti del 2° tempo, se il display è ancora 1/3,
+    // viene persa una possibilità: visualizziamo 2/3.
+    // Il Time-Out residuo resta comunque utilizzabile.
+    if(state.phase===2){
+      const end2=getPhaseEnd(2);
+      const remaining2=Math.max(0,end2-state.timer);
+      if(remaining2<=300 && timeoutDisplay===1){
+        timeoutDisplay=2;
+      }
+    }
+
+    const timeoutText=
+      (state.phase===1 || state.phase===2)
+        ? `T.O. ${timeoutDisplay}/3`
+        : 'T.O. INIBITI';
+
+    el(t==='A'?'aTimeout':'bTimeout').textContent=timeoutText;
     el(t==='A'?'aPenalty':'bPenalty').textContent=state.phase===7
       ? `RIGORI${shoot}`
       : `RIGORI ${realizzati}/${tirati}`;
-    el('timeout'+t).disabled=state.timeouts[t]>=3 || state.phase===7;
+
+    el('timeout'+t).disabled=!timeoutAllowed(t);
   });
 }
 
 function renderLog(){
-  const box = document.getElementById('log');
-  if(!box) return;
-
-  const events = Array.isArray(state.events) ? state.events : [];
-
-  /* L'intestazione TEMPO / SQ / N° / EVENTO / RIS segue
-     la squadra dell'evento visualizzato più recente. */
-  const columns = box.previousElementSibling;
-  if(columns && columns.classList.contains('log-columns')){
-    columns.classList.remove('header-a','header-b');
-    const latest = events.length ? events[events.length - 1] : null;
-    if(latest?.team === 'A') columns.classList.add('header-a');
-    if(latest?.team === 'B') columns.classList.add('header-b');
-  }
-
-  box.innerHTML = [...events].reverse().map(e => {
-    const cls = e.team === 'A' ? 'log-a' : 'log-b';
-
-    // EVENTO contains only the action. The player/manager identifier
-    // belongs in N°; staff events intentionally have no N°.
-    let text = e.text || e.event || '';
-    text = String(text)
-      .replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'')
-      .replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'')
-      .trim();
-
-    const num = e.num && e.num !== '—' ? e.num : '';
-
-    return `
-      <div class="log-row ${cls}">
-        <div class="log-time">${e.time || ''}</div>
-        <div class="log-team">${e.team || ''}</div>
-        <div class="log-num">${num}</div>
-        <div class="log-event">${text}</div>
-        <div class="log-res">${e.result || ''}</div>
-      </div>`;
+  const box=el('log');
+  if(!box)return;
+  const events=Array.isArray(state.events)?state.events:[];
+  box.classList.toggle('log-editable',!state.running);
+  box.innerHTML=[...events].reverse().map((e,rev)=>{
+    const idx=events.length-1-rev;
+    const cls=e.team==='A'?'log-a':(e.team==='B'?'log-b':'');
+    let text=String(e.text||e.event||'').replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'').replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'').trim();
+    const num=e.num&&e.num!=='—'?e.num:'';
+    const editable=!state.running&&e.type!=='SYSTEM';
+    return `<div class="log-row ${cls}" ${editable?`onclick="editLogRow(${idx})"`:''}>`+
+      `<div class="log-time">${e.time||''}</div><div class="log-team">${e.team||''}</div>`+
+      `<div class="log-num">${num}</div><div class="log-event">${text}</div><div class="log-res">${e.result||''}</div></div>`;
   }).join('');
-
-  box.scrollTop = 0;
+  box.scrollTop=0;
 }
 
 function snapshot(){
@@ -6716,6 +7050,277 @@ function addEvent(team,num,type,text,result=''){
   });
 }
 
+
+function isPlayerLogEvent(e){
+  if(!e||!e.team)return false;
+  const n=String(e.num??'').trim();
+  return state.numbers?.[e.team]?.some(v=>String(v)===n) ?? false;
+}
+
+function closeLogEditModal(){
+  editingLogIndex=null;
+  editingLogTeam=null;
+  const m=el('logEditModal');
+  if(m)m.style.display='none';
+}
+
+function editLogRow(index){
+  if(state.running){
+    toast('Per modificare il registro il cronometro deve essere fermo');
+    return;
+  }
+
+  const e=state.events?.[index];
+  if(!e || e.type==='SYSTEM' || !e.team) return;
+
+  editingLogIndex=index;
+  editingLogTeam=e.team;
+
+  updateLogEditModal();
+}
+
+function changeLogEditTeam(team){
+  if(editingLogIndex===null) return;
+  editingLogTeam=team;
+  updateLogEditModal();
+}
+
+function updateLogEditModal(){
+  const e=state.events?.[editingLogIndex];
+  if(!e) return;
+
+  const team=editingLogTeam || e.team;
+  const player=isPlayerLogEventForTeam(e,team);
+
+  el('logEditTitle').textContent='MODIFICA EVENTO';
+
+  const subject=player
+    ? `N° ${e.num}`
+    : (e.type==='TIMEOUT' ? 'TIME OUT' : `N° ${e.num}`);
+
+  el('logEditSubtitle').textContent=
+    `${state.teams[team]} · ${subject} · ${e.text||e.type}`;
+
+  el('logEditTeamInfo').textContent=
+    `SQUADRA: ${state.teams[team]}`;
+
+  el('logEditTeamA').style.opacity=team==='A'?'1':'0.55';
+  el('logEditTeamB').style.opacity=team==='B'?'1':'0.55';
+
+  el('logEditPlayerActions').style.display=
+    player && e.type!=='TIMEOUT' ? 'grid':'none';
+
+  el('logEditStaffActions').style.display=
+    (!player && e.type!=='TIMEOUT') ? 'grid':'none';
+
+  el('logEditTimeoutActions').style.display=
+    e.type==='TIMEOUT' ? 'grid':'none';
+
+  const m=el('logEditModal');
+  m.classList.remove('team-a','team-b');
+  m.classList.add(team==='A'?'team-a':'team-b');
+  m.style.display='flex';
+}
+
+function isPlayerLogEventForTeam(e,team){
+  if(!e || !team) return false;
+  const n=String(e.num??'').trim();
+  return state.numbers?.[team]?.some(v=>String(v)===n) ?? false;
+}
+
+function rebuildAfterLogEdit(){
+  const events=state.events||[];
+  let sa=0,sb=0;
+
+  // Ricostruzione completa: NON parte da 0-0 come risultato finale.
+  // Parte da 0-0 solo come accumulatore e rilegge TUTTI gli eventi storici.
+  state.scoreA=0;
+  state.scoreB=0;
+
+  state.penalty={A:0,B:0};
+  state.penaltyScored={A:0,B:0};
+
+  state.discipline={
+    A:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false})),
+    B:Array.from({length:MAX_PLAYERS},()=>({goals:0,yellow:0,two:0,red:false}))
+  };
+
+  state.staff={
+    A:STAFF.map(()=>({yellow:0,two:0,red:false})),
+    B:STAFF.map(()=>({yellow:0,two:0,red:false}))
+  };
+
+  state.timeouts={A:0,B:0};
+  state.timeoutsFirstHalf={A:0,B:0};
+  state.timeoutsSecondHalf={A:0,B:0};
+  state.timeoutsSecondHalfLimit={A:2,B:2};
+
+  let period=1;
+  const results=[];
+
+  for(const e of events){
+
+    if(e.type==='SYSTEM'){
+      const t=String(e.text||'').toUpperCase();
+
+      if(t.includes('INIZIO 2° TEMPO')) period=2;
+      else if(t.includes('INIZIO 1° TEMPO SUPPLEMENTARE')) period=3;
+      else if(t.includes('INIZIO 2° TEMPO SUPPLEMENTARE')) period=4;
+      else if(t.includes('INIZIO 3° TEMPO SUPPLEMENTARE')) period=5;
+      else if(t.includes('INIZIO 4° TEMPO SUPPLEMENTARE')) period=6;
+
+      results.push([sa,sb]);
+      continue;
+    }
+
+    const team=e.team==='A'||e.team==='B'?e.team:null;
+    const num=String(e.num??'').trim();
+
+    if(team){
+
+      const idx=state.numbers[team].findIndex(v=>String(v)===num);
+      const si=STAFF.indexOf(num.toUpperCase());
+
+      if(e.type==='GOAL'){
+        // Il GOAL conta SEMPRE nel punteggio della squadra,
+        // anche se il numero non è presente nella rosa della squadra.
+        if(team==='A') sa++;
+        else sb++;
+
+        if(idx>=0) state.discipline[team][idx].goals++;
+      }
+
+      else if(e.type==='PENALTY'){
+        state.penalty[team]++;
+
+        if(/REALIZZATO/i.test(e.text||'')){
+          state.penaltyScored[team]++;
+
+          if(team==='A') sa++;
+          else sb++;
+
+          if(idx>=0) state.discipline[team][idx].goals++;
+        }
+      }
+
+      else if(e.type==='YELLOW'){
+        if(idx>=0) state.discipline[team][idx].yellow++;
+        else if(si>=0) state.staff[team][si].yellow++;
+      }
+
+      else if(e.type==='TWO'){
+        if(idx>=0) state.discipline[team][idx].two++;
+        else if(si>=0) state.staff[team][si].two++;
+      }
+
+      else if(e.type==='RED'){
+        if(idx>=0) state.discipline[team][idx].red=true;
+        else if(si>=0) state.staff[team][si].red=true;
+      }
+
+      else if(e.type==='TIMEOUT'){
+        state.timeouts[team]++;
+
+        if(period===1){
+          state.timeoutsFirstHalf[team]++;
+        }else if(period===2){
+          state.timeoutsSecondHalf[team]++;
+        }
+      }
+    }
+
+    results.push([sa,sb]);
+  }
+
+  ['A','B'].forEach(t=>{
+    state.timeoutsSecondHalfLimit[t]=Math.min(
+      2,
+      Math.max(0,3-state.timeoutsFirstHalf[t])
+    );
+  });
+
+  // Aggiorna RIS di OGNI evento in base al punteggio reale
+  // progressivo ricostruito dall'intera gara.
+  events.forEach((e,i)=>{
+    if(e.type!=='SYSTEM' && results[i]){
+      e.result=`${results[i][0]}-${results[i][1]}`;
+    }
+  });
+
+  // Il punteggio ufficiale della gara viene dal totale di TUTTI gli eventi.
+  state.scoreA=sa;
+  state.scoreB=sb;
+}
+
+function applyLogEventEdit(newType){
+  if(editingLogIndex===null || state.running) return;
+
+  const old=state.events?.[editingLogIndex];
+  if(!old || old.type==='SYSTEM') return;
+
+  const newTeam=editingLogTeam || old.team;
+
+  snapshot();
+
+  // Il cambio squadra è indipendente dal tipo dell'evento.
+  // Questo permette, ad esempio, di spostare:
+  // GOAL CASA -> GOAL OSPITI
+  // AMMONIZIONE CASA -> AMMONIZIONE OSPITI
+  // 2' CASA -> 2' OSPITI
+  // ESPULSIONE CASA -> ESPULSIONE OSPITI
+  // TIME OUT CASA -> TIME OUT OSPITI
+  let type=old.type;
+  let text=old.text;
+
+  if(newType==='TIMEOUT'){
+    type='TIMEOUT';
+    text='TIME OUT';
+  }else{
+    const map={
+      GOAL:['GOAL','GOAL'],
+      PENALTY_SCORED:['PENALTY','RIGORE REALIZZATO'],
+      PENALTY_MISSED:['PENALTY','RIGORE ERRATO'],
+      YELLOW:['YELLOW','AMMONIZIONE'],
+      TWO:['TWO',"2'"],
+      RED:['RED','ESPULSIONE DIRETTA']
+    };
+
+    const v=map[newType];
+    if(!v){
+      undoStack.pop();
+      return;
+    }
+
+    type=v[0];
+    text=v[1];
+  }
+
+  // GOAL/RIGORE richiedono un giocatore nella squadra selezionata
+  // per poter aggiornare anche il dato personale.
+  if((type==='GOAL'||type==='PENALTY') &&
+     !isPlayerLogEventForTeam(old,newTeam)){
+    toast(`Il numero ${old.num} non è presente nella squadra ${state.teams[newTeam]}. Cambiare prima il numero o scegliere la squadra corretta.`);
+    undoStack.pop();
+    return;
+  }
+
+  state.events[editingLogIndex]={
+    ...old,
+    team:newTeam,
+    type,
+    text
+  };
+
+  closeLogEditModal();
+
+  // Ricalcola TUTTA la gara, non la sola variazione.
+  rebuildAfterLogEdit();
+
+  render();
+  saveRecovery();
+
+  toast('EVENTO MODIFICATO · PUNTEGGIO E REGISTRO RICALCOLATI');
+}
 
 function openEventMenu(kind,team,index){
   selected={kind,team,index};
@@ -7088,6 +7693,19 @@ function processFinishedPhase(phase){
       'INIZIARE IL 2° TEMPO?',
       `1° tempo terminato: ${state.scoreA} - ${state.scoreB}`,
       ()=>{
+        ensureTimeoutState();
+
+        ['A','B'].forEach(t=>{
+          // 0 usati nel 1° tempo -> il terzo viene perso -> 2 nel 2°;
+          // 1 usato -> 2 nel 2°;
+          // 2 usati -> 1 nel 2°.
+          state.timeoutsSecondHalfLimit[t]=Math.min(
+            2,
+            Math.max(0,3-state.timeoutsFirstHalf[t])
+          );
+          state.timeoutsSecondHalf[t]=0;
+        });
+
         state.phase=2;
         state.timer=getPhaseEnd(1);
         state.running=false;
@@ -7419,9 +8037,31 @@ function finishShootout(){
    ========================================================= */
 
 /* TIME OUT: nei supplementari è vietato. */
+function timeoutAllowed(team){
+  ensureTimeoutState();
+
+  if(state.phase!==1 && state.phase!==2) return false;
+  if(!state.running) return false;
+
+  if(state.phase===1){
+    if(state.timeoutsFirstHalf[team]>=2) return false;
+
+    // Il primo time-out è vietato negli ultimi 2 minuti del 1° tempo.
+    if(state.timeoutsFirstHalf[team]===0 &&
+       state.timer >= (getPhaseEnd(1)-120)){
+      return false;
+    }
+    return true;
+  }
+
+  return state.timeoutsSecondHalf[team] < state.timeoutsSecondHalfLimit[team];
+}
+
 function requestTimeout(team){
-  if(isOvertimePhase(state.phase)){
-    toast('Nei tempi supplementari non è possibile richiedere Time-Out.');
+  ensureTimeoutState();
+
+  if(isOvertimePhase(state.phase) || state.phase===7){
+    toast('Nei supplementari e nei rigori il Time-Out è inibito.');
     return;
   }
 
@@ -7430,14 +8070,34 @@ function requestTimeout(team){
     return;
   }
 
-  if(state.timeouts[team]>=3){
-    toast('Time-out esauriti');
+  if(state.phase===1){
+    if(state.timeoutsFirstHalf[team]>=2){
+      toast('Massimo 2 Time-Out nel 1° tempo');
+      return;
+    }
+
+    if(state.timeoutsFirstHalf[team]===0 &&
+       state.timer >= (getPhaseEnd(1)-120)){
+      toast('Il 1° Time-Out non può essere richiesto negli ultimi 2 minuti del 1° tempo');
+      return;
+    }
+  }else if(state.phase===2){
+    if(state.timeoutsSecondHalf[team]>=state.timeoutsSecondHalfLimit[team]){
+      toast('Time-Out disponibili esauriti per il 2° tempo');
+      return;
+    }
+  }else{
+    toast('Time-Out non disponibile in questa fase della gara');
     return;
   }
 
   snapshot();
 
   state.timeouts[team]++;
+
+  if(state.phase===1) state.timeoutsFirstHalf[team]++;
+  if(state.phase===2) state.timeoutsSecondHalf[team]++;
+
   addEvent(team,'—','TIMEOUT','TIME OUT');
 
   state.running=false;
@@ -7468,8 +8128,6 @@ function closeTimeout(){
   clearInterval(timeoutInterval);
   timeoutInterval=null;
   el('timeoutModal').style.display='none';
-
-  // Il timeout non fa ripartire automaticamente la gara.
   state.running=false;
   if(state.phase!==7 && state.timer>0) el('timer').classList.add('blink');
   render();
@@ -7681,28 +8339,53 @@ function endMatch(){
 
 /* TIME OUT: IL PULSANTE È IN ALTO */
 function requestTimeout(team){
+  ensureTimeoutState();
+
+  if(isOvertimePhase(state.phase) || state.phase===7){
+    toast('Nei supplementari e nei rigori il Time-Out è inibito.');
+    return;
+  }
+
   if(!state.running){
     toast('Il time-out è disponibile solo con il cronometro in corso');
     return;
   }
 
-  if(state.timeouts[team]>=3){
-    toast('Time-out esauriti');
+  if(state.phase===1){
+    if(state.timeoutsFirstHalf[team]>=2){
+      toast('Massimo 2 Time-Out nel 1° tempo');
+      return;
+    }
+
+    if(state.timeoutsFirstHalf[team]===0 &&
+       state.timer >= (getPhaseEnd(1)-120)){
+      toast('Il 1° Time-Out non può essere richiesto negli ultimi 2 minuti del 1° tempo');
+      return;
+    }
+  }else if(state.phase===2){
+    if(state.timeoutsSecondHalf[team]>=state.timeoutsSecondHalfLimit[team]){
+      toast('Time-Out disponibili esauriti per il 2° tempo');
+      return;
+    }
+  }else{
+    toast('Time-Out non disponibile in questa fase della gara');
     return;
   }
 
   snapshot();
 
   state.timeouts[team]++;
+
+  if(state.phase===1) state.timeoutsFirstHalf[team]++;
+  if(state.phase===2) state.timeoutsSecondHalf[team]++;
+
   addEvent(team,'—','TIMEOUT','TIME OUT');
 
   state.running=false;
   clearInterval(interval);
   interval=null;
 
-  if(state.timer>0){
-    el('timer').classList.add('blink');
-  }
+  if(state.timer>0) el('timer').classList.add('blink');
 
   let left=60;
   el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;
@@ -7716,7 +8399,6 @@ function requestTimeout(team){
     left--;
     el('timeoutCountdown').textContent=
       String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
-
     if(left<=0)closeTimeout();
   },1000);
 
@@ -7727,11 +8409,8 @@ function closeTimeout(){
   clearInterval(timeoutInterval);
   timeoutInterval=null;
   el('timeoutModal').style.display='none';
-
-  if(!state.running && state.timer>0){
-    el('timer').classList.add('blink');
-  }
-
+  state.running=false;
+  if(state.phase!==7 && state.timer>0) el('timer').classList.add('blink');
   render();
 }
 
@@ -7793,7 +8472,75 @@ function closeDiscipline(){
 }
 
 /* CONFIGURAZIONE */
+const TEAM_COLOR_OPTIONS=[{"color": "#2563eb", "name": "BLU"}, {"color": "#7c3aed", "name": "VIOLA"}, {"color": "#16a34a", "name": "VERDE"}, {"color": "#ea580c", "name": "ARANCIONE"}, {"color": "#dc2626", "name": "ROSSO"}, {"color": "#111827", "name": "NERO"}];
+let configTeamColors={A:'#2563eb',B:'#7c3aed'};
+
+
+function ensureTeamColors(){
+  if(!state.teamColors || typeof state.teamColors!=='object'){
+    state.teamColors={A:'#2563eb',B:'#7c3aed'};
+  }
+  if(!state.teamColors.A)state.teamColors.A='#2563eb';
+  if(!state.teamColors.B)state.teamColors.B='#7c3aed';
+}
+
+function applyTeamColors(colors){
+  const c=colors || state.teamColors || {A:'#2563eb',B:'#7c3aed'};
+  const root=document.documentElement;
+
+  root.style.setProperty('--team-home',c.A || '#2563eb');
+  root.style.setProperty('--team-away',c.B || '#7c3aed');
+
+  try{
+    root.style.setProperty(
+      '--team-home-bg',
+      `color-mix(in srgb, ${c.A || '#2563eb'} 7%, white)`
+    );
+    root.style.setProperty(
+      '--team-away-bg',
+      `color-mix(in srgb, ${c.B || '#7c3aed'} 7%, white)`
+    );
+  }catch(e){}
+
+  // I popup che mostrano la squadra mantengono lo stesso colore.
+  document.querySelectorAll('.team-a .btn.blue').forEach(x=>{
+    x.style.backgroundColor=c.A || '#2563eb';
+  });
+  document.querySelectorAll('.team-b .btn').forEach(x=>{
+    if(!x.classList.contains('gray'))x.style.backgroundColor=c.B || '#7c3aed';
+  });
+}
+
+function renderTeamColorPalette(team){
+  const box=el('editTeam'+team+'Colors');
+  if(!box)return;
+
+  const selected=configTeamColors[team];
+
+  box.innerHTML=TEAM_COLOR_OPTIONS.map(opt=>`
+    <button type="button"
+      class="team-color-swatch ${selected===opt.color?'selected':''}"
+      style="background:${opt.color}"
+      title="${opt.name}"
+      aria-label="${team==='A'?'Casa':'Ospiti'}: ${opt.name}"
+      onclick="selectTeamColor('${team}','${opt.color}')">
+    </button>
+  `).join('');
+}
+
+function selectTeamColor(team,color){
+  if(!TEAM_COLOR_OPTIONS.some(x=>x.color===color))return;
+
+  configTeamColors[team]=color;
+  renderTeamColorPalette(team);
+
+  // Anteprima immediata: la squadra cambia colore appena si preme il quadratino.
+  applyTeamColors(configTeamColors);
+}
+
 function openEditTeams(){
+  ensureTeamColors();
+  configTeamColors={A:state.teamColors.A,B:state.teamColors.B};
   if(state.matchStarted || state.running){
     toast('Modifica squadre disponibile solo prima dello START');
     return;
@@ -7802,6 +8549,7 @@ function openEditTeams(){
   ['A','B'].forEach(team=>{
     const teamNameInput=el('editTeam'+team+'Name');
     teamNameInput.value=state.teams[team] || '';
+    renderTeamColorPalette(team);
     teamNameInput.onfocus=function(){
       if(!this.dataset.touched){
         this.select();
@@ -7891,6 +8639,9 @@ function openEditTeams(){
 }
 
 function closeEditTeams(){
+  ensureTeamColors();
+  configTeamColors={A:state.teamColors.A,B:state.teamColors.B};
+  applyTeamColors(state.teamColors);
   el('editTeamsModal').style.display='none';
 }
 
@@ -7971,6 +8722,11 @@ function saveEditTeams(){
       state.numbers[team][+inp.dataset.index]=raw===''?'':Number(raw);
     });
   });
+
+  ensureTeamColors();
+  state.teamColors.A=configTeamColors.A;
+  state.teamColors.B=configTeamColors.B;
+  applyTeamColors(state.teamColors);
 
   state.halfDurationMinutes=duration;
   state.matchMode=el('matchModeInput')?.value || 'STANDARD';
@@ -8055,6 +8811,7 @@ function resetMatch(){
     phaseStartScoreA:0,phaseStartScoreB:0,
     scoreA:0,scoreB:0,
     teams:{A:'CASA',B:'OSPITI'},
+    teamColors:{A:'#2563eb',B:'#7c3aed'},
     numbers:{
       A:Array.from({length:MAX_PLAYERS},(_,i)=>i+1),
       B:Array.from({length:MAX_PLAYERS},(_,i)=>i+1)
@@ -8069,6 +8826,9 @@ function resetMatch(){
       B:STAFF.map(()=>({yellow:0,two:0,red:false}))
     },
     timeouts:{A:0,B:0},
+    timeoutsFirstHalf:{A:0,B:0},
+    timeoutsSecondHalf:{A:0,B:0},
+    timeoutsSecondHalfLimit:{A:2,B:2},
     penalty:{A:0,B:0},
     penaltyScored:{A:0,B:0},
     activeSuspensions:[],
