@@ -9649,8 +9649,10 @@ function preparaRefertoFIGH(){
         }))
       },
 
-      teamA: state.teams?.A || "",
-      teamB: state.teams?.B || "",
+      // I nomi possono essere modificati in configurazione, ma nel JSON
+      // devono essere sempre memorizzati in MAIUSCOLO.
+      teamA: String(state.teams?.A || "").trim().toUpperCase(),
+      teamB: String(state.teams?.B || "").trim().toUpperCase(),
 
       matchNumber: state.matchData?.matchNumber || state.matchNumber || "",
       modalitaGara: String(state.matchMode || el('matchModeInput')?.value || 'STANDARD'),
@@ -9765,31 +9767,51 @@ function closeTimeout(){
 
 /* 2 MINUTI / ESPULSIONE */
 function startSuspension(team,num){
+  const keyTeam=String(team);
+  const keyNum=String(num);
+
+  // Non duplicare mai il countdown dello stesso soggetto.
+  state.activeSuspensions=Array.isArray(state.activeSuspensions)
+    ? state.activeSuspensions.filter(x =>
+        !(String(x.team)===keyTeam && String(x.num)===keyNum)
+      )
+    : [];
+
   state.activeSuspensions.push({
-    team:team,
-    num:String(num),
-    endGameTime:state.timer+120,
+    team:keyTeam,
+    num:keyNum,
+    endGameTime:Number(state.timer||0)+120,
     end:Date.now()+120000
   });
+
+  render();
   renderSuspensions();
   startSuspensionWatcher();
 }
 
 function startSuspensionWatcher(){
-  if(window.suspensionWatcher)return;
+  if(window.suspensionWatcher) return;
 
   window.suspensionWatcher=setInterval(()=>{
+    if(!Array.isArray(state.activeSuspensions)){
+      state.activeSuspensions=[];
+    }
+
     const before=state.activeSuspensions.length;
 
-    state.activeSuspensions=state.activeSuspensions.filter(x=>{
-      return state.timer < x.endGameTime;
-    });
+    // Il countdown dei 2' scorre in base al CRONOMETRO DI GARA.
+    // Se il cronometro è fermo (popup disciplinare/time-out), il countdown
+    // resta fermo. Quando la gara riparte, riprende automaticamente.
+    state.activeSuspensions=state.activeSuspensions.filter(x =>
+      Number(state.timer||0) < Number(x.endGameTime||0)
+    );
 
     if(before!==state.activeSuspensions.length){
       render();
       saveRecovery();
+    }else{
+      renderSuspensions();
     }
-    renderSuspensions();
 
     if(!state.activeSuspensions.length){
       clearInterval(window.suspensionWatcher);
@@ -9797,6 +9819,7 @@ function startSuspensionWatcher(){
     }
   },250);
 }
+
 
 function stopForDisciplinary(team,num,text){
   state.running=false;
