@@ -7092,7 +7092,6 @@ let state={
   timeouts:{A:0,B:0},
   timeoutsFirstHalf:{A:0,B:0},
   timeoutsSecondHalf:{A:0,B:0},
-  timeoutsSecondHalfLimit:{A:2,B:2},
   penalty:{A:0,B:0},
   penaltyScored:{A:0,B:0},
   activeSuspensions:[],
@@ -7111,28 +7110,6 @@ let undoStack=[];
 
 function el(id){return document.getElementById(id)}
 
-function ensureTimeoutState(){
-  if(!state.timeouts || typeof state.timeouts!=='object') state.timeouts={A:0,B:0};
-  if(!state.timeoutsFirstHalf || typeof state.timeoutsFirstHalf!=='object')
-    state.timeoutsFirstHalf={A:0,B:0};
-  if(!state.timeoutsSecondHalf || typeof state.timeoutsSecondHalf!=='object')
-    state.timeoutsSecondHalf={A:0,B:0};
-  if(!state.timeoutsSecondHalfLimit || typeof state.timeoutsSecondHalfLimit!=='object')
-    state.timeoutsSecondHalfLimit={A:2,B:2};
-
-  ['A','B'].forEach(t=>{
-    state.timeouts[t]=Number(state.timeouts[t]||0);
-    state.timeoutsFirstHalf[t]=Number(state.timeoutsFirstHalf[t]||0);
-    state.timeoutsSecondHalf[t]=Number(state.timeoutsSecondHalf[t]||0);
-    state.timeoutsSecondHalfLimit[t]=Number(state.timeoutsSecondHalfLimit[t] ?? 2);
-
-    // Vecchi salvataggi: se siamo ancora nel 1° tempo possiamo ricostruire
-    // almeno il conteggio del 1° tempo dal totale.
-    if(state.phase===1 && state.timeoutsFirstHalf[t]===0 && state.timeouts[t]>0){
-      state.timeoutsFirstHalf[t]=Math.min(2,state.timeouts[t]);
-    }
-  });
-}
 
 function ensureShootoutState(){
   if(!state.shootout || typeof state.shootout!=='object'){
@@ -7651,7 +7628,6 @@ function buildStateFromSavedReferto(data){
   s.timeouts=s.timeouts || {A:0,B:0};
   s.timeoutsFirstHalf=s.timeoutsFirstHalf || {A:0,B:0};
   s.timeoutsSecondHalf=s.timeoutsSecondHalf || {A:0,B:0};
-  s.timeoutsSecondHalfLimit=s.timeoutsSecondHalfLimit || {A:2,B:2};
 
   return s;
 }
@@ -7697,8 +7673,7 @@ function loadSavedJson(event){
       };
 
       ensureTeamColors();
-      ensureTimeoutState();
-      ensureShootoutState();
+          ensureShootoutState();
 
       selected=null;
       selectedPenalty=null;
@@ -7831,7 +7806,6 @@ function applyRegistroFullRowColors(){
 }
 
 function render(){
-  ensureTimeoutState();
   ensureTeamColors();
   applyTeamColors(state.teamColors);
   applyRegistroTeamColors();
@@ -8137,59 +8111,73 @@ function renderStaff(team){
     box.appendChild(card);
   });
 }
+function getTimeoutUsage(team){
+  // Unica fonte affidabile per il conteggio visualizzato:
+  // rileggiamo gli eventi già registrati, così un vecchio salvataggio
+  // non può portarsi dietro contatori incoerenti.
+  let first=0, second=0, period=1;
+  for(const e of (state.events||[])){
+    if(e?.type==='SYSTEM'){
+      const t=String(e.text||'').toUpperCase();
+      if(t==='INIZIO 2° TEMPO') period=2;
+      else if(t==='INIZIO 1° TEMPO SUPPLEMENTARE') period=3;
+      else if(t==='INIZIO 2° TEMPO SUPPLEMENTARE') period=4;
+      else if(t==='INIZIO 3° TEMPO SUPPLEMENTARE') period=5;
+      else if(t==='INIZIO 4° TEMPO SUPPLEMENTARE') period=6;
+      continue;
+    }
+    if(e?.type==='TIMEOUT' && e.team===team){
+      if(period===1) first++;
+      else if(period===2) second++;
+    }
+  }
+
+  // Se la gara è già nel 2° tempo ma l'evento INIZIO 2° TEMPO
+  // non è ancora presente, tutti i T.O. registrati finora sono del 1°.
+  return {first,second};
+}
+
+function syncTimeoutCounters(){
+  ['A','B'].forEach(t=>{
+    const u=getTimeoutUsage(t);
+    state.timeoutsFirstHalf[t]=u.first;
+    state.timeoutsSecondHalf[t]=u.second;
+    state.timeouts[t]=u.first+u.second;
+  });
+}
+
 function renderCounters(){
-  ensureTimeoutState();
+  syncTimeoutCounters();
 
   ['A','B'].forEach(t=>{
     const tirati=state.penalty[t]||0;
     const realizzati=state.penaltyScored[t]||0;
     const shoot=state.phase===7 ? ` · SERIE ${state.shootout?.scoreA||0}-${state.shootout?.scoreB||0}` : '';
+    const first=Number(state.timeoutsFirstHalf[t]||0);
+    const second=Number(state.timeoutsSecondHalf[t]||0);
 
-    let timeoutDisplay=state.timeouts[t] || 0;
-
-    if(state.phase===1){
-      // Nel 1° tempo visualizziamo sempre il totale su 3.
-      timeoutDisplay=state.timeoutsFirstHalf[t];
-    }else if(state.phase===2){
-      // Nel passaggio al 2° tempo il primo posto viene perso.
-      // Esempi:
-      // 0 T.O. nel 1° tempo -> 1/3
-      // 1 T.O. nel 1° tempo -> 2/3
-      // 2 T.O. nel 1° tempo -> 2/3
-      const firstHalfUsed=Number(state.timeoutsFirstHalf[t]||0);
-      // Se nel 1° tempo non è stato chiamato nessun time-out,
-      // uno dei 3 viene perso: il contatore parte quindi da 1/3.
-      // Se ne è stato chiamato 1, il contatore resta 1/3.
-      // Se ne sono stati chiamati 2, parte da 2/3.
-      const base=firstHalfUsed===0 ? 1 : firstHalfUsed;
-      timeoutDisplay=Math.min(3,base+Number(state.timeoutsSecondHalf[t]||0));
-    }
-
-    // Negli ultimi 5 minuti del 2° tempo, se il display è ancora 1/3,
-    // viene persa una possibilità: visualizziamo 2/3.
-    // Il Time-Out residuo resta comunque utilizzabile.
+    // REGOLA FISSA:
+    // 1° tempo: 0/3, 1/3, 2/3 in base ai T.O. effettivamente usati.
+    // 2° tempo: se nel 1° tempo erano 0 -> parte da 1/3;
+    //            se erano 1 -> resta 1/3;
+    //            se erano 2 -> resta 2/3.
+    //            Ogni T.O. del 2° tempo aumenta poi di 1.
+    let timeoutDisplay=first;
     if(state.phase===2){
-      const end2=getPhaseEnd(2);
-      const remaining2=Math.max(0,end2-state.timer);
-      if(remaining2<=300 && timeoutDisplay===1){
-        timeoutDisplay=2;
-      }
+      const base=(first===0 || first===1) ? 1 : 2;
+      timeoutDisplay=Math.min(3,base+second);
     }
 
-    const timeoutText=
-      (state.phase===1 || state.phase===2)
-        ? `T.O. ${timeoutDisplay}/3`
-        : 'T.O. INIBITI';
+    // La perdita della possibilità prevista negli ultimi 5' del 2° tempo
+    // resta solo una regola di disponibilità, NON modifica il contatore.
 
-    el(t==='A'?'aTimeout':'bTimeout').textContent=timeoutText;
+    el(t==='A'?'aTimeout':'bTimeout').textContent=
+      (state.phase===1 || state.phase===2) ? `T.O. ${timeoutDisplay}/3` : 'T.O. INIBITI';
     el(t==='A'?'aPenalty':'bPenalty').textContent=state.phase===7
-      ? `RIGORI${shoot}`
-      : `RIGORI ${realizzati}/${tirati}`;
-
+      ? `RIGORI${shoot}` : `RIGORI ${realizzati}/${tirati}`;
     el('timeout'+t).disabled=!timeoutAllowed(t);
   });
 }
-
 function renderLog(){
   const box=el('log');
   if(!box)return;
@@ -8455,7 +8443,6 @@ function rebuildAfterLogEdit(){
   state.timeouts={A:0,B:0};
   state.timeoutsFirstHalf={A:0,B:0};
   state.timeoutsSecondHalf={A:0,B:0};
-  state.timeoutsSecondHalfLimit={A:2,B:2};
 
   let period=1;
   const results=[];
@@ -8533,11 +8520,6 @@ function rebuildAfterLogEdit(){
 
     results.push([sa,sb]);
   }
-
-  ['A','B'].forEach(t=>{
-    state.timeoutsSecondHalfLimit[t]=
-      state.timeoutsFirstHalf[t]===2 ? 1 : 2;
-  });
 
   // Aggiorna RIS di OGNI evento in base al punteggio reale
   // progressivo ricostruito dall'intera gara.
@@ -9092,17 +9074,6 @@ function processFinishedPhase(phase){
       'INIZIARE IL 2° TEMPO?',
       `1° tempo terminato: ${state.scoreA} - ${state.scoreB}`,
       ()=>{
-        ensureTimeoutState();
-
-        ['A','B'].forEach(t=>{
-          // 0 usati nel 1° tempo -> il terzo viene perso -> 2 nel 2°;
-          // 1 usato -> 2 nel 2°;
-          // 2 usati -> 1 nel 2°.
-          state.timeoutsSecondHalfLimit[t]=
-            state.timeoutsFirstHalf[t]===2 ? 1 : 2;
-          state.timeoutsSecondHalf[t]=0;
-        });
-
         state.phase=2;
         state.timer=getPhaseEnd(1);
         state.running=false;
@@ -9454,72 +9425,58 @@ function finishShootout(){
 
 /* TIME OUT: nei supplementari è vietato. */
 function timeoutAllowed(team){
-  ensureTimeoutState();
-
+  syncTimeoutCounters();
   if(state.phase!==1 && state.phase!==2) return false;
   if(!state.running) return false;
 
-  if(state.phase===1){
-    if(state.timeoutsFirstHalf[team]>=2) return false;
+  const first=Number(state.timeoutsFirstHalf[team]||0);
+  const second=Number(state.timeoutsSecondHalf[team]||0);
 
-    // Il primo time-out è vietato negli ultimi 2 minuti del 1° tempo.
-    if(state.timeoutsFirstHalf[team]===0 &&
-       state.timer >= (getPhaseEnd(1)-120)){
-      return false;
-    }
+  if(state.phase===1){
+    if(first>=2) return false;
+    if(first===0 && state.timer >= (getPhaseEnd(1)-120)) return false;
     return true;
   }
 
-  return state.timeoutsSecondHalf[team] < state.timeoutsSecondHalfLimit[team];
+  // 2° tempo: con 2 T.O. nel 1° tempo ne resta 1;
+  // con 0 o 1 T.O. nel 1° tempo ne restano 2.
+  const maxSecond=(first===2)?1:2;
+  return second<maxSecond;
 }
 
 function requestTimeout(team){
-  ensureTimeoutState();
+  syncTimeoutCounters();
 
-  if(isOvertimePhase(state.phase) || state.phase===7){
-    toast('Nei supplementari e nei rigori il Time-Out è inibito.');
-    return;
+  if(state.phase!==1 && state.phase!==2){
+    toast('Time-Out non disponibile in questa fase della gara'); return;
   }
-
   if(!state.running){
-    toast('Il time-out è disponibile solo con il cronometro in corso');
-    return;
+    toast('Il time-out è disponibile solo con il cronometro in corso'); return;
   }
+
+  const first=Number(state.timeoutsFirstHalf[team]||0);
+  const second=Number(state.timeoutsSecondHalf[team]||0);
 
   if(state.phase===1){
-    if(state.timeoutsFirstHalf[team]>=2){
-      toast('Massimo 2 Time-Out nel 1° tempo');
-      return;
+    if(first>=2){
+      toast('Massimo 2 Time-Out nel 1° tempo'); return;
     }
-
-    if(state.timeoutsFirstHalf[team]===0 &&
-       state.timer >= (getPhaseEnd(1)-120)){
-      toast('Il 1° Time-Out non può essere richiesto negli ultimi 2 minuti del 1° tempo');
-      return;
-    }
-  }else if(state.phase===2){
-    if(state.timeoutsSecondHalf[team]>=state.timeoutsSecondHalfLimit[team]){
-      toast('Time-Out disponibili esauriti per il 2° tempo');
-      return;
+    if(first===0 && state.timer >= (getPhaseEnd(1)-120)){
+      toast('Il 1° Time-Out non può essere richiesto negli ultimi 2 minuti del 1° tempo'); return;
     }
   }else{
-    toast('Time-Out non disponibile in questa fase della gara');
-    return;
+    const maxSecond=(first===2)?1:2;
+    if(second>=maxSecond){
+      toast('Time-Out disponibili esauriti per il 2° tempo'); return;
+    }
   }
 
   snapshot();
-
-  state.timeouts[team]++;
-
-  if(state.phase===1) state.timeoutsFirstHalf[team]++;
-  if(state.phase===2) state.timeoutsSecondHalf[team]++;
-
   addEvent(team,'—','TIMEOUT','TIME OUT');
+  syncTimeoutCounters();
 
   state.running=false;
-  clearInterval(interval);
-  interval=null;
-
+  clearInterval(interval); interval=null;
   if(state.timer>0) el('timer').classList.add('blink');
 
   let left=60;
@@ -9528,18 +9485,14 @@ function requestTimeout(team){
   el('timeoutModal').classList.remove('team-a','team-b');
   el('timeoutModal').classList.add(team==='A'?'team-a':'team-b');
   el('timeoutModal').style.display='flex';
-
   clearInterval(timeoutInterval);
   timeoutInterval=setInterval(()=>{
     left--;
-    el('timeoutCountdown').textContent=
-      String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    el('timeoutCountdown').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     if(left<=0)closeTimeout();
   },1000);
-
   render();
 }
-
 function closeTimeout(){
   clearInterval(timeoutInterval);
   timeoutInterval=null;
@@ -9754,72 +9707,7 @@ function endMatch(){
 }
 
 /* TIME OUT: IL PULSANTE È IN ALTO */
-function requestTimeout(team){
-  ensureTimeoutState();
 
-  if(isOvertimePhase(state.phase) || state.phase===7){
-    toast('Nei supplementari e nei rigori il Time-Out è inibito.');
-    return;
-  }
-
-  if(!state.running){
-    toast('Il time-out è disponibile solo con il cronometro in corso');
-    return;
-  }
-
-  if(state.phase===1){
-    if(state.timeoutsFirstHalf[team]>=2){
-      toast('Massimo 2 Time-Out nel 1° tempo');
-      return;
-    }
-
-    if(state.timeoutsFirstHalf[team]===0 &&
-       state.timer >= (getPhaseEnd(1)-120)){
-      toast('Il 1° Time-Out non può essere richiesto negli ultimi 2 minuti del 1° tempo');
-      return;
-    }
-  }else if(state.phase===2){
-    if(state.timeoutsSecondHalf[team]>=state.timeoutsSecondHalfLimit[team]){
-      toast('Time-Out disponibili esauriti per il 2° tempo');
-      return;
-    }
-  }else{
-    toast('Time-Out non disponibile in questa fase della gara');
-    return;
-  }
-
-  snapshot();
-
-  state.timeouts[team]++;
-
-  if(state.phase===1) state.timeoutsFirstHalf[team]++;
-  if(state.phase===2) state.timeoutsSecondHalf[team]++;
-
-  addEvent(team,'—','TIMEOUT','TIME OUT');
-
-  state.running=false;
-  clearInterval(interval);
-  interval=null;
-
-  if(state.timer>0) el('timer').classList.add('blink');
-
-  let left=60;
-  el('timeoutTitle').textContent=`TIME OUT · ${state.teams[team]}`;
-  el('timeoutCountdown').textContent='01:00';
-  el('timeoutModal').classList.remove('team-a','team-b');
-  el('timeoutModal').classList.add(team==='A'?'team-a':'team-b');
-  el('timeoutModal').style.display='flex';
-
-  clearInterval(timeoutInterval);
-  timeoutInterval=setInterval(()=>{
-    left--;
-    el('timeoutCountdown').textContent=
-      String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
-    if(left<=0)closeTimeout();
-  },1000);
-
-  render();
-}
 
 function closeTimeout(){
   clearInterval(timeoutInterval);
@@ -10352,7 +10240,6 @@ function resetMatch(){
     timeouts:{A:0,B:0},
     timeoutsFirstHalf:{A:0,B:0},
     timeoutsSecondHalf:{A:0,B:0},
-    timeoutsSecondHalfLimit:{A:2,B:2},
     penalty:{A:0,B:0},
     penaltyScored:{A:0,B:0},
     activeSuspensions:[],
