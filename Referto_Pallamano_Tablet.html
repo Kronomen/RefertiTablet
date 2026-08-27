@@ -7508,13 +7508,17 @@ function buildStateFromSavedReferto(data){
     const candidates=[
       obj?.eventi,
       obj?.events,
+      obj?.logEvents,
       obj?.registroGara,
       obj?.registro?.eventi,
       obj?.registro?.events,
+      obj?.registro?.logEvents,
       obj?.partita?.eventi,
       obj?.partita?.events,
+      obj?.partita?.logEvents,
       obj?.gara?.eventi,
       obj?.gara?.events,
+      obj?.gara?.logEvents,
       obj?.state?.events
     ];
 
@@ -7536,13 +7540,7 @@ function buildStateFromSavedReferto(data){
     if(!e || typeof e!=='object')return null;
 
     const teamRaw=String(e.team ?? e.squadra ?? e.SQ ?? '').trim().toUpperCase();
-    const team=
-      teamRaw==='A' || teamRaw==='CASA' ? 'A' :
-      teamRaw==='B' || teamRaw==='OSPITI' || teamRaw==='OSPITE' ? 'B' :
-      (teamRaw==='—' || teamRaw==='-' || teamRaw==='SYSTEM') ? '—' :
-      (e.type==='SYSTEM' ? '—' : teamRaw);
 
-    const type=String(e.type ?? e.tipo ?? '').trim().toUpperCase();
     const text=String(
       e.text ??
       e.event ??
@@ -7550,6 +7548,30 @@ function buildStateFromSavedReferto(data){
       e.descrizione ??
       ''
     ).trim();
+
+    let type=String(e.type ?? e.tipo ?? '').trim().toUpperCase();
+
+    const isPhaseText = /^(?:INIZIO|FINE)\s+(?:1°|2°|3°|4°)\s+TEMPO(?:\s+SUPPLEMENTARE)?$/i.test(text);
+
+    const team=
+      teamRaw==='A' || teamRaw==='CASA' ? 'A' :
+      teamRaw==='B' || teamRaw==='OSPITI' || teamRaw==='OSPITE' ? 'B' :
+      (teamRaw==='—' || teamRaw==='-' || teamRaw==='SYSTEM' || isPhaseText) ? '—' :
+      (String(e.type ?? e.tipo ?? '').toUpperCase()==='SYSTEM' ? '—' : teamRaw);
+
+    // Il file RefertoFIGH_Rigori salva gli eventi come logEvents:
+    // tempo, fase, squadra, numero, evento, risultato, senza "type".
+    if(!type){
+      const upper=text.toUpperCase();
+      if(/^(?:INIZIO|FINE)\s+/.test(upper)) type='SYSTEM';
+      else if(upper==='TIME OUT' || upper==='TIMEOUT') type='TIMEOUT';
+      else if(upper.includes('AMMONIZ')) type='YELLOW';
+      else if(upper==="2'" || upper.includes("2'")) type='TWO';
+      else if(upper.includes('ESPULSIONE') || upper.includes('ESCLUSIONE')) type='RED';
+      else if(upper.includes('RIGORE REALIZZATO') || upper.includes('RIGORE ERRATO')) type='RIGORE';
+      else if(upper==='GOAL') type='GOAL';
+      else type='EVENT';
+    }
 
     const num=String(
       e.num ??
@@ -7587,6 +7609,16 @@ function buildStateFromSavedReferto(data){
 
   const savedEvents=extractSavedEvents(data);
   s.events=savedEvents.map(normalizeSavedEvent).filter(Boolean);
+
+  // Uniforma gli eventi di cambio periodo. Nei JSON più vecchi possono essere
+  // presenti senza "type" oppure con i nomi del formato logEvents.
+  s.events=s.events.map(e=>{
+    const t=String(e.text||'').trim();
+    if(/^(?:INIZIO|FINE)\s+(?:1°|2°|3°|4°)\s+TEMPO(?:\s+SUPPLEMENTARE)?$/i.test(t)){
+      return {...e,team:'—',num:'—',type:'SYSTEM'};
+    }
+    return e;
+  });
 
   // Manteniamo anche eventuali registri contenuti nel JSON definitivo.
   s.phaseScores=JSON.parse(JSON.stringify(
@@ -8880,6 +8912,7 @@ function recordSystemPhaseEvent(text){
   // Gli eventi di cambio periodo sono eventi reali del Registro Gare.
   // Vengono registrati con il tempo corrente e il punteggio corrente.
   addEvent('—','—','SYSTEM',text,`${state.scoreA}-${state.scoreB}`);
+  saveRecovery();
   return true;
 }
 
@@ -9638,6 +9671,18 @@ function preparaRefertoFIGH(){
 
       eventi: eventi,
 
+      // Registro completo in formato compatibile anche con RefertoFIGH_Rigori.
+      // In questo modo INIZIO/FINE TEMPO e tutti gli altri eventi viaggiano
+      // sempre nel JSON, indipendentemente dal modulo che lo riaprirà.
+      logEvents: eventi.map(e => ({
+        tempo: e.time || '',
+        fase: e.phase || phaseLabel(state.phase),
+        squadra: e.team || '',
+        numero: e.num || '',
+        evento: e.text || e.event || '',
+        risultato: e.result || ''
+      })),
+
       modalitaGara: state.matchMode || 'STANDARD',
       statoGara: state.phase === 7 ? 'RIGORI' : phaseLabel(state.phase),
       motivoFineGara: state.motivoFineGara || '',
@@ -10328,7 +10373,10 @@ document.addEventListener('keydown', function(ev){
   if(endText){
     // Usa direttamente addEvent, senza passare da un controllo del
     // popup o da una funzione di transizione.
-    const already=state.events.some(e=>String(e?.event||'')===endText);
+    const already=state.events.some(e=>
+      e?.type==='SYSTEM' &&
+      String(e?.text||e?.event||'').trim().toUpperCase()===endText.toUpperCase()
+    );
     if(!already){
       addEvent('—','—','SYSTEM',endText,`${state.scoreA}-${state.scoreB}`);
     }
