@@ -8143,8 +8143,13 @@ function renderCounters(){
       // 0 T.O. nel 1° tempo -> 1/3
       // 1 T.O. nel 1° tempo -> 2/3
       // 2 T.O. nel 1° tempo -> 2/3
-      const base=Math.min(2,state.timeoutsFirstHalf[t]+1);
-      timeoutDisplay=Math.min(3,base+state.timeoutsSecondHalf[t]);
+      const firstHalfUsed=Number(state.timeoutsFirstHalf[t]||0);
+      // Se nel 1° tempo non è stato chiamato nessun time-out,
+      // uno dei 3 viene perso: il contatore parte quindi da 1/3.
+      // Se ne è stato chiamato 1, il contatore resta 1/3.
+      // Se ne sono stati chiamati 2, parte da 2/3.
+      const base=firstHalfUsed===0 ? 1 : firstHalfUsed;
+      timeoutDisplay=Math.min(3,base+Number(state.timeoutsSecondHalf[t]||0));
     }
 
     // Negli ultimi 5 minuti del 2° tempo, se il display è ancora 1/3,
@@ -8517,10 +8522,8 @@ function rebuildAfterLogEdit(){
   }
 
   ['A','B'].forEach(t=>{
-    state.timeoutsSecondHalfLimit[t]=Math.min(
-      2,
-      Math.max(0,3-state.timeoutsFirstHalf[t])
-    );
+    state.timeoutsSecondHalfLimit[t]=
+      state.timeoutsFirstHalf[t]===2 ? 1 : 2;
   });
 
   // Aggiorna RIS di OGNI evento in base al punteggio reale
@@ -8925,9 +8928,19 @@ function tick(){
   state.timer++;
   renderSuspensions();
 
+  // Ultimi 30 secondi: il cronometro lampeggia mentre il tempo scorre.
+  // La soglia usa la durata configurata, quindi vale anche se il tempo
+  // è stato impostato manualmente (es. 5 minuti).
   const end=getPhaseEnd(state.phase);
+  const remaining=end-state.timer;
+  if(remaining>0 && remaining<=30){
+    el('timer').classList.add('blink');
+  }else{
+    el('timer').classList.remove('blink');
+  }
   if(state.timer>=end){
     state.timer=end;
+    el('timer').classList.remove('blink');
     state.running=false;
     clearInterval(interval);
     interval=null;
@@ -8937,7 +8950,7 @@ function tick(){
       startBtn.style.opacity='0.45';
       startBtn.style.pointerEvents='none';
     }
-    beep();
+    beepEndOfPeriod(state.phase);
     toast('FINE '+phaseLabel(state.phase));
   }
   render();
@@ -9072,10 +9085,8 @@ function processFinishedPhase(phase){
           // 0 usati nel 1° tempo -> il terzo viene perso -> 2 nel 2°;
           // 1 usato -> 2 nel 2°;
           // 2 usati -> 1 nel 2°.
-          state.timeoutsSecondHalfLimit[t]=Math.min(
-            2,
-            Math.max(0,3-state.timeoutsFirstHalf[t])
-          );
+          state.timeoutsSecondHalfLimit[t]=
+            state.timeoutsFirstHalf[t]===2 ? 1 : 2;
           state.timeoutsSecondHalf[t]=0;
         });
 
@@ -10355,6 +10366,15 @@ function beep(){
   }catch(e){}
 }
 
+function beepEndOfPeriod(phase){
+  // 1 beep alla fine di ogni periodo.
+  // 3 beep alla fine del 2° tempo, 2° supplementare e 4° supplementare.
+  const count = [2,4,6].includes(Number(phase)) ? 3 : 1;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>beep(), i*850);
+  }
+}
+
 function toast(msg){
   const t=el('toast');
   t.textContent=msg;
@@ -10394,6 +10414,7 @@ document.addEventListener('keydown', function(ev){
   el('timer').classList.remove('blink');
 
   const phase=state.phase;
+  beepEndOfPeriod(phase);
   const endTexts={
     1:'FINE 1° TEMPO',
     2:'FINE 2° TEMPO',
@@ -10564,6 +10585,20 @@ function closeConfigAndStart(){
     }
   });
 
+  // IMPORTANTISSIMO: REFERTO deve usare anche la durata impostata
+  // manualmente in CONFIGURAZIONE. REFERTO non deve ripristinare 30'.
+  const durationInput=el('matchDurationInput');
+  const configuredDuration=Number(durationInput?.value);
+  if(!Number.isInteger(configuredDuration) || configuredDuration<1 || configuredDuration>45){
+    if(durationInput){
+      durationInput.style.borderColor='#dc2626';
+      durationInput.focus();
+    }
+    toast('Durata non valida: inserire da 1 a 45 minuti');
+    return;
+  }
+  state.halfDurationMinutes=configuredDuration;
+
   // IMPORTANTISSIMO: REFERTO deve usare la modalità scelta in CONFIGURAZIONE.
   // selectMatchMode() aggiorna l'input, ma non basta da solo perché REFERTO
   // può essere aperto senza passare da saveEditTeams().
@@ -10671,6 +10706,67 @@ document.addEventListener('keydown', function(e){
     grid-template-rows:
       23px 8px 12px 9px minmax(0,1fr) 10px 112px !important;
   }
+}
+</style>
+
+<style id="responsive-viewport-final">
+/* ADATTAMENTO DIMENSIONI MONITOR/TABLET
+   Il browser fornisce la viewport reale: vw/vh/dvw/dvh e clamp() permettono
+   di ridimensionare progressivamente i componenti senza fissarli a un solo
+   modello di tablet. */
+html,body{
+  width:100%;
+  min-width:0;
+  min-height:0;
+}
+#app{
+  width:100%;
+  width:100dvw;
+  height:100%;
+  height:100dvh;
+  min-width:0;
+  min-height:0;
+}
+
+/* Landscape: sfrutta automaticamente tutta la viewport disponibile. */
+@media screen and (orientation:landscape) and (min-width:700px){
+  #app{
+    padding:clamp(2px,.35vw,6px);
+    gap:clamp(2px,.35vw,6px);
+  }
+  .main{
+    gap:clamp(2px,.35vw,6px);
+  }
+  .panel{
+    border-radius:clamp(6px,.55vw,10px);
+  }
+  .players{
+    gap:clamp(2px,.35vw,6px);
+    padding:clamp(2px,.45vw,8px);
+  }
+}
+
+/* 11" e tablet compatti: le proporzioni si adattano alla viewport,
+   senza creare scroll verticale. */
+@media screen and (min-width:900px) and (max-width:1400px) and (max-height:900px){
+  #app{
+    padding:clamp(2px,.4vw,5px);
+    gap:clamp(2px,.4vw,5px);
+  }
+  .top{
+    padding:clamp(1px,.25vw,3px) clamp(3px,.45vw,6px);
+  }
+  .main{
+    gap:clamp(2px,.4vw,5px);
+  }
+}
+
+/* Se la viewport è molto bassa, privilegiamo l'area gara e riduciamo
+   solo margini/spazi, non i contenuti funzionali. */
+@media screen and (orientation:landscape) and (max-height:700px){
+  #app{padding:2px;gap:2px}
+  .main{gap:2px}
+  .players{gap:2px;padding:2px}
 }
 </style>
 
