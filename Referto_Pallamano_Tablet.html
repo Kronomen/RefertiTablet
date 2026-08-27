@@ -5204,39 +5204,7 @@ tr.team-b td,
 
 
 
-<style id="figh-logo-size-final">
-/* LOGO FIGH - versione grande */
-.top > img.match-logo.figh{
-  height:clamp(72px, 12vw, 105px) !important;
-  width:auto !important;
-  max-height:105px !important;
-  max-width:170px !important;
-  min-height:72px !important;
-  object-fit:contain !important;
-  display:block !important;
-  top:50% !important;
-  transform:translateY(-50%) !important;
-  left:5px !important;
-  right:auto !important;
-  flex:none !important;
-}
 
-/* Tablet: quasi il doppio della versione precedente, senza uscire dalla testata */
-@media screen and (max-width:1100px){
-  .top > img.match-logo.figh{
-    height:clamp(68px, 10vw, 90px) !important;
-    max-height:90px !important;
-    max-width:145px !important;
-    min-height:68px !important;
-    left:3px !important;
-  }
-}
-
-/* Evita che una regola generica .match-logo riduca nuovamente il FIGH */
-.top > img.match-logo.figh{
-  aspect-ratio:auto !important;
-}
-</style>
 
 
 
@@ -6716,6 +6684,34 @@ tr.team-b td,
 }
 .player-card{
   touch-action:manipulation !important;
+}
+</style>
+
+
+<style id="figh-logo-size-definitivo">
+/* LOGO FIGH: dimensione grande reale nella testata */
+.top > img.match-logo.figh{
+  height:clamp(105px, 15vw, 145px) !important;
+  width:auto !important;
+  min-height:105px !important;
+  max-height:145px !important;
+  max-width:230px !important;
+  object-fit:contain !important;
+  flex:none !important;
+  left:8px !important;
+}
+
+/* Tablet 10-11": il logo deve risultare chiaramente più grande
+   rispetto alla versione precedente. */
+@media screen and (max-width:1100px){
+  .top > img.match-logo.figh{
+    height:clamp(100px, 13vw, 125px) !important;
+    width:auto !important;
+    min-height:100px !important;
+    max-height:125px !important;
+    max-width:205px !important;
+    left:6px !important;
+  }
 }
 </style>
 
