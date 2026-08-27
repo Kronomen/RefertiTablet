@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+<script>
+/* BLOCCO PAUSA SCHERMO
+   Mantiene acceso lo schermo mentre il referto è aperto.
+   Chrome/Android: Screen Wake Lock API.
+   Il lock viene richiesto nuovamente quando la pagina torna visibile. */
+let refertoWakeLock = null;
+
+async function attivaSchermoSempreAcceso(){
+  try{
+    if("wakeLock" in navigator){
+      refertoWakeLock = await navigator.wakeLock.request("screen");
+    }
+  }catch(err){
+    console.log("Wake Lock non disponibile:", err);
+  }
+}
+
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible"){
+    attivaSchermoSempreAcceso();
+  }
+});
+
+window.addEventListener("load", ()=>{
+  attivaSchermoSempreAcceso();
+});
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Referto Pallamano - Tablet 11"</title>
