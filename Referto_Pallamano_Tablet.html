@@ -6678,6 +6678,19 @@ tr.team-b td,
 }
 </style>
 
+
+<style id="tablet-touch-timeout-events">
+#aTimeout,#bTimeout{
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent;
+  cursor:pointer;
+}
+.player-card{
+  touch-action:manipulation !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -10641,6 +10654,71 @@ document.addEventListener('keydown', function(e){
   }
 });
 </script>
+
+<script id="tablet-touch-timeout-handler">
+(function(){
+  function bindTimeoutTouch(id,team){
+    const btn=document.getElementById(id);
+    if(!btn || btn.dataset.touchBound==='1') return;
+    const fire=function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      if(btn.disabled) return;
+      if(typeof requestTimeout==='function') requestTimeout(team);
+    };
+    btn.addEventListener('pointerup',fire,{passive:false});
+    btn.addEventListener('touchend',fire,{passive:false});
+    btn.dataset.touchBound='1';
+  }
+  function bind(){
+    bindTimeoutTouch('aTimeout','A');
+    bindTimeoutTouch('bTimeout','B');
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',bind);
+  }else bind();
+  const obs=new MutationObserver(bind);
+  obs.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+
+<script id="tablet-touch-event-handler">
+(function(){
+  function bind(){
+    const root=document.getElementById('playersA') || document;
+    // renderPlayers may recreate cards, so delegation must be on a stable ancestor.
+    const roots=[document.getElementById('playersA'),document.getElementById('playersB'),
+                 document.getElementById('staffA'),document.getElementById('staffB')]
+                .filter(Boolean);
+    roots.forEach(root=>{
+      if(root.dataset.eventTouchBound==='1') return;
+      const fire=function(ev){
+        const card=ev.target.closest?.('.player-card,.staff-card');
+        if(!card || !root.contains(card)) return;
+        if(ev.target.closest('button,input,select')) return;
+        if(typeof state==='undefined' || state.phase===7) return;
+        const team=card.dataset.playerTeam || card.dataset.team;
+        const index=Number(card.dataset.playerIndex ?? card.dataset.index);
+        if((team==='A'||team==='B') && Number.isInteger(index) &&
+           typeof openEventMenu==='function'){
+          ev.preventDefault();
+          ev.stopPropagation();
+          const isStaff=card.classList.contains('staff-card');
+          openEventMenu(isStaff?'STAFF':'PLAYER',team,index);
+        }
+      };
+      root.addEventListener('pointerup',fire,{passive:false});
+      root.addEventListener('click',fire,{passive:false});
+      root.dataset.eventTouchBound='1';
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+  new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
 
