@@ -5658,6 +5658,49 @@ tr.team-b td,
 }
 </style>
 
+<style id="first-half-config-info">
+/* Nel contenitore dei parziali, durante il 1° tempo, mostriamo
+   durata e modalità configurate. Dal 2° tempo tornano i parziali. */
+.first-half-info{
+  width:100%;
+  height:100%;
+  min-width:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  box-sizing:border-box;
+  padding:2px 8px;
+  color:#334155;
+  font-size:10px;
+  line-height:1;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.first-half-info-duration b{
+  font-size:12px;
+  color:#111827;
+}
+.first-half-info-separator{
+  color:#94a3b8;
+  font-weight:900;
+}
+.first-half-info-mode{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#phaseScore.show-first-half-info .first-half-info{
+  display:flex;
+}
+#phaseScore.show-first-half-info .phase-score-item{
+  display:none !important;
+}
+@media screen and (max-width:700px){
+  .first-half-info{font-size:9px;gap:5px;padding:2px 5px;}
+  .first-half-info-duration b{font-size:11px;}
+}
+</style>
 
 <style id="parziali-futuri-nascosti">
 .phase-score-item[style*="visibility: hidden"]{
@@ -6944,6 +6987,11 @@ body.referto-attivo #app > * {
 
     <div class="phase phase-box">
       <div id="phaseScore" class="phase-score-container" aria-label="Parziali della gara">
+        <div id="firstHalfInfo" class="first-half-info" aria-label="Impostazioni gara">
+          <span class="first-half-info-duration"><b id="firstHalfDurationDisplay">30'</b> PER TEMPO</span>
+          <span class="first-half-info-separator">·</span>
+          <span class="first-half-info-mode" id="firstHalfModeDisplay">PARTITA STANDARD</span>
+        </div>
         <span class="phase-score-item" data-phase-score="1">1° T —</span>
         <span class="phase-score-item" data-phase-score="2">2° T —</span>
         <span class="phase-score-item" data-phase-score="3">1° TS —</span>
@@ -8103,8 +8151,24 @@ function render(){
       }
     });
 
-    // Il contenitore rimane sempre visibile; al suo interno compaiono
-    // esclusivamente i periodi già conclusi.
+    // Durante il 1° tempo il contenitore, ancora vuoto, viene usato
+    // per mostrare in modo compatto durata e modalità della gara.
+    // Dal 2° tempo in poi torna a contenere esclusivamente i parziali.
+    const firstHalfInfo=el('firstHalfInfo');
+    const durationDisplay=el('firstHalfDurationDisplay');
+    const modeDisplay=el('firstHalfModeDisplay');
+    const isFirstHalf=state.phase===1;
+    phaseScoreEl.classList.toggle('show-first-half-info',isFirstHalf);
+    if(firstHalfInfo){
+      const minutes=Number(state.halfDurationMinutes ?? 30);
+      if(durationDisplay) durationDisplay.textContent=`${Number.isFinite(minutes)?minutes:30}'`;
+      const modeLabels={
+        STANDARD:'PARTITA STANDARD',
+        SUPPLEMENTARI:'CON SUPPLEMENTARI',
+        RIGORI:'CON TIRI DI RIGORE'
+      };
+      if(modeDisplay) modeDisplay.textContent=modeLabels[state.matchMode] || 'PARTITA STANDARD';
+    }
     phaseScoreEl.style.display='flex';
   }
   el('phase').textContent=state.phase===7 ? `RIGORI · ${state.shootout?.scoreA||0}-${state.shootout?.scoreB||0}` : phaseLabel(state.phase);
