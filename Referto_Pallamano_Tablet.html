@@ -7225,13 +7225,17 @@ body.referto-attivo #app > * {
       <button class="btn orange" style="grid-column:1/-1" onclick="applyLogEventEdit('TIMEOUT')">TIME OUT</button>
     </div>
 
-    <button class="gray" style="width:100%;margin-top:8px;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900" onclick="closeLogEditModal()">ANNULLA</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <button class="gray" style="width:100%;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900" onclick="closeLogEditModal()">ANNULLA</button>
+      <button class="btn green" style="width:100%;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900" onclick="saveLogEventEdit()">SALVA</button>
+    </div>
   </div>
 </div>
 <style>
 #log.log-editable .log-row{cursor:pointer;touch-action:manipulation}
 #log.log-editable .log-row:active{filter:brightness(.94);transform:scale(.995)}
 #logEditTeamA,#logEditTeamB{font-weight:900}
+#logEditModal .selected-edit-action{outline:3px solid rgba(15,23,42,.35);filter:brightness(.92);transform:scale(.98)}
 </style>
 <!-- POPUP SCELTA EVENTO -->
 <div id="eventModal" class="modal-back">
@@ -7379,6 +7383,8 @@ let editingLogIndex=null;
 let editingLogTeam=null;
 let editingLogKind=null;
 let editingLogSubject=null;
+let editingLogDraftType=null;
+let editingLogDraftText='';
 let undoStack=[];
 
 function el(id){return document.getElementById(id)}
@@ -8503,14 +8509,14 @@ function renderLog(){
   const box=el('log');
   if(!box)return;
   const events=Array.isArray(state.events)?state.events:[];
-  box.classList.toggle('log-editable',!state.running);
+  box.classList.add('log-editable');
   box.innerHTML=[...events].reverse().map((e,rev)=>{
     const idx=events.length-1-rev;
     const phaseEvent=/^(?:INIZIO|FINE)\s+(?:1°|2°|3°|4°)\s+TEMPO(?:\s+SUPPLEMENTARE)?$/.test(String(e.text||e.event||'').trim());
     const cls=(e.team==='A'?'log-a':(e.team==='B'?'log-b':''))+(phaseEvent?' system-phase-event':'');
     let text=String(e.text||e.event||'').replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'').replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'').trim();
     const num=e.num&&e.num!=='—'?e.num:'';
-    const editable=!state.running&&e.type!=='SYSTEM';
+    const editable=e.type!=='SYSTEM';
     return `<div class="log-row ${cls}" ${editable?`onclick="editLogRow(${idx})"`:''}>`+
       `<div class="log-time">${e.time||''}</div><div class="log-team">${e.team||''}</div>`+
       `<div class="log-num">${num}</div><div class="log-event">${text}</div><div class="log-res">${e.result||''}</div></div>`;
@@ -8596,16 +8602,13 @@ function closeLogEditModal(){
   editingLogTeam=null;
   editingLogKind=null;
   editingLogSubject=null;
+  editingLogDraftType=null;
+  editingLogDraftText='';
   const m=el('logEditModal');
   if(m)m.style.display='none';
 }
 
 function editLogRow(index){
-  if(state.running){
-    toast('Per modificare il registro il cronometro deve essere fermo');
-    return;
-  }
-
   const e=state.events?.[index];
   if(!e || e.type==='SYSTEM' || !e.team) return;
 
@@ -8620,6 +8623,8 @@ function editLogRow(index){
     : (STAFF.includes(String(e.num??'').trim().toUpperCase()) ? 'STAFF' : 'PLAYER');
 
   editingLogSubject=String(e.num??'').trim().toUpperCase();
+  editingLogDraftType=e.type;
+  editingLogDraftText=String(e.text||e.type||'');
 
   updateLogEditModal();
 }
@@ -8703,12 +8708,14 @@ function updateLogEditModal(){
   el('logEditTitle').textContent='MODIFICA EVENTO';
 
   const currentSubject=editingLogSubject || e.num;
+  const draftType=editingLogDraftType || e.type;
+  const draftText=editingLogDraftText || e.text || e.type;
   const subject=e.type==='TIMEOUT'
     ? 'TIME OUT'
     : (player ? `N° ${currentSubject}` : `DIRIGENTE ${currentSubject}`);
 
   el('logEditSubtitle').textContent=
-    `${state.teams[team]} · ${subject} · ${e.text||e.type}`;
+    `${state.teams[team]} · ${subject} · ${draftText}`;
 
   el('logEditTeamInfo').textContent=
     `SQUADRA: ${state.teams[team]}`;
@@ -8856,7 +8863,51 @@ function rebuildAfterLogEdit(){
 }
 
 function applyLogEventEdit(newType){
-  if(editingLogIndex===null || state.running) return;
+  // La modifica viene prima memorizzata come variazione provvisoria.
+  // Il cronometro può continuare a correre e il salvataggio definitivo
+  // avviene soltanto premendo SALVA.
+  if(editingLogIndex===null) return;
+
+  const old=state.events?.[editingLogIndex];
+  if(!old || old.type==='SYSTEM') return;
+
+  const map={
+    GOAL:['GOAL','GOAL'],
+    PENALTY_SCORED:['PENALTY','RIGORE REALIZZATO'],
+    PENALTY_MISSED:['PENALTY','RIGORE ERRATO'],
+    YELLOW:['YELLOW','AMMONIZIONE'],
+    TWO:['TWO',"2'"],
+    RED:['RED','ESPULSIONE DIRETTA'],
+    TIMEOUT:['TIMEOUT','TIME OUT']
+  };
+
+  const v=map[newType];
+  if(!v) return;
+
+  // Non scriviamo ancora in state.events: così ANNULLA annulla davvero
+  // la modifica, anche se nel frattempo il cronometro sta correndo.
+  editingLogDraftType=v[0];
+  editingLogDraftText=v[1];
+  updateLogEditModal();
+
+  // Evidenzia visivamente l'azione scelta senza chiudere il popup.
+  const all=document.querySelectorAll('#logEditPlayerActions button,#logEditStaffActions button,#logEditTimeoutActions button');
+  all.forEach(btn=>btn.classList.remove('selected-edit-action'));
+  const selectedBtn=[...all].find(btn=>{
+    const t=(btn.textContent||'').toUpperCase();
+    return (newType==='GOAL' && t==='GOAL') ||
+           (newType==='PENALTY_SCORED' && t.includes('RIGORE REALIZZATO')) ||
+           (newType==='PENALTY_MISSED' && t.includes('RIGORE ERRATO')) ||
+           (newType==='YELLOW' && t.includes('AMMONIZZA')) ||
+           (newType==='TWO' && t.trim()==="2'") ||
+           (newType==='RED' && t.includes('ESPULSIONE')) ||
+           (newType==='TIMEOUT' && t.includes('TIME OUT'));
+  });
+  if(selectedBtn) selectedBtn.classList.add('selected-edit-action');
+}
+
+function saveLogEventEdit(){
+  if(editingLogIndex===null) return;
 
   const old=state.events?.[editingLogIndex];
   if(!old || old.type==='SYSTEM') return;
@@ -8868,52 +8919,20 @@ function applyLogEventEdit(newType){
     old.num || ''
   ).trim();
 
-  snapshot();
+  const type=editingLogDraftType || old.type;
+  const text=editingLogDraftText || old.text || old.type;
 
-  // Il cambio squadra è indipendente dal tipo dell'evento.
-  // Questo permette, ad esempio, di spostare:
-  // GOAL CASA -> GOAL OSPITI
-  // AMMONIZIONE CASA -> AMMONIZIONE OSPITI
-  // 2' CASA -> 2' OSPITI
-  // ESPULSIONE CASA -> ESPULSIONE OSPITI
-  // TIME OUT CASA -> TIME OUT OSPITI
-  let type=old.type;
-  let text=old.text;
-
-  if(newType==='TIMEOUT'){
-    type='TIMEOUT';
-    text='TIME OUT';
-  }else{
-    const map={
-      GOAL:['GOAL','GOAL'],
-      PENALTY_SCORED:['PENALTY','RIGORE REALIZZATO'],
-      PENALTY_MISSED:['PENALTY','RIGORE ERRATO'],
-      YELLOW:['YELLOW','AMMONIZIONE'],
-      TWO:['TWO',"2'"],
-      RED:['RED','ESPULSIONE DIRETTA']
-    };
-
-    const v=map[newType];
-    if(!v){
-      undoStack.pop();
-      return;
-    }
-
-    type=v[0];
-    text=v[1];
-  }
-
-  // La variazione può cambiare sia squadra sia soggetto.
-  // Un giocatore può quindi passare, per esempio, da N° 7 CASA a N° 11 OSPITI.
-  // Lo stesso vale per i dirigenti (A/B/C/D/E).
-  if(editingLogKind==='PLAYER'){
+  // Validazione eseguita al momento del SALVA, quindi squadra e soggetto
+  // possono essere modificati liberamente mentre il timer continua a correre.
+  if(type==='TIMEOUT'){
+    // nessun soggetto necessario
+  }else if(editingLogKind==='PLAYER'){
     const exists=state.numbers?.[newTeam]?.some(
       v=>String(v??'').trim()===newSubject
     );
 
     if(!exists){
       toast(`Il giocatore N° ${newSubject} non è presente nella squadra ${state.teams[newTeam]}`);
-      undoStack.pop();
       return;
     }
   }else if(editingLogKind==='STAFF'){
@@ -8923,16 +8942,16 @@ function applyLogEventEdit(newType){
 
     if(!exists){
       toast(`Il dirigente ${newSubject} non è presente nella squadra ${state.teams[newTeam]}`);
-      undoStack.pop();
       return;
     }
   }
 
   if((type==='GOAL'||type==='PENALTY') && editingLogKind!=='PLAYER'){
     toast('GOAL e RIGORE possono essere assegnati solo a un giocatore');
-    undoStack.pop();
     return;
   }
+
+  snapshot();
 
   state.events[editingLogIndex]={
     ...old,
@@ -8942,15 +8961,13 @@ function applyLogEventEdit(newType){
     text
   };
 
-  closeLogEditModal();
-
-  // Ricalcola TUTTA la gara, non la sola variazione.
+  // Ricalcola tutta la gara senza alterare lo stato del cronometro.
   rebuildAfterLogEdit();
-
+  closeLogEditModal();
   render();
   saveRecovery();
 
-  toast('EVENTO MODIFICATO · PUNTEGGIO E REGISTRO RICALCOLATI');
+  toast('EVENTO MODIFICATO · SALVATO · PUNTEGGIO E REGISTRO RICALCOLATI');
 }
 
 function openEventMenu(kind,team,index){
