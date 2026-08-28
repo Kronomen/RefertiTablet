@@ -11032,6 +11032,24 @@ document.addEventListener('keydown', function(e){
 }
 </style>
 
+
+<style id="staff-size-final">
+/* DIRIGENTI: contenitore +2 mm circa; card dirigente +1 mm circa. */
+@media screen and (orientation:landscape) and (min-width:700px){
+  .main > .panel:first-child > .staff,
+  .main > .panel:last-child > .staff{
+    height:80px !important;
+    min-height:80px !important;
+    max-height:80px !important;
+  }
+  .main > .panel:first-child > .staff > .staff-card,
+  .main > .panel:last-child > .staff > .staff-card{
+    height:76px !important;
+    min-height:76px !important;
+    max-height:76px !important;
+  }
+}
+</style>
 </body>
 </html>
 
@@ -11045,7 +11063,7 @@ document.addEventListener('keydown', function(e){
   .main > .panel:first-child,
   .main > .panel:last-child{
     display:grid !important;
-    grid-template-rows:43px 10px 313px 10px 72px !important;
+    grid-template-rows:43px 10px 313px 10px 80px !important;
     min-height:0 !important;
     overflow:hidden !important;
   }
