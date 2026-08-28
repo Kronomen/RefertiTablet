@@ -10192,6 +10192,36 @@ function applyTeamColors(colors){
       x.style.color='#fff';
     }
   });
+
+  // ANTEPRIMA IN CONFIGURAZIONE: giocatori e dirigenti assumono
+  // immediatamente il colore scelto, così la configurazione mostra
+  // esattamente come appariranno nel referto.
+  updateConfigColorPreview(c);
+}
+
+function updateConfigColorPreview(colors){
+  const c=colors || state.teamColors || {A:'#2563eb',B:'#7c3aed'};
+  ['A','B'].forEach(team=>{
+    const color=c[team] || (team==='A' ? '#2563eb' : '#7c3aed');
+    document.querySelectorAll(`#editPlayers${team} .edit-player-input`).forEach(inp=>{
+      inp.style.borderColor=color;
+      inp.style.backgroundColor=color;
+      inp.style.color='#fff';
+      inp.style.fontWeight='900';
+    });
+
+    document.querySelectorAll(`#editStaff${team} .edit-staff-letter`).forEach(inp=>{
+      inp.style.borderColor=color;
+      if(inp.disabled){
+        inp.style.backgroundColor='#f1f5f9';
+        inp.style.color='#94a3b8';
+      }else{
+        inp.style.backgroundColor=color;
+        inp.style.color='#fff';
+      }
+      inp.style.fontWeight='900';
+    });
+  });
 }
 
 function renderTeamColorPalette(team){
@@ -10262,6 +10292,11 @@ function openEditTeams(){
       </div>`;
     }).join('');
   });
+
+  // Applica subito l'anteprima dei colori DOPO aver creato i campi
+  // della configurazione. In questo modo all'apertura del popup
+  // giocatori e dirigenti mostrano già il colore della rispettiva squadra.
+  updateConfigColorPreview(configTeamColors);
 
   /* Nei numeri di maglia si digita direttamente dalla tastiera.
      Per i dirigenti compare esclusivamente la cella A-B-C-D-E: la lettera è fissa e può solo essere cancellata. */
@@ -10438,6 +10473,10 @@ function validateAndSortPlayerNumbers(showError=true){
       }
     }
   });
+
+  // validateAndSortPlayerNumbers può ricreare i campi: riapplica i colori
+  // anche dopo il riordino automatico dei numeri.
+  updateConfigColorPreview(configTeamColors);
 
   if(!valid && showError){
     const msg=el('editNumberError');
