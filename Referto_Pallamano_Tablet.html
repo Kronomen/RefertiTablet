@@ -10943,3 +10943,214 @@ html,body{
 }
 </style>
 
+<style id="config-final-compact-v2">
+/* CONFIGURAZIONE — versione compatta finale
+   Obiettivo: popup più piccolo, niente scroll, sfondo index visibile,
+   loghi proporzionati, controlli compatti e colori squadra rispettati. */
+.config-modal-back{
+  padding:0!important;
+  background-color:#041937!important;
+  background-image:
+    linear-gradient(90deg,rgba(4,25,55,.62),rgba(4,25,55,.12),rgba(4,25,55,.62)),
+    url("referto-pallamano-home-clean.png")!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  backdrop-filter:none!important;
+}
+.config-modal-back .edit-teams-modal{
+  width:min(900px,88vw)!important;
+  max-width:900px!important;
+  height:min(68vh,650px)!important;
+  max-height:68vh!important;
+  min-height:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(148,163,184,.95)!important;
+  border-radius:8px!important;
+  background:rgba(248,250,252,.97)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.48)!important;
+}
+.config-header{
+  height:64px!important;
+  display:grid!important;
+  grid-template-columns:220px 1fr 170px!important;
+  align-items:center!important;
+  gap:8px!important;
+  padding:4px 12px!important;
+  background:rgba(255,255,255,.98)!important;
+  border-bottom:1px solid #cbd5e1!important;
+}
+.config-logo{height:56px!important;display:flex!important;align-items:center!important;min-width:0!important}
+.config-logo.figh{justify-content:flex-start!important}
+.config-logo.ficr{justify-content:flex-end!important}
+.config-logo.figh img{max-width:215px!important;max-height:56px!important;width:auto!important;height:auto!important}
+.config-logo.ficr img{max-width:145px!important;max-height:48px!important;width:auto!important;height:auto!important}
+.config-heading h3{font-size:20px!important;line-height:1!important;margin:0!important}
+.config-heading p{font-size:7px!important;margin:4px 0 0!important}
+.config-kicker{font-size:6px!important;margin-bottom:2px!important;letter-spacing:1.5px!important}
+.config-body{
+  height:calc(100% - 64px)!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  padding:8px 11px 7px!important;
+  background:rgba(248,250,252,.96)!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.config-body .edit-teams-grid{
+  flex:0 0 auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:8px!important;
+}
+.config-body .edit-team-box{
+  min-width:0!important;
+  border:1px solid #cbd5e1!important;
+  border-radius:6px!important;
+  padding:6px!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 1px 5px rgba(15,23,42,.06)!important;
+  overflow:hidden!important;
+}
+.config-team-accent{height:3px!important;margin:-6px -6px 5px!important}
+.config-team-label{font-size:7px!important;letter-spacing:1px!important;margin-bottom:3px!important}
+.config-body .edit-team-name{
+  height:29px!important;
+  padding:3px 6px!important;
+  border-radius:4px!important;
+  font-size:14px!important;
+}
+.config-body .edit-section-title{
+  margin-top:5px!important;margin-bottom:3px!important;
+  padding-bottom:2px!important;font-size:7px!important;letter-spacing:.5px!important;
+}
+/* Palette: piccoli quadratini, senza occupare spazio inutile. */
+.config-body .team-color-section{margin-top:4px!important;padding:3px 5px!important;border-radius:5px!important}
+.config-body .team-color-title{font-size:6px!important;margin-bottom:3px!important}
+.config-body .team-color-palette{
+  grid-template-columns:repeat(6,18px)!important;
+  grid-auto-rows:18px!important;
+  justify-content:center!important;
+  gap:3px!important;
+}
+.config-body .team-color-swatch{
+  width:18px!important;height:18px!important;min-height:18px!important;
+  border-radius:4px!important;border-width:1px!important;
+}
+.config-body .team-color-swatch.selected{outline:2px solid #0f172a!important;outline-offset:1px!important}
+/* Numeri giocatori e lettere dirigenti: più piccoli e nel colore della squadra. */
+.config-body .edit-players-grid,.config-body .edit-staff-grid{gap:3px!important}
+.config-body .edit-player-input,
+.config-body .edit-staff-letter{
+  min-height:25px!important;height:25px!important;
+  padding:2px!important;border-radius:4px!important;font-size:10px!important;
+  font-weight:900!important;background:#fff!important;
+}
+.config-team-home .edit-player-input,
+.config-team-home .edit-staff-letter{
+  color:var(--team-home,#2563eb)!important;
+  border-color:color-mix(in srgb,var(--team-home,#2563eb) 48%,#cbd5e1)!important;
+}
+.config-team-away .edit-player-input,
+.config-team-away .edit-staff-letter{
+  color:var(--team-away,#7c3aed)!important;
+  border-color:color-mix(in srgb,var(--team-away,#7c3aed) 48%,#cbd5e1)!important;
+}
+.config-body .edit-staff-item.deleted .edit-staff-letter{color:#94a3b8!important;border-color:#cbd5e1!important;background:#f1f5f9!important}
+.config-options-row{
+  flex:0 0 auto!important;
+  display:grid!important;
+  grid-template-columns:125px minmax(0,1fr)!important;
+  gap:7px!important;
+  margin-top:7px!important;
+}
+.config-body .edit-duration-box,.config-body .config-mode-box{
+  margin:0!important;padding:6px!important;border:1px solid #cbd5e1!important;
+  border-radius:6px!important;background:#fff!important;box-shadow:none!important;
+}
+.config-body .config-option-title{margin:0 0 4px!important;font-size:7px!important}
+.config-duration-line{
+  min-height:31px!important;height:31px!important;gap:5px!important;
+  border:1px solid #dbeafe!important;border-radius:4px!important;background:#eff6ff!important;
+}
+.config-duration-line input{
+  width:42px!important;height:25px!important;border:1px solid #93c5fd!important;
+  border-radius:4px!important;font-size:13px!important;
+}
+.config-duration-line strong{font-size:7px!important}
+.config-body .edit-mode-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important}
+.config-body .edit-mode-card{
+  min-height:49px!important;height:49px!important;padding:5px!important;
+  border:1px solid #cbd5e1!important;border-radius:5px!important;
+}
+.config-body .edit-mode-card.selected{border-width:2px!important}
+.config-body .edit-mode-card strong{font-size:8px!important}
+.config-body .edit-mode-card span{font-size:6.5px!important;line-height:1.15!important;margin-top:2px!important}
+/* Barra com i quattro comandi in un solo rigo, sempre in fondo. */
+.config-bottom-actions{
+  flex:0 0 34px!important;
+  position:static!important;
+  display:grid!important;
+  grid-template-columns:1fr 1.45fr 1fr .72fr!important;
+  gap:5px!important;
+  margin:6px 0 0!important;
+  padding:0!important;
+  border-top:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.config-bottom-actions .btn{
+  min-height:34px!important;height:34px!important;
+  padding:2px 5px!important;font-size:8px!important;
+  border-radius:5px!important;white-space:nowrap!important;
+}
+@media (max-width:900px){
+  .config-modal-back .edit-teams-modal{
+    width:88vw!important;max-width:900px!important;
+    height:68vh!important;max-height:68vh!important;
+  }
+  .config-header{grid-template-columns:190px 1fr 150px!important;height:60px!important}
+  .config-logo{height:52px!important}
+  .config-logo.figh img{max-width:190px!important;max-height:52px!important}
+  .config-logo.ficr img{max-width:130px!important;max-height:44px!important}
+  .config-body{height:calc(100% - 60px)!important;padding:7px 9px 6px!important}
+}
+@media (orientation:portrait) and (max-width:900px){
+  /* Anche in verticale restano le due squadre affiancate sul tablet. */
+  .config-modal-back .edit-teams-modal{width:88vw!important;height:68vh!important;max-height:68vh!important}
+  .config-header{grid-template-columns:150px 1fr 115px!important;height:56px!important;padding:3px 8px!important}
+  .config-logo{height:48px!important}
+  .config-logo.figh img{max-width:150px!important;max-height:48px!important}
+  .config-logo.ficr img{max-width:105px!important;max-height:40px!important}
+  .config-heading h3{font-size:16px!important}
+  .config-heading p,.config-kicker{font-size:6px!important}
+  .config-body{height:calc(100% - 56px)!important;padding:6px 7px 5px!important}
+  .config-body .edit-teams-grid{grid-template-columns:1fr 1fr!important;gap:6px!important}
+  .config-body .edit-team-box{padding:5px!important}
+  .config-team-accent{margin:-5px -5px 4px!important}
+  .config-body .edit-team-name{height:27px!important;font-size:12px!important}
+  .config-body .edit-section-title{margin-top:4px!important;margin-bottom:2px!important;font-size:6.5px!important}
+  .config-body .team-color-section{margin-top:3px!important;padding:2px 3px!important}
+  .config-body .team-color-palette{grid-template-columns:repeat(6,15px)!important;grid-auto-rows:15px!important;gap:2px!important}
+  .config-body .team-color-swatch{width:15px!important;height:15px!important;min-height:15px!important}
+  .config-body .edit-player-input,.config-body .edit-staff-letter{height:22px!important;min-height:22px!important;font-size:9px!important}
+  .config-options-row{grid-template-columns:105px minmax(0,1fr)!important;gap:5px!important;margin-top:5px!important}
+  .config-body .edit-duration-box,.config-body .config-mode-box{padding:5px!important}
+  .config-duration-line{height:27px!important;min-height:27px!important}
+  .config-duration-line input{width:36px!important;height:22px!important;font-size:12px!important}
+  .config-body .edit-mode-grid{gap:3px!important}
+  .config-body .edit-mode-card{min-height:43px!important;height:43px!important;padding:4px!important}
+  .config-body .edit-mode-card strong{font-size:7px!important}
+  .config-body .edit-mode-card span{font-size:5.7px!important}
+  .config-bottom-actions{height:30px!important;flex-basis:30px!important;gap:3px!important;margin-top:5px!important}
+  .config-bottom-actions .btn{height:30px!important;min-height:30px!important;font-size:7px!important;padding:1px 3px!important}
+}
+@media (max-width:560px){
+  /* Su schermi davvero piccoli si privilegia la leggibilità. */
+  .config-modal-back .edit-teams-modal{width:94vw!important;height:82vh!important;max-height:82vh!important}
+  .config-body{overflow:auto!important}
+  .config-body .edit-teams-grid{grid-template-columns:1fr!important}
+}
+</style>
+
