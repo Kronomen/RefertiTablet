@@ -10845,30 +10845,62 @@ document.addEventListener('keydown', function(e){
 });
 </script>
 
+<style id="tablet-timeout-fast-touch">
+/* TIME OUT: risposta immediata al tocco su tablet */
+#aTimeout,#bTimeout{
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent !important;
+  -webkit-user-select:none !important;
+  user-select:none !important;
+  cursor:pointer !important;
+  min-height:44px !important;
+  min-width:92px !important;
+}
+</style>
 <script id="tablet-touch-timeout-handler">
 (function(){
   function bindTimeoutTouch(id,team){
     const btn=document.getElementById(id);
-    if(!btn || btn.dataset.touchBound==='1') return;
+    if(!btn || btn.dataset.touchBound==='2') return;
+
+    let handledPointer=false;
+    let handledAt=0;
+
     const fire=function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
       if(btn.disabled) return;
-      if(typeof requestTimeout==='function') requestTimeout(team);
+      /* Il comando parte già al pointerdown: niente attesa del rilascio. */
+      if(ev.type==='pointerdown'){
+        if(ev.pointerType==='mouse' && ev.button!==0) return;
+        handledPointer=true;
+        handledAt=Date.now();
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        if(typeof requestTimeout==='function') requestTimeout(team);
+        return;
+      }
+
+      /* Sopprime il click sintetico generato dal tap, evitando un doppio TIME OUT. */
+      if(ev.type==='click' && handledPointer && (Date.now()-handledAt)<800){
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        handledPointer=false;
+      }
     };
-    btn.addEventListener('pointerup',fire,{passive:false});
-    btn.addEventListener('touchend',fire,{passive:false});
-    btn.dataset.touchBound='1';
+
+    btn.addEventListener('pointerdown',fire,{passive:false});
+    btn.addEventListener('click',fire,{passive:false});
+    btn.dataset.touchBound='2';
   }
+
   function bind(){
-    bindTimeoutTouch('aTimeout','A');
-    bindTimeoutTouch('bTimeout','B');
+    bindTimeoutTouch('timeoutA','A');
+    bindTimeoutTouch('timeoutB','B');
   }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',bind);
-  }else bind();
-  const obs=new MutationObserver(bind);
-  obs.observe(document.documentElement,{childList:true,subtree:true});
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind,{once:true});
+  else bind();
+
+  new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 
