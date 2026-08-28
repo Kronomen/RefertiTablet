@@ -6959,12 +6959,26 @@ body.referto-attivo #app > * {
   z-index:1 !important;
 }
 </style>
+
+<style id="exit-match-button">
+#exitMatchBtn{
+  position:fixed;top:7px;right:7px;z-index:12000;
+  display:none;width:52px;height:28px;padding:0;
+  border:0;border-radius:5px;background:#dc2626;color:#fff;
+  font:900 10px/28px Arial,sans-serif;text-align:center;
+  box-shadow:0 1px 3px #0004;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+#exitMatchBtn:active{transform:scale(.96)}
+</style>
 </head>
 
 <body>
 
 <button id="fullscreenBtn" type="button" aria-label="Schermo intero"
         title="Schermo intero" onclick="toggleTabletFullscreen()">⛶</button>
+
+<button id="exitMatchBtn" type="button" aria-label="Esci" title="Torna all'INDEX" onclick="goToIndex()">ESCI</button>
 
 <div id="app">
 
@@ -8166,6 +8180,12 @@ function render(){
     state.phase===5?'FINE 3° SUPPLEMENTARE':
     'FINE 4° SUPPLEMENTARE';
   el('timer').textContent=currentTime();
+  const exitMatchBtn=el('exitMatchBtn');
+  if(exitMatchBtn){
+    const configModal=el('editTeamsModal');
+    const configVisible=!!configModal && getComputedStyle(configModal).display!=='none';
+    exitMatchBtn.style.display=(!state.running && !configVisible) ? 'block' : 'none';
+  }
 
   renderPlayers('A');
   renderPlayers('B');
