@@ -1368,7 +1368,7 @@ function closePenalty(){
     width:100% !important;
     height:100% !important;
     min-height:0 !important;
-    max-height:none !important;
+    max-height:100% !important;
     overflow:hidden !important;
 
     display:grid !important;
@@ -1778,8 +1778,8 @@ function closePenalty(){
   }
 
   .staff-status{
-    height:36px !important;
-    min-height:36px !important;
+    height:42px !important;
+    min-height:42px !important;
     line-height:36px !important;
     font-size:11px !important;
     font-weight:900 !important;
@@ -7031,8 +7031,6 @@ body.referto-attivo #app > * {
         </div>
       </div>
 
-      <div class="suspensions-title">ESCLUSIONI IN CORSO</div>
-      <div id="suspensionsA" class="suspensions"></div>
       <div class="players-caption">N° MAGLIA · EVENTO</div>
       <div id="playersA" class="players"></div>
 
@@ -7067,8 +7065,6 @@ body.referto-attivo #app > * {
         </div>
       </div>
 
-      <div class="suspensions-title">ESCLUSIONI IN CORSO</div>
-      <div id="suspensionsB" class="suspensions"></div>
       <div class="players-caption">N° MAGLIA · EVENTO</div>
       <div id="playersB" class="players"></div>
 
@@ -8026,30 +8022,6 @@ function currentTime(){
 }
 
 
-function renderSuspensions(){
-  ['A','B'].forEach(team=>{
-    const box=el('suspensions'+team);
-    if(!box)return;
-
-    const list=state.activeSuspensions.filter(x=>x.team===team);
-
-    if(!list.length){
-      box.innerHTML='<div class="suspension-empty">Nessuna esclusione</div>';
-      return;
-    }
-
-    box.innerHTML=list.map(x=>{
-      const remaining=Math.max(0,x.endGameTime-state.timer);
-      const m=Math.floor(remaining/60);
-      const s=remaining%60;
-      return `
-        <div class="suspension-item">
-          <div class="suspension-num">${x.num}</div>
-          <div class="suspension-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-        </div>`;
-    }).join('');
-  });
-}
 
 
 function isTabletFullscreen(){
@@ -8195,7 +8167,6 @@ function render(){
     'FINE 4° SUPPLEMENTARE';
   el('timer').textContent=currentTime();
 
-  renderSuspensions();
   renderPlayers('A');
   renderPlayers('B');
   renderStaff('A');
@@ -9263,7 +9234,6 @@ function tick(){
 
   el('timer').classList.remove('blink');
   state.timer++;
-  renderSuspensions();
 
   // Ultimi 30 secondi: il cronometro lampeggia mentre il tempo scorre.
   // La soglia usa la durata configurata, quindi vale anche se il tempo
@@ -10094,7 +10064,6 @@ function startSuspension(team,num){
   });
 
   render();
-  renderSuspensions();
   startSuspensionWatcher();
 }
 
@@ -10119,8 +10088,7 @@ function startSuspensionWatcher(){
       render();
       saveRecovery();
     }else{
-      renderSuspensions();
-    }
+        }
 
     if(!state.activeSuspensions.length){
       clearInterval(window.suspensionWatcher);
@@ -11025,132 +10993,192 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 
-</body>
-</html>
 
-<style id="suspensions-compact-final">
-/* ESCLUSIONI IN CORSO: recupera circa 0,5 cm di altezza. */
-@media screen and (orientation:landscape) and (min-width:700px) and (max-width:1100px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:
-      31px 10px 20px 12px minmax(0,1fr) 14px 72px !important;
-  }
-  .suspensions-title{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-    font-size:7px !important;
-    padding:0 !important;
-  }
-  .suspensions{
-    height:20px !important;
-    min-height:20px !important;
-    padding:1px 3px !important;
-    gap:3px !important;
-    overflow:hidden !important;
-  }
-  .suspension-item{
-    min-height:18px !important;
-    height:18px !important;
-    padding:0 3px !important;
-  }
-  .suspension-num,.suspension-time{
-    font-size:8px !important;
-    line-height:18px !important;
-  }
+<style id="players-container-unlocked-final">
+/* GIOCATORI: il contenitore non ha più un'altezza fissa.
+   Riceve lo spazio realmente disponibile dal pannello e lascia i
+   DIRIGENTI immediatamente sotto. */
+.main > .panel.team-a,
+.main > .panel.team-b{
+  display:flex !important;
+  flex-direction:column !important;
+  min-height:0 !important;
+  overflow:hidden !important;
 }
-
-@media screen and (orientation:portrait) and (max-width:900px){
-  .suspensions-title{
-    height:8px !important;
-    min-height:8px !important;
-    line-height:8px !important;
-    font-size:6px !important;
-    padding:0 !important;
-  }
-  .suspensions{
-    height:12px !important;
-    min-height:12px !important;
-    padding:0 2px !important;
-    gap:2px !important;
-    overflow:hidden !important;
-  }
-  .suspension-item{
-    min-height:12px !important;
-    height:12px !important;
-    padding:0 2px !important;
-  }
-  .suspension-num,.suspension-time{
-    font-size:7px !important;
-    line-height:12px !important;
-  }
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    grid-template-rows:
-      23px 8px 12px 9px minmax(0,1fr) 10px 112px !important;
+.main > .panel.team-a .players,
+.main > .panel.team-b .players{
+  flex:1 1 auto !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  box-sizing:border-box !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+  overflow:hidden !important;
+}
+.main > .panel.team-a .staff,
+.main > .panel.team-b .staff{
+  flex:0 0 auto !important;
+}
+@media screen and (max-height:700px){
+  .main > .panel.team-a .players,
+  .main > .panel.team-b .players{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
   }
 }
 </style>
 
-<style id="responsive-viewport-final">
-/* ADATTAMENTO DIMENSIONI MONITOR/TABLET
-   Il browser fornisce la viewport reale: vw/vh/dvw/dvh e clamp() permettono
-   di ridimensionare progressivamente i componenti senza fissarli a un solo
-   modello di tablet. */
-html,body{
-  width:100%;
-  min-width:0;
-  min-height:0;
-}
-#app{
-  width:100%;
-  width:100dvw;
-  height:100%;
-  height:100dvh;
-  min-width:0;
-  min-height:0;
-}
+</body>
+</html>
 
-/* Landscape: sfrutta automaticamente tutta la viewport disponibile. */
+<style id="layout-final-clean">
+/* LAYOUT FINALE PANNELLI SQUADRA
+   Nessun contenitore separato per "ESCLUSIONI IN CORSO".
+   Il countdown dei 2' vive nella card del giocatore/dirigente.
+   La testata mantiene spazio sufficiente per nome squadra e TIME OUT.
+   La griglia giocatori riceve lo spazio verticale disponibile. */
 @media screen and (orientation:landscape) and (min-width:700px){
-  #app{
-    padding:clamp(2px,.35vw,6px);
-    gap:clamp(2px,.35vw,6px);
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:grid !important;
+    grid-template-rows:43px 10px 313px 10px 72px !important;
+    min-height:0 !important;
+    overflow:hidden !important;
   }
-  .main{
-    gap:clamp(2px,.35vw,6px);
+
+  .main > .panel:first-child > .panel-head,
+  .main > .panel:last-child > .panel-head{
+    height:38px !important;
+    min-height:38px !important;
+    padding:2px 5px !important;
+    overflow:hidden !important;
   }
-  .panel{
-    border-radius:clamp(6px,.55vw,10px);
+
+  .main > .panel:first-child > .panel-head .team-line,
+  .main > .panel:last-child > .panel-head .team-line{
+    height:24px !important;
+    min-height:24px !important;
+    align-items:center !important;
   }
-  .players{
-    gap:clamp(2px,.35vw,6px);
-    padding:clamp(2px,.45vw,8px);
+
+  .main > .panel:first-child > .panel-head .name-input,
+  .main > .panel:last-child > .panel-head .name-input{
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 5px !important;
+    line-height:23px !important;
+  }
+
+  .main > .panel:first-child > .panel-head .timeout-btn,
+  .main > .panel:last-child > .panel-head .timeout-btn{
+    height:24px !important;
+    min-height:24px !important;
+    padding:0 8px !important;
+    line-height:23px !important;
+  }
+
+  .main > .panel:first-child > .panel-head .team-counters,
+  .main > .panel:last-child > .panel-head .team-counters{
+    height:10px !important;
+    min-height:10px !important;
+    margin-top:1px !important;
+    line-height:9px !important;
+    font-size:8px !important;
+    gap:8px !important;
+  }
+
+  .main > .panel:first-child > .players-caption,
+  .main > .panel:last-child > .players-caption{
+    height:10px !important;
+    min-height:10px !important;
+    line-height:10px !important;
+    padding:0 !important;
+    font-size:7px !important;
+  }
+
+  .main > .panel:first-child > .players,
+  .main > .panel:last-child > .players{
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+    padding:3px !important;
+    gap:3px !important;
+    overflow:hidden !important;
+    align-self:stretch !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+  }
+
+  .main > .panel:first-child > .staff-title,
+  .main > .panel:last-child > .staff-title{
+    height:10px !important;
+    min-height:10px !important;
+    line-height:10px !important;
+  }
+
+  .main > .panel:first-child > .staff,
+  .main > .panel:last-child > .staff{
+    height:72px !important;
+    min-height:72px !important;
+    max-height:72px !important;
+    padding:2px !important;
+    gap:2px !important;
+    overflow:hidden !important;
   }
 }
 
-/* 11" e tablet compatti: le proporzioni si adattano alla viewport,
-   senza creare scroll verticale. */
-@media screen and (min-width:900px) and (max-width:1400px) and (max-height:900px){
-  #app{
-    padding:clamp(2px,.4vw,5px);
-    gap:clamp(2px,.4vw,5px);
+@media screen and (orientation:portrait) and (min-width:500px){
+  .main > .panel:first-child,
+  .main > .panel:last-child{
+    display:grid !important;
+    grid-template-rows:34px 9px minmax(0,1fr) 10px 72px !important;
+    min-height:0 !important;
+    overflow:hidden !important;
   }
-  .top{
-    padding:clamp(1px,.25vw,3px) clamp(3px,.45vw,6px);
+  .main > .panel:first-child > .panel-head,
+  .main > .panel:last-child > .panel-head{
+    height:34px !important;
+    min-height:34px !important;
+    padding:2px 4px !important;
+    overflow:hidden !important;
   }
-  .main{
-    gap:clamp(2px,.4vw,5px);
+  .main > .panel:first-child > .panel-head .team-line,
+  .main > .panel:last-child > .panel-head .team-line{
+    height:21px !important;
+    min-height:21px !important;
   }
-}
-
-/* Se la viewport è molto bassa, privilegiamo l'area gara e riduciamo
-   solo margini/spazi, non i contenuti funzionali. */
-@media screen and (orientation:landscape) and (max-height:700px){
-  #app{padding:2px;gap:2px}
-  .main{gap:2px}
-  .players{gap:2px;padding:2px}
+  .main > .panel:first-child > .panel-head .name-input,
+  .main > .panel:last-child > .panel-head .name-input,
+  .main > .panel:first-child > .panel-head .timeout-btn,
+  .main > .panel:last-child > .panel-head .timeout-btn{
+    height:21px !important;
+    min-height:21px !important;
+    padding:0 5px !important;
+    line-height:20px !important;
+  }
+  .main > .panel:first-child > .panel-head .team-counters,
+  .main > .panel:last-child > .panel-head .team-counters{
+    height:9px !important;
+    min-height:9px !important;
+    margin-top:0 !important;
+    line-height:8px !important;
+    font-size:7px !important;
+  }
+  .main > .panel:first-child > .players,
+  .main > .panel:last-child > .players{
+    height:100% !important;
+    min-height:0 !important;
+    padding:2px !important;
+    gap:2px !important;
+    overflow:hidden !important;
+    align-self:stretch !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+  }
 }
 </style>
 
