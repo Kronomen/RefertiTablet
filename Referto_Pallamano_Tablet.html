@@ -9072,12 +9072,13 @@ function playerAction(team,index,type){
     if(d.two===3){
       d.red=true;
 
-      // Il 3° 2' comporta espulsione definitiva.
-      // L'alone rosso non dipende più dal countdown.
-      clearActiveSuspension(team,num);
-
+      // Il 3° 2' comporta espulsione definitiva, ma il countdown
+      // dei 2' deve comunque essere sempre attivato e mostrato.
+      // L'alone rosso resta permanente; allo scadere dei 2'
+      // scompare soltanto il countdown.
       addEvent(team,num,'TWO',"2'");
       addEvent(team,num,'RED',"ESCLUSIONE PER 3x2'");
+      startSuspension(team,num);
 
       stopForDisciplinary(team,num,'ESCLUSIONE PER 3x2\'');
     }else{
@@ -9161,7 +9162,9 @@ function staffAction(team,index,type){
     /* Un dirigente riceve un solo 2'. Il successivo provvedimento è direttamente espulsione. */
     if(d.two >= 1){
       d.red=true;
-      clearActiveSuspension(team,letter);
+      // Anche l'espulsione conseguente al secondo provvedimento
+      // del dirigente deve avere sempre il countdown dei 2'.
+      startSuspension(team,letter);
       addEvent(team,letter,'RED','ESPULSIONE');
       stopForDisciplinary(team,letter,'ESPULSIONE');
     }else{
