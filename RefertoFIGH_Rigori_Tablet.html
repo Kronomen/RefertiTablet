@@ -1,3 +1,223 @@
+<style id="rigore-popup-final-typography">
+#singlePenaltyResultPopup .rigore-title{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+  text-overflow:clip!important;
+  text-align:center!important;
+  font-size:82px!important;
+  line-height:.95!important;
+  font-weight:1000!important;
+  letter-spacing:2px!important;
+  margin:0 0 18px!important;
+}
+#singlePenaltyResultPopup .rigore-shooter{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  overflow:visible!important;
+  white-space:normal!important;
+  text-align:center!important;
+  font-size:50px!important;
+  line-height:1.08!important;
+  font-weight:1000!important;
+  column-gap:14px!important;
+  row-gap:2px!important;
+}
+#singlePenaltyResultPopup .rigore-number{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  max-width:none!important;
+  overflow:visible!important;
+}
+#singlePenaltyResultPopup .rigore-name{
+  flex:0 1 auto!important;
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  text-overflow:clip!important;
+}
+#singlePenaltyResultPopup .rigore-title *,
+#singlePenaltyResultPopup .rigore-shooter *{
+  font-size:inherit!important;
+  max-width:none!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+#singlePenaltyResultPopup .single-penalty-content{
+  min-height:180px!important;
+  width:100%!important;
+  max-width:none!important;
+  overflow:visible!important;
+}
+@media(max-width:650px){
+  #singlePenaltyResultPopup .rigore-title{font-size:58px!important}
+  #singlePenaltyResultPopup .rigore-shooter{font-size:38px!important}
+}
+</style>
+
+<style id="popup-font-enorme-nested">
+#singlePenaltyResultPopup .rigore-title,
+#singlePenaltyResultPopup .rigore-title *,
+#singlePenaltyResultPopup .rigore-shooter,
+#singlePenaltyResultPopup .rigore-shooter *{
+  max-width:none !important;
+  min-width:0 !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+#singlePenaltyResultPopup .rigore-shooter{
+  white-space:normal !important;
+}
+</style>
+<style id="popup-font-enorme">
+#singlePenaltyResultPopup .rigore-title{
+  font-size:86px !important;
+  line-height:.95 !important;
+  font-weight:1000 !important;
+  letter-spacing:2px !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 0 20px !important;
+}
+#singlePenaltyResultPopup .rigore-shooter{
+  font-size:52px !important;
+  line-height:1.12 !important;
+  font-weight:1000 !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+#singlePenaltyResultPopup .single-penalty-content{
+  min-height:175px !important;
+  width:100% !important;
+  max-width:none !important;
+  overflow:visible !important;
+}
+@media(max-width:650px){
+  #singlePenaltyResultPopup .rigore-title{
+    font-size:64px !important;
+  }
+  #singlePenaltyResultPopup .rigore-shooter{
+    font-size:40px !important;
+  }
+}
+</style>
+<style id="popup-rigore-font-fix">
+#singlePenaltyResultPopup .rigore-title{
+  font-size:64px !important; line-height:1 !important;
+  font-weight:1000 !important; letter-spacing:1px !important;
+  white-space:nowrap !important; overflow:visible !important;
+  text-overflow:clip !important; width:100% !important;
+  max-width:none !important; margin:0 0 16px !important;
+}
+#singlePenaltyResultPopup .rigore-shooter{
+  font-size:42px !important; line-height:1.18 !important;
+  font-weight:1000 !important; white-space:normal !important;
+  overflow:visible !important; text-overflow:clip !important;
+  overflow-wrap:anywhere !important; word-break:normal !important;
+  width:100% !important; max-width:none !important; margin:0 !important;
+}
+#singlePenaltyResultPopup .single-penalty-content{
+  min-height:145px !important; width:100% !important;
+  max-width:none !important; overflow:visible !important;
+}
+@media(max-width:650px){
+  #singlePenaltyResultPopup .rigore-title{font-size:50px !important}
+  #singlePenaltyResultPopup .rigore-shooter{font-size:34px !important}
+}
+</style>
+<style id="single-penalty-result-popup-style">
+#singlePenaltyResultPopup{
+ position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;
+ z-index:2147483647!important;display:none;align-items:center!important;
+ justify-content:center!important;padding:16px!important;box-sizing:border-box!important;
+ background:rgba(0,0,0,.45)!important;
+}
+#singlePenaltyResultPopup .single-penalty-box{
+ width:min(94vw,760px)!important;max-width:760px!important;min-height:360px!important;
+ margin:0 auto!important;padding:34px 42px!important;box-sizing:border-box!important;
+ border-radius:22px!important;background:#fff!important;
+ box-shadow:0 24px 80px rgba(0,0,0,.5)!important;
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ gap:24px!important;
+}
+#singlePenaltyResultPopup .single-penalty-content{
+ width:100%!important;min-width:0!important;min-height:125px!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;text-align:center!important;overflow:visible!important;
+ box-sizing:border-box!important;
+}
+#singlePenaltyResultPopup .rigore-title{
+ display:block!important;width:100%!important;max-width:none!important;
+ white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+ font-size:48px!important;line-height:1!important;font-weight:1000!important;
+ margin:0 0 12px!important;
+}
+#singlePenaltyResultPopup .rigore-shooter{
+ display:block!important;width:100%!important;max-width:none!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+ word-break:normal!important;overflow:visible!important;text-overflow:clip!important;
+ font-size:34px!important;line-height:1.18!important;font-weight:1000!important;
+ margin:0!important;
+}
+#singlePenaltyResultPopup .single-penalty-actions{
+ width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:20px!important;
+}
+#singlePenaltyResultPopup button{
+ width:100%!important;min-height:96px!important;border:0!important;border-radius:15px!important;
+ font-size:30px!important;font-weight:1000!important;cursor:pointer!important;
+ touch-action:manipulation!important;
+}
+#singlePenaltyResultPopup #singlePenaltyBtn1{background:#16a34a!important;color:#fff!important}
+#singlePenaltyResultPopup #singlePenaltyBtn2{background:#dc2626!important;color:#fff!important}
+@media(max-width:650px){
+ #singlePenaltyResultPopup{padding:10px!important}
+ #singlePenaltyResultPopup .single-penalty-box{width:96vw!important;min-height:320px!important;padding:24px 18px!important}
+ #singlePenaltyResultPopup .rigore-title{font-size:40px!important}
+ #singlePenaltyResultPopup .rigore-shooter{font-size:28px!important}
+ #singlePenaltyResultPopup button{min-height:82px!important;font-size:25px!important}
+}
+</style>
+<style>
+.rigori-expelled-label{
+  margin-top:4px;
+  width:100%;
+  box-sizing:border-box;
+  text-align:center;
+  font-size:9px;
+  line-height:15px;
+  font-weight:1000;
+  letter-spacing:.5px;
+  color:#b91c1c;
+  background:#fee2e2;
+  border:1px solid #ef4444;
+  border-radius:4px;
+  user-select:none;
+  pointer-events:none;
+}
+.rigori-player-card.expelled{
+  cursor:not-allowed !important;
+  opacity:.72;
+}
+</style>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -231,79 +451,6 @@
 }
 
 </style>
-<style id="popup-rigori-centered-style">
-#action-panel-A,
-#action-panel-B{
-    position:fixed !important;
-    left:50% !important;
-    right:auto !important;
-    top:50% !important;
-    transform:translate(-50%,-50%) !important;
-    width:min(320px,82vw) !important;
-    max-width:320px !important;
-    margin:0 !important;
-    padding:14px !important;
-    z-index:99999 !important;
-}
-#action-panel-A .flex,
-#action-panel-B .flex{
-    gap:10px !important;
-}
-#action-panel-A button,
-#action-panel-B button{
-    min-height:52px !important;
-    height:52px !important;
-    font-size:15px !important;
-    touch-action:manipulation !important;
-}
-#action-title-A,
-#action-title-B{
-    font-size:14px !important;
-    margin-bottom:10px !important;
-}
-</style>
-
-<style id="popup-realizzazione-rigore-grande">
-/*
-  POPUP REALIZZAZIONE RIGORE
-  Deve essere più grande del popup che chiede CASA/OSPITI.
-  Rimane sempre centrato nel video.
-*/
-#action-panel-A,
-#action-panel-B{
-    width:min(520px,90vw) !important;
-    max-width:520px !important;
-    padding:26px !important;
-    border-radius:20px !important;
-    box-sizing:border-box !important;
-}
-
-#action-panel-A .flex,
-#action-panel-B .flex{
-    gap:16px !important;
-    width:100% !important;
-}
-
-#action-panel-A button,
-#action-panel-B button{
-    flex:1 1 0 !important;
-    min-width:0 !important;
-    min-height:78px !important;
-    height:78px !important;
-    font-size:20px !important;
-    font-weight:800 !important;
-    border-radius:12px !important;
-    touch-action:manipulation !important;
-}
-
-#action-title-A,
-#action-title-B{
-    font-size:21px !important;
-    line-height:1.3 !important;
-    margin-bottom:20px !important;
-}
-</style>
-
 </head>
 
     <!-- SCHERMATA COMPILAZIONE DISTINTE (SETUP) -->
@@ -1568,8 +1715,9 @@ function renderTable(team){
       .sort((a,b)=>(parseInt(a.num)||999)-(parseInt(b.num)||999))
       .forEach(item => {
 
-        if(item.canShoot===undefined)
-            item.canShoot = !item.red;
+        /* I giocatori restano SEMPRE visibili.
+           canShoot stabilisce soltanto se la card è selezionabile. */
+        item.canShoot = !!item.canShoot && !item.red;
 
         if(item.penaltyTaken===undefined)
             item.penaltyTaken = false;
@@ -1600,6 +1748,10 @@ function renderTable(team){
             <span class="${item.suspensions ? "two-active" : ""}">2' ${item.suspensions || 0}/3</span>
             <span class="${item.red ? "red-active" : ""}">${item.red ? "E" : "R"}</span>
           </div>
+
+          ${item.red
+            ? `<div class="rigori-expelled-label">ESPULSO</div>`
+            : ``}
         `;
 
         // Come nel referto Tablet: il contenitore del giocatore è il touch target.
@@ -1774,115 +1926,100 @@ function closeActionPanel(team){
 // PANNELLO AZIONI
 //=========================================
 
-function showActionPanel(
-    team,
-    titolo,
-    testo1,
-    testo2,
-    callback1,
-    callback2
-){
+function showActionPanel(){
+  /*
+    POPUP RISULTATO RIGORE.
+    Questa funzione mantiene compatibilità con le chiamate già presenti:
+    prende gli argomenti originali senza richiedere una nuova firma.
+  */
+  const args=Array.from(arguments);
 
-    const panel = document.getElementById("action-panel-" + team);
-    const title = document.getElementById("action-title-" + team);
-    const b1 = document.getElementById("action-btn1-" + team);
-    const b2 = document.getElementById("action-btn2-" + team);
+  let overlay=document.getElementById('singlePenaltyResultPopup');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='singlePenaltyResultPopup';
+    overlay.innerHTML=
+      '<div class="single-penalty-box" role="dialog" aria-modal="true">'+
+        '<div id="singlePenaltyContent" class="single-penalty-content"></div>'+
+        '<div class="single-penalty-actions">'+
+          '<button id="singlePenaltyBtn1" type="button">REALIZZATO</button>'+
+          '<button id="singlePenaltyBtn2" type="button">NON REALIZZATO</button>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(overlay);
+  }
 
-    if(!panel || !title || !b1 || !b2)
-        return;
+  const contentBox=overlay.querySelector('#singlePenaltyContent');
+  const b1=overlay.querySelector('#singlePenaltyBtn1');
+  const b2=overlay.querySelector('#singlePenaltyBtn2');
 
-    //---------------------------------
-    // TITOLO
-    //---------------------------------
+  // Nelle chiamate esistenti il contenuto può essere una stringa HTML.
+  // Cerchiamo anche la squadra, se presente, senza imporre una firma nuova.
+  let team='';
+  let content='';
+  const functions=[];
 
-    title.innerHTML = titolo;
-
-    //---------------------------------
-    // TESTO PULSANTI
-    //---------------------------------
-
-    b1.innerHTML = testo1;
-    b2.innerHTML = testo2;
-
-    //---------------------------------
-    // CALLBACK
-    //---------------------------------
-
-    b1.onclick = callback1;
-    b2.onclick = callback2;
-
-    //---------------------------------
-    // PULSANTI ATTIVI
-    //---------------------------------
-
-    b1.disabled = false;
-    b2.disabled = false;
-
-    b1.classList.remove("hidden");
-    b2.classList.remove("hidden");
-
-    //---------------------------------
-    // PORTA IN PRIMO PIANO
-    //---------------------------------
-
-    // POPUP CENTRATO AL CENTRO DEL VIDEO
-    // Più grande e facilmente utilizzabile sul tablet.
-    panel.style.position = "fixed";
-    panel.style.left = "50%";
-    panel.style.top = "50%";
-    panel.style.right = "auto";
-    panel.style.transform = "translate(-50%, -50%)";
-    panel.style.width = "min(320px, 82vw)";
-    panel.style.maxWidth = "320px";
-    panel.style.padding = "14px";
-    panel.style.zIndex = "99999";
-    panel.style.pointerEvents = "auto";
-    panel.style.margin = "0";
-
-    // Pulsanti più grandi per il tocco.
-    b1.style.minHeight = "52px";
-    b1.style.height = "52px";
-    b1.style.fontSize = "15px";
-    b2.style.minHeight = "52px";
-    b2.style.height = "52px";
-    b2.style.fontSize = "15px";
-
-    b1.style.pointerEvents = "auto";
-    b2.style.pointerEvents = "auto";
-
-    //---------------------------------
-    // COLORE BORDO
-    //---------------------------------
-
-    panel.classList.remove(
-        "border-green-600",
-        "border-orange-500",
-        "border-red-600"
-    );
-
-    if(titolo.includes("⚽")){
-
-        panel.classList.add("border-green-600");
-
-    }else if(titolo.includes("🟧")){
-
-        panel.classList.add("border-orange-500");
-
-    }else if(titolo.includes("🟥")){
-
-        panel.classList.add("border-red-600");
-
+  args.forEach(a=>{
+    if(typeof a==='function') functions.push(a);
+    else if(typeof a==='string'){
+      const s=a.trim();
+      if(!content && (s.includes('<') || /RIGORE|ATLET|#/i.test(s))) content=s;
+      else if(!team && /^[AB]$/i.test(s)) team=s.toUpperCase();
     }
+  });
 
-    //---------------------------------
-    // VISUALIZZA
-    //---------------------------------
+  if(!content){
+    const stringArgs=args.filter(a=>typeof a==='string');
+    content=stringArgs.length ? stringArgs[stringArgs.length-1] : 'RIGORE';
+  }
 
-    panel.classList.remove("hidden");
+  contentBox.innerHTML=content;
+  contentBox.querySelectorAll('.truncate').forEach(n=>{
+    n.classList.remove('truncate');
+    n.style.setProperty('max-width','none','important');
+    n.style.setProperty('width','100%','important');
+    n.style.setProperty('white-space','normal','important');
+    n.style.setProperty('overflow','visible','important');
+    n.style.setProperty('text-overflow','clip','important');
+  });
 
-    panel.style.display = "block";
 
+  const nodes=Array.from(contentBox.querySelectorAll('*'));
+  const title=nodes.find(n=>String(n.textContent||'').trim().toUpperCase()==='RIGORE');
+  if(title) title.classList.add('rigore-title');
+
+  const shooters=nodes.filter(n=>{
+    const t=String(n.textContent||'').trim();
+    return t && t.toUpperCase()!=='RIGORE' && /#\s*\d+/.test(t);
+  });
+  if(shooters.length){
+    let shooter=shooters[0];
+    shooters.forEach(n=>{ if(n.contains(shooter)) shooter=n; });
+    shooter.classList.add('rigore-shooter');
+  }
+
+  b1.onclick=function(){
+    closeSinglePenaltyResultPopup();
+    if(functions[0]) functions[0]();
+  };
+  b2.onclick=function(){
+    closeSinglePenaltyResultPopup();
+    if(functions[1]) functions[1]();
+  };
+
+  overlay.style.display='flex';
 }
+
+function closeSinglePenaltyResultPopup(){
+  const overlay=document.getElementById('singlePenaltyResultPopup');
+  if(overlay) overlay.style.display='none';
+}
+
+function closeSinglePenaltyResultPopup(){
+  const overlay=document.getElementById('singlePenaltyResultPopup');
+  if(overlay) overlay.style.display='none';
+}
+
 
 //=========================================
 // PANNELLO STAMPA CARTELLINO
@@ -1988,8 +2125,10 @@ console.log("CLICK TIRA", team, id);
     if(!player)
         return;
 
-    if(player.red)
+    if(player.red){
+        if(typeof toast === "function") toast("Giocatore ESPULSO: non può tirare i rigori");
         return;
+    }
 
     if(player.penaltyTaken)
         return;
@@ -2013,10 +2152,7 @@ console.log("CLICK TIRA", team, id);
     // APRE IL POPUP
     //---------------------------------
 
- const nomeBreve =
-    player.name.length > 5
-        ? player.name.substring(0,5) + "…"
-        : player.name;
+ const nomeCompleto = String(player.name || '').trim();
 
 showActionPanel(
 
@@ -2025,23 +2161,14 @@ showActionPanel(
     `
     <div class="text-center">
 
-        <div class="text-[12px] font-bold text-blue-700">
+        <div class="rigore-title">
             ⚽ RIGORE
         </div>
 
-<div class="flex items-center justify-center gap-1 mt-1
-            text-[10px] font-black whitespace-nowrap overflow-hidden">
-
-    <span class="shrink-0">
-        #${player.num}
-    </span>
-
-    <span class="truncate max-w-[65px]">
-        ${nomeBreve}
-    </span>
-
-</div>
-    </div>
+        <div class="rigore-shooter">
+            <span class="rigore-number">#${player.num}</span>
+            <span class="rigore-name">${nomeCompleto}</span>
+        </div>
     `,
 
     "⚽ GOAL",
@@ -3253,6 +3380,18 @@ function ripristinaPartita(partita){
         }
     );
 
+    // Normalizzazione finale delle rose: garantisce che i giocatori passati
+    // dal referto principale siano sempre presenti nei due contenitori.
+    [currentRosterA,currentRosterB].forEach(roster=>{
+        roster.players = Array.isArray(roster.players) ? roster.players.filter(g=>String(g?.num??'').trim()!=='') : [];
+        roster.officials = Array.isArray(roster.officials) ? roster.officials : [];
+        roster.players.forEach(g=>{
+            g.num=String(g.num ?? g.numero ?? '').trim();
+            g.name=String(g.name ?? g.nome ?? '').trim();
+            g.canShoot=!g.red;
+        });
+    });
+
     //---------------------------------
     // INIZIALIZZA GIOCATORI
     //---------------------------------
@@ -3724,266 +3863,178 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 #action-panel-A button,#action-panel-B button{min-height:42px!important;touch-action:manipulation!important}
 </style>
 <script id="tablet-rigori-handoff-loader">
-/*
-  CARICAMENTO AUTOMATICO DATI DA REFerto_PALLAMANO_TABLET
-  Priorità:
-  1. RefertoFIGH_Rigori_Tablet_Handoff
-  2. RefertoPallamanoTablet_Ripristino_v1
-  3. RefertoFIGH
-
-  In questo modo il file dei rigori può essere aperto anche direttamente
-  e non perde squadre, giocatori, dirigenti, dati gara, eventi e parziali.
-*/
 window.addEventListener('load',function(){
+  const raw=localStorage.getItem('RefertoFIGH_Rigori_Tablet_Handoff');
+  if(!raw)return;
+
   try{
-    const readJSON = key => {
-      try{
-        const raw=localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : null;
-      }catch(e){
-        console.warn('JSON non valido in localStorage:',key,e);
-        return null;
+    const h=JSON.parse(raw);
+    const s=h.state||{};
+
+    /*
+      IMPORTAZIONE ROSE DAL REFERTO PRINCIPALE
+      ----------------------------------------
+      rosterA/rosterB sono costruiti dal Referto principale prima
+      dell'apertura del file Rigori. Sono la fonte primaria.
+      In questo modo tutti i giocatori presenti nella distinta
+      arrivano sempre nei due contenitori dei rigori.
+    */
+    const buildRoster=(team)=>{
+      const supplied=h[team==='A'?'rosterA':'rosterB'];
+
+      if(Array.isArray(supplied)){
+        return supplied.map((p,i)=>{
+          const num=String(p?.num ?? p?.numero ?? '').trim();
+          if(!num)return null;
+
+          return {
+            id:String(p?.id ?? num ?? (i+1)),
+            num:num,
+            name:String(p?.name ?? p?.nome ?? `ATLETA #${num}`),
+            goals:Number(p?.goals ?? 0),
+            yellows:Number(p?.yellows ?? p?.yellow ?? 0),
+            suspensions:Number(p?.suspensions ?? p?.two ?? 0),
+            red:!!p?.red,
+            canShoot:false,
+            penaltyTaken:false,
+            type:'G'
+          };
+        }).filter(Boolean);
       }
-    };
 
-    const handoff=readJSON('RefertoFIGH_Rigori_Tablet_Handoff');
-    const recovery=readJSON('RefertoPallamanoTablet_Ripristino_v1');
-    const referto=readJSON('RefertoFIGH');
-
-    let source=handoff || recovery || referto;
-    if(!source){
-      console.log('Nessun dato gara del Referto Pallamano disponibile.');
-      return;
-    }
-
-    // Il nuovo handoff contiene state; il recovery contiene direttamente state;
-    // RefertoFIGH contiene già currentRosterA/currentRosterB.
-    const s=source.state || source;
-
-    const rosterFromState=team=>{
-      const nums=s.numbers?.[team] || [];
-      const disc=s.discipline?.[team] || [];
-      const names=s.playerNames?.[team] || [];
+      /* Fallback per vecchi handoff senza rosterA/rosterB. */
+      const nums=Array.isArray(s.numbers?.[team]) ? s.numbers[team] : [];
+      const disc=Array.isArray(s.discipline?.[team]) ? s.discipline[team] : [];
+      const names=Array.isArray(s.playerNames?.[team]) ? s.playerNames[team] : [];
 
       return nums.map((num,i)=>{
         const n=String(num ?? '').trim();
-        if(!n) return null;
-        const d=disc[i] || {};
+        if(!n)return null;
+        const d=disc[i]||{};
         return {
           id:n,
           num:n,
-          name:String(names[i] || `ATLETA #${n}`).toUpperCase(),
-          goals:Number(d.goals || 0),
-          yellows:Number(d.yellow || 0),
-          suspensions:Number(d.two || 0),
+          name:String(names[i]||`ATLETA #${n}`),
+          goals:Number(d.goals||0),
+          yellows:Number(d.yellow||0),
+          suspensions:Number(d.two||0),
           red:!!d.red,
-          canShoot:!d.red,
+          canShoot:false,
           penaltyTaken:false,
           type:'G'
         };
       }).filter(Boolean);
     };
 
-    const officialsFromState=team=>{
-      const letters=s.staffLetters?.[team] || [];
-      const names=s.staffNames?.[team] || [];
-      const staff=s.staff?.[team] || [];
+    const officials=(team)=>{
+      const letters=Array.isArray(s.staffLetters?.[team])
+        ? s.staffLetters[team] : ['A','B','C','D','E'];
+      const names=Array.isArray(s.staffNames?.[team])
+        ? s.staffNames[team] : [];
+      const st=Array.isArray(s.staff?.[team])
+        ? s.staff[team] : [];
 
       return letters.map((letter,i)=>{
-        const L=String(letter || '').trim().toUpperCase();
-        if(!L) return null;
-        const d=staff[i] || {};
+        const L=String(letter||'').trim();
+        if(!L)return null;
+        const d=st[i]||{};
         return {
           id:'o_'+i,
           num:L,
-          name:String(names[i] || `DIRIGENTE ${L}`),
+          name:String(names[i]||('DIRIGENTE '+L)),
           goals:0,
-          yellows:Number(d.yellow || 0),
-          suspensions:Number(d.two || 0),
+          yellows:Number(d.yellow||0),
+          suspensions:Number(d.two||0),
           red:!!d.red,
           type:'D'
         };
       }).filter(Boolean);
     };
 
-    // Se arriva direttamente da RefertoFIGH, manteniamo il roster già pronto.
-    const currentA = source.currentRosterA?.players
-      ? source.currentRosterA
-      : {players:rosterFromState('A'),officials:officialsFromState('A')};
+    const ps=s.phaseScores||{};
 
-    const currentB = source.currentRosterB?.players
-      ? source.currentRosterB
-      : {players:rosterFromState('B'),officials:officialsFromState('B')};
-
-    const phaseScores=s.phaseScores || {};
     const partita={
       jsonVersion:'tablet-rigori-2',
       generatedBy:'Referto_Pallamano_Tablet',
-      teamA:s.teams?.A || source.teamA || 'CASA',
-      teamB:s.teams?.B || source.teamB || 'OSPITI',
 
-      scoreA:Number(s.scoreA ?? source.scoreA ?? 0),
-      scoreB:Number(s.scoreB ?? source.scoreB ?? 0),
+      teamA:s.teams?.A||'CASA',
+      teamB:s.teams?.B||'OSPITI',
 
-      penaltyScoredA:Number(s.penaltyScored?.A ?? source.penaltyScoredA ?? 0),
-      penaltyTotalA:Number(s.penalty?.A ?? source.penaltyTotalA ?? 0),
-      penaltyScoredB:Number(s.penaltyScored?.B ?? source.penaltyScoredB ?? 0),
-      penaltyTotalB:Number(s.penalty?.B ?? source.penaltyTotalB ?? 0),
+      scoreA:Number(s.scoreA||0),
+      scoreB:Number(s.scoreB||0),
 
-      timerSeconds:Number(s.timer ?? source.timerSeconds ?? 0),
-      currentHalf:Number(s.phase ?? source.currentHalf ?? 2),
+      penaltyScoredA:Number(s.penaltyScored?.A||0),
+      penaltyTotalA:Number(s.penalty?.A||0),
+      penaltyScoredB:Number(s.penaltyScored?.B||0),
+      penaltyTotalB:Number(s.penalty?.B||0),
+
+      currentHalf:2,
       statoGara:'RIGORI',
 
-      firstHalfScoreA:Number(s.firstHalfScoreA ?? source.firstHalfScoreA ?? phaseScores[1]?.A ?? 0),
-      firstHalfScoreB:Number(s.firstHalfScoreB ?? source.firstHalfScoreB ?? phaseScores[1]?.B ?? 0),
-      secondHalfScoreA:Number(s.secondHalfScoreA ?? source.secondHalfScoreA ?? phaseScores[2]?.A ?? 0),
-      secondHalfScoreB:Number(s.secondHalfScoreB ?? source.secondHalfScoreB ?? phaseScores[2]?.B ?? 0),
-
-      overtime1ScoreA:Number(phaseScores[3]?.A ?? source.overtime1ScoreA ?? 0),
-      overtime1ScoreB:Number(phaseScores[3]?.B ?? source.overtime1ScoreB ?? 0),
-      overtime2ScoreA:Number(phaseScores[4]?.A ?? source.overtime2ScoreA ?? 0),
-      overtime2ScoreB:Number(phaseScores[4]?.B ?? source.overtime2ScoreB ?? 0),
-      overtime3ScoreA:Number(phaseScores[5]?.A ?? source.overtime3ScoreA ?? 0),
-      overtime3ScoreB:Number(phaseScores[5]?.B ?? source.overtime3ScoreB ?? 0),
-      overtime4ScoreA:Number(phaseScores[6]?.A ?? source.overtime4ScoreA ?? 0),
-      overtime4ScoreB:Number(phaseScores[6]?.B ?? source.overtime4ScoreB ?? 0),
-
-      currentRosterA:structuredClone(currentA),
-      currentRosterB:structuredClone(currentB),
-
-      logEvents:
-        (s.events || source.logEvents || []).map(e=>({
-          tempo:e.time || e.tempo || '00:00',
-          fase:e.phase || e.fase || 'GARA',
-          squadra:e.team || e.squadra || '',
-          numero:e.num || e.numero || '',
-          evento:e.text || e.event || e.evento || '',
-          risultato:e.result || e.risultato || ''
-        })),
+      firstHalfScoreA:Number(s.firstHalfScoreA||ps[1]?.A||0),
+      firstHalfScoreB:Number(s.firstHalfScoreB||ps[1]?.B||0),
+      secondHalfScoreA:Number(s.secondHalfScoreA||ps[2]?.A||0),
+      secondHalfScoreB:Number(s.secondHalfScoreB||ps[2]?.B||0),
+      overtime1ScoreA:Number(ps[3]?.A||0),
+      overtime1ScoreB:Number(ps[3]?.B||0),
+      overtime2ScoreA:Number(ps[4]?.A||0),
+      overtime2ScoreB:Number(ps[4]?.B||0),
+      overtime3ScoreA:Number(ps[5]?.A||0),
+      overtime3ScoreB:Number(ps[5]?.B||0),
+      overtime4ScoreA:Number(ps[6]?.A??s.scoreA??0),
+      overtime4ScoreB:Number(ps[6]?.B??s.scoreB??0),
 
       penaltyShootout:{
         started:false,finished:false,winner:'',
         scoreA:0,scoreB:0,firstTeam:'',
         currentTurn:0,phase:1,suddenDeath:false,
-        shotsA:0,shotsB:0,goalsA:0,goalsB:0,missedA:0,missedB:0,shots:[]
+        shotsA:0,shotsB:0,goalsA:0,goalsB:0,
+        missedA:0,missedB:0,shots:[]
       },
+
+      currentRosterA:{players:buildRoster('A'),officials:officials('A')},
+      currentRosterB:{players:buildRoster('B'),officials:officials('B')},
+
+      logEvents:(s.events||[]).map(e=>({
+        tempo:e.time||'00:00',
+        fase:'GARA',
+        squadra:e.team||'',
+        numero:e.num||'',
+        evento:e.text||e.event||'',
+        risultato:e.result||''
+      })),
+
       rigori:[]
     };
 
-    // Mantieni anche i dati anagrafici presenti nel RefertoFIGH, quando disponibili.
-    [
-      'matchNumber','league','season','matchDate','matchTime',
-      'city','venue','referee1','referee2','delegate1','delegate2',
-      'timekeeper','secretary'
-    ].forEach(k=>{
-      if(source[k] !== undefined) partita[k]=source[k];
-      else if(s.matchData){
-        const map={
-          matchNumber:'matchNumber', league:'championship',
-          season:'season', matchDate:'date', matchTime:'time',
-          city:'localita', venue:'venue',
-          referee1:'referee1', referee2:'referee2',
-          delegate1:'delegate1', delegate2:'delegate2',
-          timekeeper:'timekeeper', secretary:'secretary'
-        };
-        if(map[k]) partita[k]=s.matchData[map[k]] || '';
-      }
-    });
-
-    console.log('DATI REFerto PALLAMANO CARICATI PER I RIGORI:',partita);
-
+    /*
+      Ripristino e render immediato.
+      NON aspettiamo il primo tiro: i giocatori devono essere
+      visibili già nella schermata iniziale dei rigori.
+    */
     if(typeof ripristinaPartita==='function'){
       ripristinaPartita(partita);
-    }else{
-      throw new Error('ripristinaPartita non disponibile');
+    }
+
+    if(typeof renderTable==='function'){
+      renderTable('A');
+      renderTable('B');
+    }
+
+    if(typeof updatePenaltyCountersDisplay==='function'){
+      updatePenaltyCountersDisplay();
     }
 
     if(typeof mostraPopupPrimoRigore==='function'){
-      setTimeout(()=>mostraPopupPrimoRigore(),100);
+      mostraPopupPrimoRigore();
     }
 
-    // Il passaggio Handoff è usa-e-getta; recovery/referto invece restano
-    // disponibili per eventuale recupero della gara.
-    if(handoff){
-      localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
-    }
+    localStorage.removeItem('RefertoFIGH_Rigori_Tablet_Handoff');
 
   }catch(err){
-    console.error('Errore caricamento dati Referto Pallamano -> Rigori:',err);
-    alert('Errore nel caricamento dei dati della gara dal Referto Pallamano.');
+    console.error('Errore handoff rigori:',err);
+    alert('Errore nel caricamento della gara per i tiri di rigore.');
   }
 });
 </script>
-
-<style id="rigore-realizzazione-triplo-definitivo">
-/*
-  POPUP REALIZZAZIONE RIGORE — GRANDE
-  Il vecchio layout era limitato a 170px.
-  Qui lo portiamo a circa 600px (oltre 3 volte), mantenendolo
-  proporzionato allo schermo del tablet.
-*/
-#action-panel-A,
-#action-panel-B{
-    position:fixed !important;
-    left:50% !important;
-    right:auto !important;
-    top:50% !important;
-    bottom:auto !important;
-    transform:translate(-50%,-50%) !important;
-
-    width:min(600px,90vw) !important;
-    max-width:600px !important;
-    min-width:510px !important;
-
-    padding:30px !important;
-    border-radius:24px !important;
-    box-sizing:border-box !important;
-    z-index:99999 !important;
-}
-
-#action-panel-A .flex,
-#action-panel-B .flex{
-    display:flex !important;
-    width:100% !important;
-    gap:22px !important;
-}
-
-#action-panel-A button,
-#action-panel-B button{
-    flex:1 1 0 !important;
-    width:50% !important;
-    min-width:0 !important;
-    min-height:100px !important;
-    height:100px !important;
-    padding:12px 20px !important;
-    font-size:26px !important;
-    font-weight:800 !important;
-    border-radius:16px !important;
-    touch-action:manipulation !important;
-}
-
-#action-title-A,
-#action-title-B{
-    font-size:26px !important;
-    line-height:1.3 !important;
-    margin:0 0 24px !important;
-}
-</style>
-
-<style id="rigore-popup-3cm-lower">
-/* Sposta il popup GOAL/ERRATO circa 3 cm più in basso
-   rispetto al centro dello schermo. */
-#action-panel-A,
-#action-panel-B{
-    top:calc(50% + 110px) !important;
-}
-</style>
-
-<style id="rigore-popup-altri-6cm">
-/* Altri 6 cm verso il basso: totale circa 9 cm sotto il centro. */
-#action-panel-A,
-#action-panel-B{
-    top:calc(50% + 330px) !important;
-}
-</style>
 

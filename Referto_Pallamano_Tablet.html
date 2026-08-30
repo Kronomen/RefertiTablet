@@ -1,3 +1,20 @@
+<style>
+#logMiniTimer{
+  justify-self:start;
+  min-width:38px;
+  padding:1px 4px;
+  border:1px solid var(--line,#cbd5e1);
+  border-radius:4px;
+  background:#f8fafc;
+  color:#0f172a;
+  font-size:10px;
+  line-height:16px;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  box-sizing:border-box;
+}
+</style>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -7055,6 +7072,7 @@ body.referto-attivo #app > * {
     <!-- REGISTRO -->
     <section class="panel team-b">
       <div class="log-head">
+        <div id="logMiniTimer" aria-label="Tempo del periodo corrente">00:00</div>
         <div class="log-title">REGISTRO GARA</div>
         <div class="log-actions">
           <button class="btn orange small" onclick="undo()">↩ UNDO</button>
@@ -7247,6 +7265,20 @@ body.referto-attivo #app > * {
 #logEditTeamA,#logEditTeamB{font-weight:900}
 #logEditModal .selected-edit-action{outline:3px solid rgba(15,23,42,.35);filter:brightness(.92);transform:scale(.98)}
 </style>
+<!-- POPUP DECISIONE AMMONIZIONE PANCHINA -->
+<div id="staffBenchDecisionModal" class="modal-back">
+  <div class="modal event-modal">
+    <h3 id="staffBenchDecisionTitle">AMMONIZIONE PANCHINA</h3>
+    <p id="staffBenchDecisionText"></p>
+    <div class="modal-actions event-actions">
+      <button class="two-btn" onclick="staffBenchDecision('TWO')">2'</button>
+      <button class="red-btn" onclick="staffBenchDecision('RED')">ESPULSIONE</button>
+    </div>
+    <button class="gray" style="width:100%;margin-top:8px;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900"
+            onclick="closeStaffBenchDecision()">ANNULLA</button>
+  </div>
+</div>
+
 <!-- POPUP SCELTA EVENTO -->
 <div id="eventModal" class="modal-back">
   <div class="modal event-modal">
@@ -8103,6 +8135,7 @@ function applyRegistroFullRowColors(){
 }
 
 function render(){
+  renderLogMiniTimer();
   ensureTeamColors();
   applyTeamColors(state.teamColors);
   applyRegistroTeamColors();
@@ -8496,7 +8529,36 @@ function renderCounters(){
     el('timeout'+t).disabled=!timeoutAllowed(t);
   });
 }
+
+function logMiniPeriodDuration(phase){
+  phase=Number(phase)||1;
+  const end=Number(getPhaseEnd(phase))||0;
+  const prev=phase>1 ? (Number(getPhaseEnd(phase-1))||0) : 0;
+  return Math.max(0,end-prev);
+}
+
+function logMiniTimerSeconds(){
+  const phase=Math.max(1,Number(state.phase)||1);
+  let value=Math.max(0,Number(state.timer)||0);
+
+  // Nessuna pausa: sottraiamo solo le durate dei periodi già trascorsi.
+  for(let p=1;p<phase;p++){
+    value-=logMiniPeriodDuration(p);
+  }
+  return Math.max(0,value);
+}
+
+function renderLogMiniTimer(){
+  const box=el('logMiniTimer');
+  if(!box)return;
+  const total=Math.floor(logMiniTimerSeconds());
+  const mm=Math.floor(total/60);
+  const ss=total%60;
+  box.textContent=String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+}
+
 function renderLog(){
+  renderLogMiniTimer();
   const box=el('log');
   if(!box)return;
   const events=Array.isArray(state.events)?state.events:[];
@@ -9032,12 +9094,16 @@ function playerAction(team,index,type){
   }
 
   if(type==='YELLOW'){
-    /* MASSIMO 3 AMMONIZIONI PER SQUADRA.
-       Se la squadra ha già raggiunto il limite, non modificare nulla:
-       nessuna ammonizione, nessun evento e nessuna variazione del registro. */
-    const yellowCount = state.events.filter(e =>
-      e.team === team && e.type === 'YELLOW'
-    ).length;
+    /*
+      AMMONIZIONI GIOCATORI: conteggio separato dalla panchina.
+      I giocatori hanno il proprio limite di 3 ammonizioni.
+      Le ammonizioni dei dirigenti NON entrano in questo conteggio.
+    */
+    const yellowCount = state.events.filter(e => {
+      if(!e || e.team!==team || e.type!=='YELLOW') return false;
+      const n=String(e.num??'').trim().toUpperCase();
+      return !STAFF.includes(n);
+    }).length;
 
     if(yellowCount >= 3){
       undoStack.pop();
@@ -9127,6 +9193,22 @@ function closePenalty(){
 }
 
 /* DIRIGENTI */
+function staffBenchYellowCount(team){
+  /*
+    CONTEGGIO ESCLUSIVO DIRIGENTI.
+    Le ammonizioni dei giocatori NON devono mai influenzare
+    il controllo delle ammonizioni della panchina.
+    La prima ammonizione di un dirigente è sempre AMMONIZIONE;
+    dalla seconda ammonizione di un dirigente in poi si apre
+    il popup per scegliere 2' oppure ESPULSIONE.
+  */
+  return (state.events||[]).filter(e => {
+    if(!e || e.team!==team || e.type!=='YELLOW') return false;
+    const n=String(e.num??'').trim().toUpperCase();
+    return STAFF.includes(n);
+  }).length;
+}
+
 function staffAction(team,index,type){
   const d=state.staff[team][index];
   const letter=String((state.staffLetters?.[team]?.[index]) ?? '').trim().toUpperCase();
@@ -9136,25 +9218,43 @@ function staffAction(team,index,type){
     return;
   }
 
-  snapshot();
-
   if(d.red){
-    undoStack.pop();
     toast('Dirigente già espulso');
     return;
   }
 
+  /*
+    REGOLA PANCHINA — CONTROLLO SOLO DIRIGENTI:
+    - la 1ª ammonizione di un dirigente, indipendentemente da quante
+      ammonizioni abbiano ricevuto i giocatori, viene registrata come AMMONIZIONE;
+    - dalla 2ª ammonizione di un dirigente in poi, indipendentemente dalle
+      ammonizioni dei giocatori, NON viene registrata automaticamente:
+      compare il popup per scegliere 2' oppure ESPULSIONE;
+    - il conteggio della panchina considera esclusivamente gli eventi
+      YELLOW riferiti alle lettere A/B/C/D/E dei dirigenti.
+  */
   if(type==='YELLOW'){
-    d.yellow++;
-    addEvent(team,letter,'YELLOW',`AMMONIZIONE`);
+    const benchYellowCount=staffBenchYellowCount(team);
+
+    if(benchYellowCount===0){
+      snapshot();
+      d.yellow++;
+      addEvent(team,letter,'YELLOW','AMMONIZIONE');
+      render();
+      return;
+    }
+
+    openStaffBenchDecision(team,index,letter,benchYellowCount+1);
+    return;
   }
 
+  /* Questi due comandi restano disponibili anche senza una nuova ammonizione,
+     perché l'arbitro può assegnare direttamente 2' o espulsione. */
+  snapshot();
+
   if(type==='TWO'){
-    /* Un dirigente riceve un solo 2'. Il successivo provvedimento è direttamente espulsione. */
-    if(d.two >= 1){
+    if(d.two>=1){
       d.red=true;
-      // Anche l'espulsione conseguente al secondo provvedimento
-      // del dirigente deve avere sempre il countdown dei 2'.
       startSuspension(team,letter);
       addEvent(team,letter,'RED','ESPULSIONE');
       stopForDisciplinary(team,letter,'ESPULSIONE');
@@ -9168,11 +9268,65 @@ function staffAction(team,index,type){
 
   if(type==='RED'){
     d.red=true;
-
-    // Anche il dirigente espulso direttamente mostra il countdown dei 2'.
-    // Dopo i 2' resta comunque espulso/inibito fino alla fine della gara.
     startSuspension(team,letter);
+    addEvent(team,letter,'RED','ESPULSIONE');
+    stopForDisciplinary(team,letter,'ESPULSIONE');
+  }
 
+  render();
+}
+
+/* =========================================================
+   DECISIONE ARBITRALE PER LA 2ª+ AMMONIZIONE DELLA PANCHINA
+   ========================================================= */
+let pendingStaffBenchDecision=null;
+
+function openStaffBenchDecision(team,index,letter,benchYellowNumber){
+  pendingStaffBenchDecision={team,index,letter};
+
+  el('staffBenchDecisionTitle').textContent='AMMONIZIONE PANCHINA';
+  el('staffBenchDecisionText').textContent=
+    `${state.teams[team]} · questa è la ${benchYellowNumber}ª ammonizione della panchina. `+
+    `L'ammonizione al dirigente ${letter} non viene registrata automaticamente. `+
+    `L'ARBITRO DEVE DECIDERE: 2' oppure ESPULSIONE.`;
+
+  el('staffBenchDecisionModal').classList.remove('team-a','team-b');
+  el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
+  el('staffBenchDecisionModal').style.display='flex';
+}
+
+function closeStaffBenchDecision(){
+  pendingStaffBenchDecision=null;
+  el('staffBenchDecisionModal').style.display='none';
+}
+
+function staffBenchDecision(type){
+  if(!pendingStaffBenchDecision)return;
+
+  const {team,index,letter}=pendingStaffBenchDecision;
+  pendingStaffBenchDecision=null;
+  el('staffBenchDecisionModal').style.display='none';
+
+  const d=state.staff[team][index];
+  if(!d || d.red)return;
+
+  snapshot();
+
+  if(type==='TWO'){
+    if(d.two>=1){
+      d.red=true;
+      startSuspension(team,letter);
+      addEvent(team,letter,'RED','ESPULSIONE');
+      stopForDisciplinary(team,letter,'ESPULSIONE');
+    }else{
+      d.two=1;
+      addEvent(team,letter,'TWO',"2'");
+      startSuspension(team,letter);
+      stopForDisciplinary(team,letter,"2'");
+    }
+  }else if(type==='RED'){
+    d.red=true;
+    startSuspension(team,letter);
     addEvent(team,letter,'RED','ESPULSIONE');
     stopForDisciplinary(team,letter,'ESPULSIONE');
   }
@@ -9442,7 +9596,7 @@ function processFinishedPhase(phase){
         showPhaseTransition(
           'INIZIARE I TIRI DI RIGORE?',
           `Parità dopo i tempi regolamentari: ${state.scoreA} - ${state.scoreB}`,
-          startPenaltyShootout
+          openTabletShootoutFile
         );
         return;
       }
