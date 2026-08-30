@@ -7279,6 +7279,16 @@ body.referto-attivo #app > * {
   </div>
 </div>
 
+<!-- POPUP AVVISO 3 AMMONIZIONI COMPLESSIVE -->
+<div id="threeYellowWarningModal" class="modal-back">
+  <div class="modal event-modal">
+    <h3 id="threeYellowWarningTitle">3 AMMONIZIONI RAGGIUNTE</h3>
+    <p id="threeYellowWarningText"></p>
+    <button class="gray" style="width:100%;min-height:48px;border:0;border-radius:8px;color:#fff;font-weight:900"
+            onclick="closeThreeYellowWarning()">OK</button>
+  </div>
+</div>
+
 <!-- POPUP SCELTA EVENTO -->
 <div id="eventModal" class="modal-back">
   <div class="modal event-modal">
@@ -8628,19 +8638,27 @@ function undo(){
   render();
 }
 
-function addEvent(team,num,type,text,result=''){
+function addEvent(team,num,type,text,result='',meta=null){
   // RIS = punteggio esatto della gara nel momento in cui viene registrato l'evento.
   // Vale per GOAL, RIGORE, TIME OUT, AMMONIZIONE, 2', ESPULSIONE e ogni altro evento.
   const risultatoCorrente = `${state.scoreA}-${state.scoreB}`;
 
-  state.events.push({
+  const ev={
     time:currentTime(),
     team:team,
     num:num,
     type:type,
     text:text,
     result:risultatoCorrente
-  });
+  };
+
+  // Alcuni provvedimenti (es. 2'/E del dirigente) possono derivare
+  // dalla trasformazione di una nuova ammonizione. L'evento resta 2'/E
+  // nel registro, ma deve comunque concorrere al conteggio cumulativo
+  // delle ammonizioni della squadra.
+  if(meta && meta.yellowOrigin) ev.yellowOrigin=true;
+
+  state.events.push(ev);
 }
 
 
@@ -9095,25 +9113,26 @@ function playerAction(team,index,type){
 
   if(type==='YELLOW'){
     /*
-      AMMONIZIONI GIOCATORI: conteggio separato dalla panchina.
-      I giocatori hanno il proprio limite di 3 ammonizioni.
-      Le ammonizioni dei dirigenti NON entrano in questo conteggio.
+      AMMONIZIONI: conteggio UNICO per squadra.
+      Giocatori + dirigenti condividono le 3 ammonizioni complessive.
+      Dopo la 3ª, le successive vengono date direttamente dagli arbitri
+      come 2' o ESPULSIONE.
     */
-    const yellowCount = state.events.filter(e => {
-      if(!e || e.team!==team || e.type!=='YELLOW') return false;
-      const n=String(e.num??'').trim().toUpperCase();
-      return !STAFF.includes(n);
-    }).length;
+    const yellowCount=teamYellowCount(team);
 
-    if(yellowCount >= 3){
+    if(yellowCount>=3){
       undoStack.pop();
-      toast(`ERRORE · MASSIMO 3 AMMONIZIONI PER ${team==='A'?'LA SQUADRA DI CASA':'LA SQUADRA OSPITE'}`);
+      toast('3 AMMONIZIONI GIÀ RAGGIUNTE · L\'ARBITRO DEVE DARE 2\' O ESPULSIONE');
       return;
     }
 
     d.yellow++;
     addEvent(team,num,'YELLOW','AMMONIZIONE');
     render();
+
+    if(yellowCount+1===3){
+      showThreeYellowWarning(team);
+    }
     return;
   }
 
@@ -9193,20 +9212,63 @@ function closePenalty(){
 }
 
 /* DIRIGENTI */
-function staffBenchYellowCount(team){
+function isStaffYellowEvent(e){
+  if(!e) return false;
+  const n=String(e.num??'').trim().toUpperCase();
+  return e.type==='YELLOW' && STAFF.includes(n);
+}
+
+function isPlayerYellowEvent(e,team){
+  if(!e || e.team!==team || e.type!=='YELLOW') return false;
+  const n=String(e.num??'').trim().toUpperCase();
+  return !STAFF.includes(n);
+}
+
+function teamYellowCount(team){
   /*
-    CONTEGGIO ESCLUSIVO DIRIGENTI.
-    Le ammonizioni dei giocatori NON devono mai influenzare
-    il controllo delle ammonizioni della panchina.
-    La prima ammonizione di un dirigente è sempre AMMONIZIONE;
-    dalla seconda ammonizione di un dirigente in poi si apre
-    il popup per scegliere 2' oppure ESPULSIONE.
+    CONTEGGIO UNICO DELLE AMMONIZIONI DELLA SQUADRA.
+    Conta insieme:
+    - ammonizioni dei giocatori;
+    - ammonizioni effettive dei dirigenti;
+    - una 2'/E del dirigente quando nasce dalla sua ammonizione
+      successiva (yellowOrigin=true).
+    Quindi il limite è complessivo: giocatori + panchina = 3.
   */
   return (state.events||[]).filter(e => {
-    if(!e || e.team!==team || e.type!=='YELLOW') return false;
-    const n=String(e.num??'').trim().toUpperCase();
-    return STAFF.includes(n);
+    if(!e || e.team!==team) return false;
+    return e.type==='YELLOW' || e.yellowOrigin===true;
   }).length;
+}
+
+function staffBenchYellowCount(team){
+  // Conteggio delle ammonizioni della panchina ai fini della regola
+  // della 2ª ammonizione del dirigente: include anche le ammonizioni
+  // trasformate in 2'/E.
+  return (state.events||[]).filter(e => {
+    if(!e || e.team!==team) return false;
+    const n=String(e.num??'').trim().toUpperCase();
+    return (e.type==='YELLOW' && STAFF.includes(n)) ||
+           (e.yellowOrigin===true && STAFF.includes(n));
+  }).length;
+}
+
+function showThreeYellowWarning(team){
+  const m=el('threeYellowWarningModal');
+  if(!m)return;
+  const name=team==='A'?'LA SQUADRA DI CASA':'LA SQUADRA OSPITE';
+  el('threeYellowWarningTitle').textContent='3 AMMONIZIONI RAGGIUNTE';
+  el('threeYellowWarningText').textContent=
+    `${name} ha raggiunto 3 ammonizioni complessive `+
+    `(giocatori + dirigenti). Da questo momento le ulteriori ammonizioni `+
+    `non vengono più registrate: l'arbitro assegna direttamente 2' oppure ESPULSIONE.`;
+  m.classList.remove('team-a','team-b');
+  m.classList.add(team==='A'?'team-a':'team-b');
+  m.style.display='flex';
+}
+
+function closeThreeYellowWarning(){
+  const m=el('threeYellowWarningModal');
+  if(m)m.style.display='none';
 }
 
 function staffAction(team,index,type){
@@ -9224,16 +9286,22 @@ function staffAction(team,index,type){
   }
 
   /*
-    REGOLA PANCHINA — CONTROLLO SOLO DIRIGENTI:
-    - la 1ª ammonizione di un dirigente, indipendentemente da quante
-      ammonizioni abbiano ricevuto i giocatori, viene registrata come AMMONIZIONE;
-    - dalla 2ª ammonizione di un dirigente in poi, indipendentemente dalle
-      ammonizioni dei giocatori, NON viene registrata automaticamente:
-      compare il popup per scegliere 2' oppure ESPULSIONE;
-    - il conteggio della panchina considera esclusivamente gli eventi
-      YELLOW riferiti alle lettere A/B/C/D/E dei dirigenti.
+    REGOLA AMMONIZIONI DI SQUADRA:
+    - giocatori + dirigenti condividono un massimo complessivo di 3;
+    - la 1ª ammonizione del dirigente viene registrata come AMMONIZIONE;
+    - dalla 2ª ammonizione del dirigente, il popup chiede 2' oppure E;
+    - una 2'/E derivata da una nuova ammonizione conta comunque come
+      ammonizione nel totale della squadra, senza trasformare l'evento
+      del registro in una semplice YELLOW.
   */
   if(type==='YELLOW'){
+    const totalYellow=teamYellowCount(team);
+
+    if(totalYellow>=3){
+      toast('3 AMMONIZIONI GIÀ RAGGIUNTE · L\'ARBITRO DEVE DARE 2\' O ESPULSIONE');
+      return;
+    }
+
     const benchYellowCount=staffBenchYellowCount(team);
 
     if(benchYellowCount===0){
@@ -9241,6 +9309,10 @@ function staffAction(team,index,type){
       d.yellow++;
       addEvent(team,letter,'YELLOW','AMMONIZIONE');
       render();
+
+      if(totalYellow+1===3){
+        showThreeYellowWarning(team);
+      }
       return;
     }
 
@@ -9312,26 +9384,35 @@ function staffBenchDecision(type){
 
   snapshot();
 
+  // Questa decisione nasce da una nuova ammonizione del dirigente:
+  // la sua ammonizione conta nel totale squadra anche se l'arbitro la
+  // trasforma immediatamente in 2' oppure ESPULSIONE.
+  const yellowBefore=teamYellowCount(team);
+
   if(type==='TWO'){
     if(d.two>=1){
       d.red=true;
       startSuspension(team,letter);
-      addEvent(team,letter,'RED','ESPULSIONE');
+      addEvent(team,letter,'RED','ESPULSIONE','',{yellowOrigin:true});
       stopForDisciplinary(team,letter,'ESPULSIONE');
     }else{
       d.two=1;
-      addEvent(team,letter,'TWO',"2'");
+      addEvent(team,letter,'TWO',"2'","",{yellowOrigin:true});
       startSuspension(team,letter);
       stopForDisciplinary(team,letter,"2'");
     }
   }else if(type==='RED'){
     d.red=true;
     startSuspension(team,letter);
-    addEvent(team,letter,'RED','ESPULSIONE');
+    addEvent(team,letter,'RED','ESPULSIONE','',{yellowOrigin:true});
     stopForDisciplinary(team,letter,'ESPULSIONE');
   }
 
   render();
+
+  if(yellowBefore+1===3){
+    showThreeYellowWarning(team);
+  }
 }
 
 /* =========================================================
