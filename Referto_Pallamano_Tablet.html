@@ -6275,6 +6275,39 @@ tr.team-b td,
 }
 </style>
 
+<style id="permanent-discipline-under-countdown-v1">
+/* Se il giocatore è ESCLUSO/ESPULSO ma il suo countdown 2' occupa già la riga
+   dello stato, la dicitura definitiva viene mostrata temporaneamente sotto. */
+.player-card > .discipline-extra-status,
+.staff-card > .discipline-extra-status{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 13px !important;
+  height:13px !important;
+  min-height:13px !important;
+  max-height:13px !important;
+  margin:0 3px 2px !important;
+  padding:0 2px !important;
+  box-sizing:border-box !important;
+  border-radius:3px !important;
+  background:#fff !important;
+  color:#dc2626 !important;
+  border:1px solid #fecaca !important;
+  font-size:7px !important;
+  line-height:11px !important;
+  font-weight:900 !important;
+  text-transform:uppercase !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
+.player-card > .discipline-status.countdown + .discipline-extra-status,
+.staff-card > .discipline-status.countdown + .discipline-extra-status{
+  visibility:visible !important;
+  opacity:1 !important;
+}
+</style>
+
 <style id="stacked-two-countdown-v1">
 .discipline-status.countdown{
   flex-direction:column !important;
@@ -7048,6 +7081,41 @@ body.referto-attivo #app > * {
 }
 #exitMatchBtn:active{transform:scale(.96)}
 </style>
+
+<style id="excluded-faded-v1">
+/* Giocatori/dirigenti definitivamente esclusi:
+   non disponibili per ulteriori azioni e visivamente più sbiaditi.
+   Il countdown 2' eventualmente presente continua a rimanere leggibile. */
+.player-card.excluded,
+.player-card.expelled,
+.staff-card.staff-excluded,
+.staff-card.staff-expelled{
+  opacity:.58 !important;
+  filter:saturate(.62) !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+}
+
+.player-card.excluded .player-number,
+.player-card.expelled .player-number,
+.staff-card.staff-excluded .staff-label,
+.staff-card.staff-expelled .staff-label{
+  opacity:.68 !important;
+  filter:saturate(.60) !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+}
+
+/* Non attenuiamo il countdown: deve restare ben leggibile durante i 2'. */
+.player-card.excluded .discipline-status.countdown,
+.player-card.expelled .discipline-status.countdown,
+.staff-card.staff-excluded .discipline-status.countdown,
+.staff-card.staff-expelled .discipline-status.countdown{
+  opacity:1 !important;
+  filter:none !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -8407,12 +8475,15 @@ function renderPlayers(team){
     else if(activeTwo)cls+=' suspended';
     else if(d.yellow)cls+=' yellow';
 
-    card.className=cls;
-
     const yellow=d.yellow>0;
     const twoCount=Number(d.two||0);
     const directRed=!!d.red && twoCount<3;
     const excluded=twoCount>=3;
+
+    // Un giocatore escluso (3° 2') non è più disponibile per la gara.
+    // La classe viene applicata anche quando il countdown è ancora visibile.
+    if(excluded) cls+=' excluded';
+    card.className=cls;
 
     const twoClass=
       twoCount>=3 ? 'two-red' :
@@ -8446,6 +8517,7 @@ function renderPlayers(team){
       </div>
 
       <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
+      ${(countdown && (excluded || directRed)) ? `<div class="discipline-extra-status">${excluded ? 'ESCLUSO' : 'ESPULSO'}</div>` : ''}
 
       ${state.phase===7 && state.shootout?.started ? `
         <button type="button"
@@ -8456,7 +8528,7 @@ function renderPlayers(team){
         </button>` : ''}
     `;
 
-    if(hasNumber && !d.red){
+    if(hasNumber && !d.red && !excluded){
       card.classList.add('player-card-touch');
       card.addEventListener('click', function(){
         openEventMenu('PLAYER', team, i);
@@ -8512,6 +8584,7 @@ function renderStaff(team){
     card.className='staff-card';
 
     if(d.red) card.classList.add('staff-expelled');
+    else if(excluded) card.classList.add('staff-excluded');
     else if(activeTwo) card.classList.add('staff-suspended');
 
     card.style.setProperty('display','flex','important');
@@ -8542,9 +8615,10 @@ function renderStaff(team){
       </div>
 
       <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
+      ${(countdown && (excluded || directRed)) ? `<div class="discipline-extra-status">${excluded ? 'ESCLUSO' : 'ESPULSO'}</div>` : ''}
     `;
 
-    if(letter && !d.red){
+    if(letter && !d.red && !excluded){
       card.classList.add('staff-card-touch');
       card.addEventListener('click', function(){
         openEventMenu('STAFF', team, i);
