@@ -500,6 +500,50 @@ function closePenalty(){
   }
 }
 
+
+/* POPUP CARTELLINO 2' - autonomo, sempre sopra agli altri popup */
+#cardPrintModal{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:12px;
+}
+#cardPrintModal .card-print-box{
+  width:min(390px,92vw);
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 15px 45px #0007;
+  text-align:center;
+  border:3px solid #ea580c;
+}
+#cardPrintModal h3{
+  margin:0 0 7px;
+  font-size:20px;
+  color:#9a3412;
+}
+#cardPrintModal p{
+  margin:5px 0 12px;
+  color:#475569;
+  font-size:12px;
+  font-weight:900;
+}
+#cardPrintModal .card-print-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+#cardPrintModal button{
+  min-height:48px;
+  border:0;
+  border-radius:8px;
+  font-weight:900;
+}
+
 /* POPUP */
 
 .event-modal{width:min(430px,92vw)}
@@ -7162,6 +7206,14 @@ body.referto-attivo #app > * {
       </div>
     </div>
 
+    <div style="margin-top:9px;padding:10px;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;text-align:left">
+      <label style="display:flex;align-items:center;gap:9px;font-weight:900;font-size:13px;cursor:pointer">
+        <input id="palazzettoContinuousInput" type="checkbox" style="width:20px;height:20px;accent-color:#16a34a">
+        CRONOMETRO PALAZZETTO CONTINUATIVO
+      </label>
+      <div style="font-size:11px;color:#475569;margin-top:5px">Se non selezionato, il cronometro ufficiale riparte da 00:00 ad ogni tempo. Questa impostazione serve solo per il calcolo del cartellino dei 2'.</div>
+    </div>
+
     <div style="margin-top:9px">
       <div class="edit-section-title">MODALITÀ GARA</div>
       <input type="hidden" id="matchModeInput" value="STANDARD">
@@ -7389,6 +7441,8 @@ function phaseLabel(phase){
 let state={
   phase:1,timer:0,running:false,matchStarted:false,
   halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
+  // Configurazione del cronometro ufficiale del palazzetto (solo per i cartellini)
+  cronometroContinuativo:true,
   firstHalfScoreA:0,firstHalfScoreB:0,
   secondHalfScoreA:0,secondHalfScoreB:0,
   overtimeSeries:0,overtimeHalf:0,
@@ -9467,6 +9521,8 @@ function toggleClock(){
 
   if(state.running){
     state.matchStarted=true;
+    if(el('cardPrintModal')) el('cardPrintModal').style.display='none';
+    pendingCardPrint=null;
     el('timer').classList.remove('blink');
 
     const startEvent=getPhaseStartEventText(state.phase);
@@ -10353,12 +10409,69 @@ function startSuspensionWatcher(){
 }
 
 
+let pendingCardPrint=null;
+
+function showCardPrintPanel(team,num,text){
+  const modal=el('cardPrintModal');
+  if(!modal)return;
+  const kind=String(text||'').includes('ESPULS') || String(text||'').includes('ESCLUSIONE')
+    ? 'RED' : '2MIN';
+  pendingCardPrint={
+    team:String(team),
+    num:String(num),
+    type:kind,
+    time:String(currentTime()),
+    phase:Number(state.phase)||1,
+    duration:Number((typeof getHalfSeconds==='function' ? getHalfSeconds()/60 : 30))
+  };
+  el('cardPrintTitle').textContent =
+    kind==='RED' ? '🟥 CARTELLINO ESPULSIONE' : "🟧 CARTELLINO 2'";
+  el('cardPrintText').textContent =
+    `${state.teams[team]} · N° ${num} · ${currentTime()} — Stampare il cartellino?`;
+  modal.style.display='flex';
+}
+
+function closeCardPrint(){
+  const modal=el('cardPrintModal');
+  if(modal)modal.style.display='none';
+  pendingCardPrint=null;
+}
+
+function confirmCardPrint(){
+  if(!pendingCardPrint)return;
+  const p=pendingCardPrint;
+  const payload={
+    team:p.team,
+    teamName:state.teams[p.team],
+    num:p.num,
+    type:p.type,
+    time:p.time,
+    phase:p.phase,
+    duration:p.duration,
+    cronometroContinuativo:state.cronometroContinuativo !== false,
+    matchData:state
+  };
+  const encoded=encodeURIComponent(JSON.stringify(payload));
+  window.open('Esclusione2Minuti.html?data='+encoded,'_blank');
+  closeCardPrint();
+}
+
 function stopForDisciplinary(team,num,text){
   state.running=false;
   clearInterval(interval);
   interval=null;
 
   el('timer').classList.add('blink');
+
+  // Memorizziamo il cartellino mentre il cronometro è fermo.
+  pendingCardPrint={
+    team:String(team),
+    num:String(num),
+    type:(String(text||'').includes('ESPULS') || String(text||'').includes('ESCLUSIONE')) ? 'RED' : '2MIN',
+    time:String(currentTime()),
+    phase:Number(state.phase)||1,
+    duration:Number((typeof getHalfSeconds==='function' ? getHalfSeconds()/60 : 30))
+  };
 
   el('disciplineTitle').textContent='PROVVEDIMENTO DISCIPLINARE';
   el('disciplineText').textContent=
@@ -10373,6 +10486,16 @@ function closeDiscipline(){
   interval=null;
   if(state.timer>0 && state.phase!==7) el('timer').classList.add('blink');
   render();
+
+  // Il cronometro resta fermo: ora chiediamo se stampare il cartellino.
+  if(pendingCardPrint){
+    const p=pendingCardPrint;
+    el('cardPrintTitle').textContent =
+      p.type==='RED' ? '🟥 CARTELLINO ESPULSIONE' : "🟧 CARTELLINO 2'";
+    el('cardPrintText').textContent =
+      `${state.teams[p.team]} · N° ${p.num} · ${p.time} — Stampare il cartellino?`;
+    el('cardPrintModal').style.display='flex';
+  }
 }
 
 /* CONFIGURAZIONE */
@@ -10582,6 +10705,8 @@ function openEditTeams(){
   if(durationInput)durationInput.value=String(state.halfDurationMinutes ?? 30);
   const modeInput=el('matchModeInput');
   if(modeInput)modeInput.value=state.matchMode || 'STANDARD';
+  const pc=el('palazzettoContinuousInput');
+  if(pc)pc.checked=state.cronometroContinuativo!==false;
   const msg=el('editNumberError');
   if(msg)msg.classList.remove('show');
   const rb=el('restoreBtn');
@@ -10772,6 +10897,7 @@ function saveEditTeams(){
 
   state.halfDurationMinutes=duration;
   state.matchMode=el('matchModeInput')?.value || 'STANDARD';
+  state.cronometroContinuativo=el('palazzettoContinuousInput')?.checked !== false;
 
   // Le lettere sono esclusivamente A-B-C-D-E e non sono modificabili.
   // L'unica operazione consentita è lasciare vuoto il nome del dirigente.
@@ -10848,6 +10974,8 @@ function resetMatch(){
   state={
     phase:1,timer:0,running:false,matchStarted:false,
     halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
+  // Configurazione del cronometro ufficiale del palazzetto (solo per i cartellini)
+  cronometroContinuativo:true,
     firstHalfScoreA:0,firstHalfScoreB:0,
     secondHalfScoreA:0,secondHalfScoreB:0,
     overtimeSeries:0,overtimeHalf:0,
@@ -11493,4 +11621,17 @@ document.addEventListener('keydown', function(e){
   }
 }
 </style>
+
+<!-- POPUP STAMPA CARTELLINO 2' -->
+<div id="cardPrintModal">
+  <div class="card-print-box">
+    <h3 id="cardPrintTitle">🟧 CARTELLINO 2'</h3>
+    <p id="cardPrintText"></p>
+    <div class="card-print-actions">
+      <button style="background:#16a34a;color:#fff" onclick="confirmCardPrint()">🖨 STAMPA</button>
+      <button style="background:#475569;color:#fff" onclick="closeCardPrint()">NO</button>
+    </div>
+  </div>
+</div>
+
 
