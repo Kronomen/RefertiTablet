@@ -7023,7 +7023,7 @@ body.referto-attivo #app > * {
 
 <style id="exit-match-button">
 #exitMatchBtn{
-  position:fixed;top:7px;right:7px;z-index:12000;
+  position:fixed;bottom:7px;left:7px;z-index:12000;
   display:none;width:52px;height:28px;padding:0;
   border:0;border-radius:5px;background:#dc2626;color:#fff;
   font:900 10px/28px Arial,sans-serif;text-align:center;
@@ -8281,7 +8281,7 @@ function render(){
   if(exitMatchBtn){
     const configModal=el('editTeamsModal');
     const configVisible=!!configModal && getComputedStyle(configModal).display!=='none';
-    exitMatchBtn.style.display=(!state.running && !configVisible) ? 'block' : 'none';
+    exitMatchBtn.style.display=(state.matchStarted && !state.running && !configVisible) ? 'block' : 'none';
   }
 
   renderPlayers('A');
