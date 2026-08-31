@@ -6275,6 +6275,22 @@ tr.team-b td,
 }
 </style>
 
+<style id="stacked-two-countdown-v1">
+.discipline-status.countdown{
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:center !important;
+  line-height:10px !important;
+  gap:0 !important;
+}
+.discipline-status.countdown .countdown-line{
+  display:block !important;
+  height:10px !important;
+  line-height:10px !important;
+  font-variant-numeric:tabular-nums !important;
+}
+</style>
+
 
 <style id="log-edit-team-colors-v1">
 #logEditTeamA{
@@ -8329,24 +8345,38 @@ function render(){
 
 
 function disciplineCountdownText(team,num){
-  const list=Array.isArray(state.activeSuspensions)?state.activeSuspensions:[];
-  const s=list.find(x=>
-    x.team===team &&
-    String(x.num)===String(num) &&
-    Number(state.timer||0) < Number(x.endGameTime||0)
-  );
-  if(!s) return '';
+  /*
+     Un giocatore può avere più di un 2' consecutivo.
+     Il secondo 2' viene accodato al primo: resta sotto con 02:00
+     mentre il primo countdown è attivo. Quando il primo termina,
+     viene rimosso e il secondo occupa automaticamente la prima riga,
+     continuando il proprio countdown.
+  */
+  const list=(Array.isArray(state.activeSuspensions)?state.activeSuspensions:[])
+    .filter(x=>x.team===team && String(x.num)===String(num))
+    .sort((a,b)=>Number(a.queueOrder||0)-Number(b.queueOrder||0));
 
-  const left=Math.max(
-    0,
-    Number(s.endGameTime||0)-Number(state.timer||0)
-  );
+  if(!list.length) return '';
 
-  if(left<=0) return '';
+  const now=Number(state.timer||0);
+  const lines=[];
 
-  const mm=String(Math.floor(left/60)).padStart(2,'0');
-  const ss=String(Math.floor(left%60)).padStart(2,'0');
-  return `${mm}:${ss}`;
+  for(const s of list){
+    const start=Number.isFinite(Number(s.startGameTime))
+      ? Number(s.startGameTime)
+      : Number(s.endGameTime||0)-120;
+    const end=Number(s.endGameTime||start+120);
+
+    if(now >= end) continue;
+
+    // Se il 2' è in coda, il suo countdown resta fermo a 02:00.
+    const left=now < start ? 120 : Math.max(0,end-now);
+    const mm=String(Math.floor(left/60)).padStart(2,'0');
+    const ss=String(Math.floor(left%60)).padStart(2,'0');
+    lines.push(`<span class="countdown-line">${mm}:${ss}</span>`);
+  }
+
+  return lines.join('');
 }
 
 function renderPlayers(team){
@@ -10359,18 +10389,31 @@ function closeTimeout(){
 function startSuspension(team,num){
   const keyTeam=String(team);
   const keyNum=String(num);
+  const now=Number(state.timer||0);
 
-  // Non duplicare mai il countdown dello stesso soggetto.
   state.activeSuspensions=Array.isArray(state.activeSuspensions)
-    ? state.activeSuspensions.filter(x =>
-        !(String(x.team)===keyTeam && String(x.num)===keyNum)
-      )
+    ? state.activeSuspensions
     : [];
+
+  // Accoda il nuovo 2' dietro all'ultimo 2' ancora da scontare
+  // dello stesso giocatore/dirigente.
+  const same=state.activeSuspensions
+    .filter(x=>String(x.team)===keyTeam && String(x.num)===keyNum)
+    .filter(x=>Number(x.endGameTime||0)>now)
+    .sort((a,b)=>Number(a.endGameTime||0)-Number(b.endGameTime||0));
+
+  const startGameTime=same.length
+    ? Math.max(now, ...same.map(x=>Number(x.endGameTime||now)))
+    : now;
+
+  const maxOrder=same.reduce((m,x)=>Math.max(m,Number(x.queueOrder||0)),0);
 
   state.activeSuspensions.push({
     team:keyTeam,
     num:keyNum,
-    endGameTime:Number(state.timer||0)+120,
+    startGameTime,
+    endGameTime:startGameTime+120,
+    queueOrder:maxOrder+1,
     end:Date.now()+120000
   });
 
