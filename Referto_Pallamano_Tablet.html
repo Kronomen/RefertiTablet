@@ -7116,6 +7116,28 @@ body.referto-attivo #app > * {
 }
 </style>
 
+<style id="undo-ultimo-evento-style">
+/* UNDO nel REGISTRO GARA:
+   disponibile = mantiene il colore originale;
+   usato/inibito = grigio e non cliccabile. */
+#undoBtn.undo-disabled,
+#undoBtn:disabled{
+  background:#94a3b8 !important;
+  border-color:#94a3b8 !important;
+  color:#e2e8f0 !important;
+  opacity:1 !important;
+  filter:grayscale(1) !important;
+  box-shadow:none !important;
+  cursor:not-allowed !important;
+  pointer-events:none !important;
+}
+#undoBtn:not(.undo-disabled):not(:disabled){
+  opacity:1 !important;
+  filter:none !important;
+  cursor:pointer !important;
+  pointer-events:auto !important;
+}
+</style>
 </head>
 
 <body>
@@ -7203,7 +7225,7 @@ body.referto-attivo #app > * {
         <div id="logMiniTimer" aria-label="Tempo del periodo corrente">00:00</div>
         <div class="log-title">REGISTRO GARA</div>
         <div class="log-actions">
-          <button class="btn orange small" onclick="undo()">↩ UNDO</button>
+          <button id="undoBtn" class="btn orange small" onclick="undo()" disabled>↩ UNDO</button>
         </div>
       </div>
       <div class="log-columns">
@@ -8430,6 +8452,7 @@ function render(){
 
   renderLog();
   renderCounters();
+  updateUndoButton();
 
   // MODIFICA SQUADRE è disponibile solo prima dell'avvio del cronometro.
   const editTeamsBtn=el('editTeamsBtn');
@@ -8826,28 +8849,42 @@ function renderLog(){
 }
 
 
+function updateUndoButton(){
+  const btn=el('undoBtn');
+  if(!btn)return;
+  const available=undoStack.length>0;
+  btn.disabled=!available;
+  btn.classList.toggle('undo-disabled',!available);
+}
+
 function snapshot(){
+  // Conserviamo SOLO lo stato immediatamente precedente all'ULTIMO evento.
+  // Non è una cronologia multipla: ogni nuovo evento sostituisce il precedente.
+  undoStack.length=0;
   undoStack.push(JSON.stringify(state));
-  if(undoStack.length>40)undoStack.shift();
+  updateUndoButton();
 }
 
 function undo(){
+  const btn=el('undoBtn');
+
+  // Dopo un UNDO non deve essere possibile annullare nuovamente
+  // finché non viene registrato un nuovo evento.
   if(!undoStack.length){
-    toast('Nessuna azione da annullare');
+    updateUndoButton();
     return;
   }
 
-  // UNDO non deve modificare lo stato del cronometro.
-  // Se il timer stava correndo, continua a correre.
-  // Se era fermo, rimane fermo.
   const timerWasRunning=!!state.running;
 
+  // Ripristina esclusivamente lo stato precedente all'ultimo evento.
   state=JSON.parse(undoStack.pop());
   state.running=timerWasRunning;
 
-  // Non fermiamo e non ricreiamo l'intervallo:
-  // quando il timer è in movimento l'intervallo già esistente
-  // continua a lavorare sulla nuova copia di state.
+  // BLOCCO immediato: nessun secondo UNDO consecutivo.
+  updateUndoButton();
+
+  // Non fermiamo e non ricreiamo il timer.
   render();
 }
 
@@ -8872,6 +8909,10 @@ function addEvent(team,num,type,text,result='',meta=null){
   if(meta && meta.yellowOrigin) ev.yellowOrigin=true;
 
   state.events.push(ev);
+
+  // Un nuovo evento rende nuovamente disponibile UNDO.
+  // snapshot() ha già salvato lo stato precedente a questo evento.
+  updateUndoButton();
 }
 
 
