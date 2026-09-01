@@ -11447,6 +11447,13 @@ function closeConfigAndStart(){
     console.error('Errore applicazione configurazione:',e);
   }
 
+  // CRONOMETRO PALAZZETTO CONTINUATIVO:
+  // questa è la spunta presente nella schermata CONFIGURAZIONE.
+  // ☐ = palazzetto azzera il cronometro a ogni tempo -> mini timer VISIBILE
+  // ☑ = palazzetto usa un cronometro continuativo -> mini timer NASCOSTO
+  const palazzettoContinuousInput=el('palazzettoContinuousInput');
+  state.cronometroContinuativo=!!palazzettoContinuousInput?.checked;
+
   // Salva immediatamente lo stato configurato, comprese le lettere vuote.
   try{ saveRecovery(); }catch(e){}
 
@@ -11460,6 +11467,14 @@ function closeConfigAndStart(){
   try{
     state.running=false;
     if(typeof render==='function') render();
+
+    // Regola definitiva del piccolo timer nel REGISTRO GARA.
+    const miniTimer=el('logMiniTimer');
+    if(miniTimer){
+      miniTimer.style.display =
+        state.cronometroContinuativo === true ? 'none' : '';
+    }
+
     applyTeamColors(state.teamColors);
   }catch(e){
     console.error('Errore apertura referto:',e);
