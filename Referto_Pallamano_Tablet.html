@@ -7526,7 +7526,7 @@ let state={
   phase:1,timer:0,running:false,matchStarted:false,
   halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
   // Configurazione del cronometro ufficiale del palazzetto (solo per i cartellini)
-  cronometroContinuativo:true,
+  cronometroContinuativo:false,
   firstHalfScoreA:0,firstHalfScoreB:0,
   secondHalfScoreA:0,secondHalfScoreB:0,
   overtimeSeries:0,overtimeHalf:0,
@@ -8719,6 +8719,16 @@ function logMiniTimerSeconds(){
 function renderLogMiniTimer(){
   const box=el('logMiniTimer');
   if(!box)return;
+
+  // REGOLA CRONOMETRO PALAZZETTO:
+  // ☐ non spuntata = il palazzetto si azzera a ogni tempo -> timer VISIBILE
+  // ☑ spuntata     = il palazzetto è continuativo -> timer NASCOSTO
+  box.style.display = state.cronometroContinuativo === true ? 'none' : '';
+
+  // Se è nascosto non serve aggiornare il valore, ma lasciamo il
+  // calcolo invariato quando è visibile.
+  if(box.style.display==='none') return;
+
   const total=Math.floor(logMiniTimerSeconds());
   const mm=Math.floor(total/60);
   const ss=total%60;
@@ -10823,7 +10833,7 @@ function openEditTeams(){
   const modeInput=el('matchModeInput');
   if(modeInput)modeInput.value=state.matchMode || 'STANDARD';
   const pc=el('palazzettoContinuousInput');
-  if(pc)pc.checked=state.cronometroContinuativo!==false;
+  if(pc)pc.checked=state.cronometroContinuativo===true;
   const msg=el('editNumberError');
   if(msg)msg.classList.remove('show');
   const rb=el('restoreBtn');
@@ -11014,7 +11024,7 @@ function saveEditTeams(){
 
   state.halfDurationMinutes=duration;
   state.matchMode=el('matchModeInput')?.value || 'STANDARD';
-  state.cronometroContinuativo=el('palazzettoContinuousInput')?.checked !== false;
+  state.cronometroContinuativo=!!el('palazzettoContinuousInput')?.checked;
 
   // Le lettere sono esclusivamente A-B-C-D-E e non sono modificabili.
   // L'unica operazione consentita è lasciare vuoto il nome del dirigente.
@@ -11032,6 +11042,13 @@ function saveEditTeams(){
 
   closeEditTeams();
   render();
+
+  // Applica subito la regola alla casella reale del REGISTRO GARA.
+  const miniTimer=el('logMiniTimer');
+  if(miniTimer){
+    miniTimer.style.display = state.cronometroContinuativo === true ? 'none' : '';
+  }
+
   saveRecovery();
 }
 /* NUMERI */
@@ -11092,7 +11109,7 @@ function resetMatch(){
     phase:1,timer:0,running:false,matchStarted:false,
     halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
   // Configurazione del cronometro ufficiale del palazzetto (solo per i cartellini)
-  cronometroContinuativo:true,
+  cronometroContinuativo:false,
     firstHalfScoreA:0,firstHalfScoreB:0,
     secondHalfScoreA:0,secondHalfScoreB:0,
     overtimeSeries:0,overtimeHalf:0,
