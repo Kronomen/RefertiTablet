@@ -4757,6 +4757,25 @@ function closePenalty(){
 #penaltyModal .gray{background:#64748b !important;color:#fff !important}
 
 
+/* TOUCH COMPLETO GIOCATORE/DIRIGENTE
+   Tutta la superficie della card è una zona di tocco per aprire il popup.
+   I controlli specifici, come TIRA, mantengono la propria funzione. */
+.player-card-touch,
+.staff-card-touch{
+  cursor:pointer !important;
+  touch-action:manipulation !important;
+  -webkit-user-select:none !important;
+  user-select:none !important;
+}
+.player-card-touch:active,
+.staff-card-touch:active{
+  transform:scale(.995);
+}
+.player-card-touch .player-number,
+.staff-card-touch .staff-label{
+  cursor:pointer !important;
+}
+
 /* V28 — tutto il contenitore del giocatore apre il popup.
    Il numero resta visivamente identico, ma non è più l'unica zona cliccabile. */
 .player-card-touch{
@@ -8530,9 +8549,11 @@ function renderPlayers(team){
 
     if(hasNumber && !d.red && !excluded){
       card.classList.add('player-card-touch');
-      card.addEventListener('click', function(){
-        openEventMenu('PLAYER', team, i);
-      });
+      card.dataset.playerTeam=team;
+      card.dataset.playerIndex=String(i);
+      card.setAttribute('role','button');
+      card.setAttribute('tabindex','0');
+      card.setAttribute('aria-label',`Giocatore ${num}: seleziona evento`);
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
     }
@@ -8620,9 +8641,11 @@ function renderStaff(team){
 
     if(letter && !d.red && !excluded){
       card.classList.add('staff-card-touch');
-      card.addEventListener('click', function(){
-        openEventMenu('STAFF', team, i);
-      });
+      card.dataset.staffTeam=team;
+      card.dataset.staffIndex=String(i);
+      card.setAttribute('role','button');
+      card.setAttribute('tabindex','0');
+      card.setAttribute('aria-label',`Dirigente ${letter}: seleziona evento`);
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
     }
@@ -11516,35 +11539,49 @@ document.addEventListener('keydown', function(e){
 <script id="tablet-touch-event-handler">
 (function(){
   function bind(){
-    const root=document.getElementById('playersA') || document;
-    // renderPlayers may recreate cards, so delegation must be on a stable ancestor.
-    const roots=[document.getElementById('playersA'),document.getElementById('playersB'),
-                 document.getElementById('staffA'),document.getElementById('staffB')]
-                .filter(Boolean);
+    const roots=[
+      document.getElementById('playersA'),document.getElementById('playersB'),
+      document.getElementById('staffA'),document.getElementById('staffB')
+    ].filter(Boolean);
+
     roots.forEach(root=>{
-      if(root.dataset.eventTouchBound==='1') return;
+      if(root.dataset.eventTouchBound==='2') return;
+
       const fire=function(ev){
         const card=ev.target.closest?.('.player-card,.staff-card');
         if(!card || !root.contains(card)) return;
-        if(ev.target.closest('button,input,select')) return;
         if(typeof state==='undefined' || state.phase===7) return;
-        const team=card.dataset.playerTeam || card.dataset.team;
-        const index=Number(card.dataset.playerIndex ?? card.dataset.index);
-        if((team==='A'||team==='B') && Number.isInteger(index) &&
+
+        /* TIRA mantiene esclusivamente la sua funzione. */
+        if(ev.target.closest('.shootout-shoot-btn')) return;
+
+        const isStaff=card.classList.contains('staff-card');
+        const team=isStaff ? card.dataset.staffTeam : card.dataset.playerTeam;
+        const index=Number(isStaff ? card.dataset.staffIndex : card.dataset.playerIndex);
+
+        if((team==='A'||team==='B') &&
+           Number.isInteger(index) &&
+           (card.classList.contains('player-card-touch') ||
+            card.classList.contains('staff-card-touch')) &&
            typeof openEventMenu==='function'){
           ev.preventDefault();
           ev.stopPropagation();
-          const isStaff=card.classList.contains('staff-card');
           openEventMenu(isStaff?'STAFF':'PLAYER',team,index);
         }
       };
+
+      /* Un solo pointerup: sul tablet tutta la card è un'unica zona touch. */
       root.addEventListener('pointerup',fire,{passive:false});
-      root.addEventListener('click',fire,{passive:false});
-      root.dataset.eventTouchBound='1';
+      root.dataset.eventTouchBound='2';
     });
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
-  else bind();
+
+  if(document.readyState==='loading')
+    document.addEventListener('DOMContentLoaded',bind,{once:true});
+  else
+    bind();
+
+  /* Le card vengono ricreate da renderPlayers/renderStaff. */
   new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
