@@ -10620,7 +10620,7 @@ function confirmCardPrint(){
     time:p.time,
     phase:p.phase,
     duration:p.duration,
-    cronometroContinuativo:state.cronometroContinuativo !== false,
+    cronometroContinuativo:state.cronometroContinuativo === true,
     matchData:state
   };
   const encoded=encodeURIComponent(JSON.stringify(payload));
@@ -11451,6 +11451,13 @@ function closeConfigAndStart(){
   }
   state.halfDurationMinutes=configuredDuration;
 
+  // La sorgente della regola è ESCLUSIVAMENTE la spunta presente
+  // nella CONFIGURAZIONE.
+  // ☐ = cronometro palazzetto si azzera a ogni tempo -> mini timer VISIBILE
+  // ☑ = cronometro palazzetto continuativo -> mini timer NASCOSTO
+  const palazzettoContinuousInput=el('palazzettoContinuousInput');
+  state.cronometroContinuativo=!!palazzettoContinuousInput?.checked;
+
   // IMPORTANTISSIMO: REFERTO deve usare la modalità scelta in CONFIGURAZIONE.
   // selectMatchMode() aggiorna l'input, ma non basta da solo perché REFERTO
   // può essere aperto senza passare da saveEditTeams().
@@ -11482,6 +11489,14 @@ function closeConfigAndStart(){
   try{
     state.running=false;
     if(typeof render==='function') render();
+
+    // Applica subito la visibilità corretta dopo OGNI apertura del REFERTO.
+    const miniTimer=el('logMiniTimer');
+    if(miniTimer){
+      miniTimer.style.display =
+        state.cronometroContinuativo === true ? 'none' : '';
+    }
+
     applyTeamColors(state.teamColors);
   }catch(e){
     console.error('Errore apertura referto:',e);
