@@ -387,41 +387,6 @@ function closePenalty(){
   el('penaltyModal').style.display='none';
 }
 
-
-/* DECISIONE SECONDA AMMONIZIONE GIOCATORE */
-let pendingPlayerYellowDecision=null;
-
-function openPlayerYellowDecision(team,index,num){
-  pendingPlayerYellowDecision={team,index,num};
-  el('staffBenchDecisionTitle').textContent='AMMONIZIONE GIOCATORE';
-  el('staffBenchDecisionText').textContent=
-    `${state.teams[team]} · giocatore n° ${num}: è già ammonito. `+
-    `Scegliere la sanzione: 2' oppure ESPULSIONE.`;
-  el('staffBenchDecisionModal').style.display='flex';
-}
-
-function playerYellowDecision(type){
-  if(!pendingPlayerYellowDecision)return;
-  const {team,index,num}=pendingPlayerYellowDecision;
-  pendingPlayerYellowDecision=null;
-  el('staffBenchDecisionModal').style.display='none';
-
-  const d=state.discipline[team][index];
-  if(!d || d.red)return;
-
-  if(type==='TWO'){
-    d.two=(d.two||0)+1;
-    addEvent(team,num,'TWO',"2'");
-    startSuspension(team,num);
-    stopForDisciplinary(team,num,"2'");
-  }else if(type==='RED'){
-    d.red=true;
-    addEvent(team,num,'RED','ESPULSIONE');
-    stopForDisciplinary(team,num,'ESPULSIONE');
-  }
-  render();
-}
-
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   text-align:center;font-size:10px;font-weight:900;padding:3px}
@@ -7428,7 +7393,7 @@ function apriManualeUso(){
               onclick="closeConfigAndStart()">REFERTO</button>
       <button id="exitConfigBtn" class="btn red" type="button"
               onclick="goToIndex()">ESCI</button>
-      <input id="savedJsonInput" type="file" style="display:none" onchange="loadSavedJson(event)">
+      <input id="savedJsonInput" type="file" accept=".json,application/json" style="display:none" onchange="loadSavedJson(event)">
       <input id="matchDataFileInput" type="file" accept=".xlsx,.xlsm,.xls" style="display:none" onchange="loadMatchDataExcel(event)">
     </div>
 
@@ -7511,6 +7476,8 @@ function apriManualeUso(){
     <div class="modal-actions event-actions">
       <button class="two-btn" onclick="staffBenchDecision('TWO')">2'</button>
       <button class="red-btn" onclick="staffBenchDecision('RED')">ESPULSIONE</button>
+      <button class="gray" style="width:100%;margin-top:8px;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900"
+        onclick="staffBenchDecision('CANCEL')">ANNULLA</button>
     </div>
     <button class="gray" style="width:100%;margin-top:8px;min-height:42px;border:0;border-radius:8px;color:#fff;font-weight:900"
             onclick="closeStaffBenchDecision()">ANNULLA</button>
@@ -9401,24 +9368,30 @@ function playerAction(team,index,type){
   }
 
   if(type==='YELLOW'){
-    // Prima ammonizione: viene registrata normalmente.
-    // Se il giocatore è già ammonito, NON viene registrata una seconda
-    // ammonizione: si apre lo stesso popup usato per i dirigenti.
-    if(d.yellow>=1){
-      openPlayerYellowDecision(team,index,num);
-      return;
-    }
-
     const yellowCount=teamYellowCount(team);
-    if(yellowCount>=3){
-      toast('3 AMMONIZIONI GIÀ RAGGIUNTE · L\'ARBITRO DEVE DARE 2\' O ESPULSIONE');
+
+    // Un giocatore può avere una sola vera ammonizione.
+    if(Number(d.yellow||0)===0){
+      if(yellowCount>=3){
+        undoStack.pop();
+        toast('3 AMMONIZIONI RAGGIUNTE · L\'ARBITRO DEVE ASSEGNARE 2\' O ESPULSIONE');
+        return;
+      }
+
+      d.yellow=1;
+      addEvent(team,num,'YELLOW','AMMONIZIONE');
+      render();
+
+      if(yellowCount+1===3){
+        showThreeYellowWarning(team);
+      }
       return;
     }
 
-    d.yellow++;
-    addEvent(team,num,'YELLOW','AMMONIZIONE');
-    render();
-    if(yellowCount+1===3) showThreeYellowWarning(team);
+    // Il giocatore è già ammonito: la seconda ammonizione non viene
+    // registrata come YELLOW. Si apre lo stesso popup dei dirigenti.
+    undoStack.pop();
+    openPlayerYellowDecision(team,index,num);
     return;
   }
 
@@ -9517,10 +9490,11 @@ function teamYellowCount(team){
 }
 
 function staffBenchYellowCount(team){
-  const STAFF=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
-  return (state.events||[]).filter(e =>
-    e && e.team===team && e.type==='YELLOW' && STAFF.includes(e.num)
-  ).length;
+  return (state.events||[]).filter(e => {
+    if(!e || e.team!==team || e.type!=='YELLOW') return false;
+    const n=String(e.num??'').trim().toUpperCase();
+    return STAFF.includes(n);
+  }).length;
 }
 
 function showThreeYellowWarning(team){
@@ -9542,6 +9516,46 @@ function closeThreeYellowWarning(){
   if(m)m.style.display='none';
 }
 
+let pendingPlayerYellowDecision=null;
+
+function openPlayerYellowDecision(team,index,num){
+  pendingPlayerYellowDecision={team,index,num};
+  el('staffBenchDecisionTitle').textContent='AMMONIZIONE GIOCATORE';
+  el('staffBenchDecisionText').textContent=
+    `${state.teams[team]} · giocatore n° ${num} è già ammonito. `+
+    `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE oppure ANNULLA.`;
+  el('staffBenchDecisionModal').classList.remove('team-a','team-b');
+  el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
+  el('staffBenchDecisionModal').style.display='flex';
+}
+
+function resolvePlayerYellowDecision(type){
+  const p=pendingPlayerYellowDecision;
+  pendingPlayerYellowDecision=null;
+  el('staffBenchDecisionModal').style.display='none';
+
+  if(!p || type==='CANCEL') return;
+
+  const d=state.discipline[p.team][p.index];
+  if(!d || d.red) return;
+
+  snapshot();
+
+  if(type==='TWO'){
+    d.two++;
+    addEvent(p.team,p.num,'TWO',"2'");
+    startSuspension(p.team,p.num);
+    stopForDisciplinary(p.team,p.num,"2'");
+  }else if(type==='RED'){
+    d.red=true;
+    startSuspension(p.team,p.num);
+    addEvent(p.team,p.num,'RED','ESPULSIONE DIRETTA');
+    stopForDisciplinary(p.team,p.num,'ESPULSIONE DIRETTA');
+  }
+
+  render();
+}
+
 function staffAction(team,index,type){
   const d=state.staff[team][index];
   const letter=String((state.staffLetters?.[team]?.[index]) ?? '').trim().toUpperCase();
@@ -9550,34 +9564,24 @@ function staffAction(team,index,type){
     toast('Dirigente senza lettera');
     return;
   }
-
   if(d.red){
     toast('Dirigente già espulso');
     return;
   }
 
-  /*
-    REGOLA AMMONIZIONI DI SQUADRA:
-    - giocatori + dirigenti condividono un massimo complessivo di 3;
-    - la 1ª ammonizione del dirigente viene registrata come AMMONIZIONE;
-    - dalla 2ª ammonizione del dirigente, il popup chiede 2' oppure E;
-    - una 2'/E derivata da una nuova ammonizione conta comunque come
-      ammonizione nel totale della squadra, senza trasformare l'evento
-      del registro in una semplice YELLOW.
-  */
   if(type==='YELLOW'){
     const totalYellow=teamYellowCount(team);
+    const benchYellow=staffBenchYellowCount(team);
 
-    if(totalYellow>=3){
-      toast('3 AMMONIZIONI GIÀ RAGGIUNTE · L\'ARBITRO DEVE DARE 2\' O ESPULSIONE');
-      return;
-    }
+    // La panchina può avere una sola ammonizione effettiva.
+    if(benchYellow===0){
+      if(totalYellow>=3){
+        toast('3 AMMONIZIONI RAGGIUNTE · L\'ARBITRO DEVE ASSEGNARE 2\' O ESPULSIONE');
+        return;
+      }
 
-    const benchYellowCount=staffBenchYellowCount(team);
-
-    if(benchYellowCount===0){
       snapshot();
-      d.yellow++;
+      d.yellow=1;
       addEvent(team,letter,'YELLOW','AMMONIZIONE');
       render();
 
@@ -9587,12 +9591,13 @@ function staffAction(team,index,type){
       return;
     }
 
-    openStaffBenchDecision(team,index,letter,benchYellowCount+1);
+    // Qualunque altro dirigente: niente seconda YELLOW.
+    // Compare sempre il popup 2' / ESPULSIONE / ANNULLA.
+    openStaffBenchDecision(team,index,letter,benchYellow+1);
     return;
   }
 
-  /* Questi due comandi restano disponibili anche senza una nuova ammonizione,
-     perché l'arbitro può assegnare direttamente 2' o espulsione. */
+  // Sanzioni assegnate direttamente dall'arbitro.
   snapshot();
 
   if(type==='TWO'){
@@ -9607,9 +9612,7 @@ function staffAction(team,index,type){
       startSuspension(team,letter);
       stopForDisciplinary(team,letter,"2'");
     }
-  }
-
-  if(type==='RED'){
+  }else if(type==='RED'){
     d.red=true;
     startSuspension(team,letter);
     addEvent(team,letter,'RED','ESPULSIONE');
@@ -9640,19 +9643,19 @@ function openStaffBenchDecision(team,index,letter,benchYellowNumber){
 
 function closeStaffBenchDecision(){
   pendingStaffBenchDecision=null;
+  pendingPlayerYellowDecision=null;
   el('staffBenchDecisionModal').style.display='none';
 }
 
-function staffBenchDecision(type){  if(pendingPlayerYellowDecision){
-    playerYellowDecision(type);
-    return;
-  }
+function staffBenchDecision(type){
+  if(pendingPlayerYellowDecision){ resolvePlayerYellowDecision(type); return; }
 
   if(!pendingStaffBenchDecision)return;
 
   const {team,index,letter}=pendingStaffBenchDecision;
   pendingStaffBenchDecision=null;
   el('staffBenchDecisionModal').style.display='none';
+  if(type==='CANCEL') return;
 
   const d=state.staff[team][index];
   if(!d || d.red)return;
@@ -9668,18 +9671,18 @@ function staffBenchDecision(type){  if(pendingPlayerYellowDecision){
     if(d.two>=1){
       d.red=true;
       startSuspension(team,letter);
-      addEvent(team,letter,'RED','ESPULSIONE','',{yellowOrigin:true});
+      addEvent(team,letter,'RED','ESPULSIONE','');
       stopForDisciplinary(team,letter,'ESPULSIONE');
     }else{
       d.two=1;
-      addEvent(team,letter,'TWO',"2'","",{yellowOrigin:true});
+      addEvent(team,letter,'TWO',"2'","");
       startSuspension(team,letter);
       stopForDisciplinary(team,letter,"2'");
     }
   }else if(type==='RED'){
     d.red=true;
     startSuspension(team,letter);
-    addEvent(team,letter,'RED','ESPULSIONE','',{yellowOrigin:true});
+    addEvent(team,letter,'RED','ESPULSIONE','');
     stopForDisciplinary(team,letter,'ESPULSIONE');
   }
 
