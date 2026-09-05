@@ -387,6 +387,41 @@ function closePenalty(){
   el('penaltyModal').style.display='none';
 }
 
+
+/* DECISIONE SECONDA AMMONIZIONE GIOCATORE */
+let pendingPlayerYellowDecision=null;
+
+function openPlayerYellowDecision(team,index,num){
+  pendingPlayerYellowDecision={team,index,num};
+  el('staffBenchDecisionTitle').textContent='AMMONIZIONE GIOCATORE';
+  el('staffBenchDecisionText').textContent=
+    `${state.teams[team]} · giocatore n° ${num}: è già ammonito. `+
+    `Scegliere la sanzione: 2' oppure ESPULSIONE.`;
+  el('staffBenchDecisionModal').style.display='flex';
+}
+
+function playerYellowDecision(type){
+  if(!pendingPlayerYellowDecision)return;
+  const {team,index,num}=pendingPlayerYellowDecision;
+  pendingPlayerYellowDecision=null;
+  el('staffBenchDecisionModal').style.display='none';
+
+  const d=state.discipline[team][index];
+  if(!d || d.red)return;
+
+  if(type==='TWO'){
+    d.two=(d.two||0)+1;
+    addEvent(team,num,'TWO',"2'");
+    startSuspension(team,num);
+    stopForDisciplinary(team,num,"2'");
+  }else if(type==='RED'){
+    d.red=true;
+    addEvent(team,num,'RED','ESPULSIONE');
+    stopForDisciplinary(team,num,'ESPULSIONE');
+  }
+  render();
+}
+
 /* DIRIGENTI */
 .staff-title{flex:0 0 auto;background:#f1f5f9;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   text-align:center;font-size:10px;font-weight:900;padding:3px}
@@ -9366,16 +9401,16 @@ function playerAction(team,index,type){
   }
 
   if(type==='YELLOW'){
-    /*
-      AMMONIZIONI: conteggio UNICO per squadra.
-      Giocatori + dirigenti condividono le 3 ammonizioni complessive.
-      Dopo la 3ª, le successive vengono date direttamente dagli arbitri
-      come 2' o ESPULSIONE.
-    */
-    const yellowCount=teamYellowCount(team);
+    // Prima ammonizione: viene registrata normalmente.
+    // Se il giocatore è già ammonito, NON viene registrata una seconda
+    // ammonizione: si apre lo stesso popup usato per i dirigenti.
+    if(d.yellow>=1){
+      openPlayerYellowDecision(team,index,num);
+      return;
+    }
 
+    const yellowCount=teamYellowCount(team);
     if(yellowCount>=3){
-      undoStack.pop();
       toast('3 AMMONIZIONI GIÀ RAGGIUNTE · L\'ARBITRO DEVE DARE 2\' O ESPULSIONE');
       return;
     }
@@ -9383,10 +9418,7 @@ function playerAction(team,index,type){
     d.yellow++;
     addEvent(team,num,'YELLOW','AMMONIZIONE');
     render();
-
-    if(yellowCount+1===3){
-      showThreeYellowWarning(team);
-    }
+    if(yellowCount+1===3) showThreeYellowWarning(team);
     return;
   }
 
@@ -9479,31 +9511,16 @@ function isPlayerYellowEvent(e,team){
 }
 
 function teamYellowCount(team){
-  /*
-    CONTEGGIO UNICO DELLE AMMONIZIONI DELLA SQUADRA.
-    Conta insieme:
-    - ammonizioni dei giocatori;
-    - ammonizioni effettive dei dirigenti;
-    - una 2'/E del dirigente quando nasce dalla sua ammonizione
-      successiva (yellowOrigin=true).
-    Quindi il limite è complessivo: giocatori + panchina = 3.
-  */
-  return (state.events||[]).filter(e => {
-    if(!e || e.team!==team) return false;
-    return e.type==='YELLOW' || e.yellowOrigin===true;
-  }).length;
+  return (state.events||[]).filter(e =>
+    e && e.team===team && e.type==='YELLOW'
+  ).length;
 }
 
 function staffBenchYellowCount(team){
-  // Conteggio delle ammonizioni della panchina ai fini della regola
-  // della 2ª ammonizione del dirigente: include anche le ammonizioni
-  // trasformate in 2'/E.
-  return (state.events||[]).filter(e => {
-    if(!e || e.team!==team) return false;
-    const n=String(e.num??'').trim().toUpperCase();
-    return (e.type==='YELLOW' && STAFF.includes(n)) ||
-           (e.yellowOrigin===true && STAFF.includes(n));
-  }).length;
+  const STAFF=['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10'];
+  return (state.events||[]).filter(e =>
+    e && e.team===team && e.type==='YELLOW' && STAFF.includes(e.num)
+  ).length;
 }
 
 function showThreeYellowWarning(team){
@@ -9626,7 +9643,11 @@ function closeStaffBenchDecision(){
   el('staffBenchDecisionModal').style.display='none';
 }
 
-function staffBenchDecision(type){
+function staffBenchDecision(type){  if(pendingPlayerYellowDecision){
+    playerYellowDecision(type);
+    return;
+  }
+
   if(!pendingStaffBenchDecision)return;
 
   const {team,index,letter}=pendingStaffBenchDecision;
