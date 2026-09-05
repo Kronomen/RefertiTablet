@@ -7425,6 +7425,13 @@ function apriManualeUso(){
     <h3 id="logEditTitle">MODIFICA EVENTO</h3>
     <p id="logEditSubtitle">Seleziona la variazione.</p>
 
+    <div style="margin:0 0 8px">
+      <div style="font-size:9px;font-weight:900;text-align:center;margin-bottom:4px">TEMPO EVENTO</div>
+      <input id="logEditTime" type="text" inputmode="numeric"
+             placeholder="MM:SS"
+             style="width:100%;box-sizing:border-box;min-height:38px;border:1px solid #cbd5e1;border-radius:7px;padding:4px 8px;font-weight:900;font-size:14px;text-align:center">
+    </div>
+
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px">
       <button id="logEditTeamA" class="btn blue" onclick="changeLogEditTeam('A')">CASA</button>
       <button id="logEditTeamB" class="btn purple" onclick="changeLogEditTeam('B')">OSPITI</button>
@@ -9035,6 +9042,11 @@ function updateLogEditModal(){
   const currentSubject=editingLogSubject || e.num;
   const draftType=editingLogDraftType || e.type;
   const draftText=editingLogDraftText || e.text || e.type;
+
+  const timeInput=el('logEditTime');
+  if(timeInput){
+    timeInput.value=String(e.time||'00:00');
+  }
   const subject=e.type==='TIMEOUT'
     ? 'TIME OUT'
     : (player ? `N° ${currentSubject}` : `DIRIGENTE ${currentSubject}`);
@@ -9247,8 +9259,27 @@ function saveLogEventEdit(){
   const type=editingLogDraftType || old.type;
   const text=editingLogDraftText || old.text || old.type;
 
-  // Validazione eseguita al momento del SALVA, quindi squadra e soggetto
-  // possono essere modificati liberamente mentre il timer continua a correre.
+  // NUOVO: il tempo dell'evento può essere modificato.
+  let newTime=String(el('logEditTime')?.value || old.time || '00:00').trim();
+  const tp=newTime.split(':');
+
+  if(tp.length!==2){
+    toast('TEMPO NON VALIDO · usare MM:SS');
+    return;
+  }
+
+  let mm=parseInt(tp[0],10);
+  let ss=parseInt(tp[1],10);
+
+  if(!Number.isFinite(mm) || !Number.isFinite(ss) ||
+     mm<0 || ss<0 || ss>59){
+    toast('TEMPO NON VALIDO · usare MM:SS');
+    return;
+  }
+
+  newTime=String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+
+  // Validazione eseguita al momento del SALVA.
   if(type==='TIMEOUT'){
     // nessun soggetto necessario
   }else if(editingLogKind==='PLAYER'){
@@ -9280,19 +9311,58 @@ function saveLogEventEdit(){
 
   state.events[editingLogIndex]={
     ...old,
+    time:newTime,
     team:newTeam,
     num:newSubject,
     type,
     text
   };
 
-  // Ricalcola tutta la gara senza alterare lo stato del cronometro.
+  /*
+    RIORDINO DOPO LA CONFERMA:
+    - gli eventi vengono ordinati per tempo crescente internamente;
+    - il Registro li visualizza già dal più alto al più basso tramite
+      renderLog(), che mantiene la visualizzazione inversa.
+    - gli eventi SYSTEM restano separatori di periodo, così il reset
+      del cronometro tra i tempi non viene confuso con un altro periodo.
+  */
+  const timeToSeconds=(value)=>{
+    const p=String(value||'00:00').split(':');
+    if(p.length!==2)return 0;
+    const a=parseInt(p[0],10);
+    const b=parseInt(p[1],10);
+    return (Number.isFinite(a)?a:0)*60+(Number.isFinite(b)?b:0);
+  };
+
+  const ordered=[];
+  let segment=[];
+
+  const flushSegment=()=>{
+    segment.sort((a,b)=>timeToSeconds(a.time)-timeToSeconds(b.time));
+    ordered.push(...segment);
+    segment=[];
+  };
+
+  for(const ev of state.events){
+    if(ev.type==='SYSTEM'){
+      flushSegment();
+      ordered.push(ev);
+    }else{
+      segment.push(ev);
+    }
+  }
+  flushSegment();
+
+  state.events=ordered;
+
+  // L'indice dell'evento è cambiato dopo il riordino, quindi il
+  // ricalcolo deve lavorare sull'intera lista ordinata.
   rebuildAfterLogEdit();
   closeLogEditModal();
   render();
   saveRecovery();
 
-  toast('EVENTO MODIFICATO · SALVATO · PUNTEGGIO E REGISTRO RICALCOLATI');
+  toast('EVENTO MODIFICATO · TEMPO AGGIORNATO · REGISTRO RIORDINATO');
 }
 
 function openEventMenu(kind,team,index){
