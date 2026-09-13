@@ -7770,6 +7770,52 @@ body.referto-attivo #app > * {
   }
 }
 </style>
+
+<style id="professional-staff-letter-v17">
+/* Lettere dirigenti: contenitore piu' largo e leggibile su tablet 11".
+   La larghezza viene sottratta al nominativo, senza aumentare la card. */
+@media screen and (orientation:landscape) and (min-width:900px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex:0 0 58px !important;
+    width:58px !important;
+    min-width:58px !important;
+    max-width:58px !important;
+    height:30px !important;
+    min-height:30px !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    box-sizing:border-box !important;
+    border-radius:7px !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+    line-height:1 !important;
+    letter-spacing:.4px !important;
+  }
+  .main > .panel:nth-child(1) > .staff .staff-main-row .staff-name-inline,
+  .main > .panel:nth-child(3) > .staff .staff-main-row .staff-name-inline{
+    min-width:0 !important;
+    flex:1 1 auto !important;
+    overflow:hidden !important;
+    white-space:nowrap !important;
+    text-overflow:clip !important;
+  }
+}
+@media screen and (orientation:landscape) and (min-width:900px) and (max-height:700px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex-basis:54px !important;
+    width:54px !important;
+    min-width:54px !important;
+    max-width:54px !important;
+    height:29px !important;
+    min-height:29px !important;
+    font-size:17px !important;
+  }
+}
+</style>
 </head>
 
 <body>
