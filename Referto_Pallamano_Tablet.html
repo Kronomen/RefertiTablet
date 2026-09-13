@@ -7488,6 +7488,39 @@ body.referto-attivo #app > * {
 }
 </style>
 
+
+<style id="staff-letter-width-v13">
+/* Tablet 11": lettera dirigente piu leggibile senza aumentare l'altezza della card. */
+.staff-card > .staff-main-row > .staff-label.staff-touch,
+.staff-card > .staff-main-row > .staff-label{
+  flex:0 0 38px !important;
+  width:38px !important;
+  min-width:38px !important;
+  max-width:38px !important;
+  height:34px !important;
+  min-height:34px !important;
+  line-height:34px !important;
+  font-size:16px !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+}
+.staff-main-row{
+  gap:4px !important;
+}
+@media screen and (max-height:700px){
+  .staff-card > .staff-main-row > .staff-label.staff-touch,
+  .staff-card > .staff-main-row > .staff-label{
+    flex:0 0 34px !important;
+    width:34px !important;
+    min-width:34px !important;
+    max-width:34px !important;
+    height:30px !important;
+    min-height:30px !important;
+    line-height:30px !important;
+    font-size:15px !important;
+  }
+}
+</style>
 </head>
 
 <body>
