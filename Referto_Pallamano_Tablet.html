@@ -7489,14 +7489,15 @@ body.referto-attivo #app > * {
 </style>
 
 
-<style id="staff-letter-width-v13">
-/* Tablet 11": lettera dirigente piu leggibile senza aumentare l'altezza della card. */
+<style id="staff-letter-width-v14">
+/* Tablet 11": contenitore lettera dirigente leggermente piu largo.
+   L'altezza della card e il resto degli indicatori restano invariati. */
 .staff-card > .staff-main-row > .staff-label.staff-touch,
 .staff-card > .staff-main-row > .staff-label{
-  flex:0 0 38px !important;
-  width:38px !important;
-  min-width:38px !important;
-  max-width:38px !important;
+  flex:0 0 46px !important;
+  width:46px !important;
+  min-width:46px !important;
+  max-width:46px !important;
   height:34px !important;
   min-height:34px !important;
   line-height:34px !important;
@@ -7510,13 +7511,261 @@ body.referto-attivo #app > * {
 @media screen and (max-height:700px){
   .staff-card > .staff-main-row > .staff-label.staff-touch,
   .staff-card > .staff-main-row > .staff-label{
-    flex:0 0 34px !important;
-    width:34px !important;
-    min-width:34px !important;
-    max-width:34px !important;
+    flex:0 0 42px !important;
+    width:42px !important;
+    min-width:42px !important;
+    max-width:42px !important;
     height:30px !important;
     min-height:30px !important;
     line-height:30px !important;
+    font-size:15px !important;
+  }
+}
+</style>
+
+<style id="professional-events-staff-v15">
+/* =========================================================
+   LOOK PROFESSIONALE — TASTI EVENTO + LETTERE DIRIGENTI
+   Pensato per tablet 11" landscape: nessun aumento dell'altezza.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:900px) and (max-width:1600px){
+  /* TASTI EVENTO: compatti, uniformi, con gerarchia visiva più pulita. */
+  .main > .panel:nth-child(1) > .event-toolbar,
+  .main > .panel:nth-child(3) > .event-toolbar{
+    padding:2px 3px !important;
+    background:linear-gradient(to bottom,#f8fafc,#eef2f7) !important;
+    border-top:1px solid #cbd5e1 !important;
+    border-bottom:1px solid #cbd5e1 !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar .event-toolbar-row,
+  .main > .panel:nth-child(3) > .event-toolbar .event-toolbar-row{
+    gap:3px !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar button,
+  .main > .panel:nth-child(3) > .event-toolbar button{
+    position:relative !important;
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    padding:1px 5px !important;
+    border:1px solid rgba(15,23,42,.22) !important;
+    border-radius:5px !important;
+    box-shadow:0 1px 2px rgba(15,23,42,.20), inset 0 1px 0 rgba(255,255,255,.22) !important;
+    font-size:9px !important;
+    font-weight:900 !important;
+    letter-spacing:.15px !important;
+    line-height:23px !important;
+    text-shadow:0 1px 1px rgba(0,0,0,.16) !important;
+    transition:filter .08s ease, transform .08s ease, box-shadow .08s ease !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar button:active,
+  .main > .panel:nth-child(3) > .event-toolbar button:active{
+    transform:translateY(1px) !important;
+    box-shadow:0 0 1px rgba(15,23,42,.22), inset 0 1px 2px rgba(0,0,0,.16) !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar button.event-selected,
+  .main > .panel:nth-child(3) > .event-toolbar button.event-selected{
+    outline:2px solid #0f172a !important;
+    outline-offset:-2px !important;
+    filter:brightness(.90) saturate(1.08) !important;
+    box-shadow:0 0 0 1px rgba(255,255,255,.55) inset, 0 1px 3px rgba(15,23,42,.28) !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar .event-prompt,
+  .main > .panel:nth-child(3) > .event-toolbar .event-prompt{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    padding:1px 4px !important;
+    border:1px solid #94a3b8 !important;
+    border-style:dashed !important;
+    border-radius:5px !important;
+    background:linear-gradient(to bottom,#ffffff,#f1f5f9) !important;
+    box-shadow:inset 0 1px 2px rgba(15,23,42,.06) !important;
+    font-size:8px !important;
+    font-weight:900 !important;
+    line-height:23px !important;
+  }
+
+  /* LETTERE DIRIGENTI: pulsante più netto e professionale, senza
+     aumentare l'altezza della card. */
+  .main > .panel:nth-child(1) > .staff .staff-card,
+  .main > .panel:nth-child(3) > .staff .staff-card{
+    border:1px solid #b8c4d3 !important;
+    border-radius:6px !important;
+    background:linear-gradient(to bottom,#ffffff,#eef2f7) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,.16) !important;
+  }
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex:0 0 46px !important;
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+    height:30px !important;
+    min-height:30px !important;
+    line-height:30px !important;
+    margin:1px !important;
+    border:1px solid rgba(15,23,42,.24) !important;
+    border-radius:5px !important;
+    background:linear-gradient(to bottom,#3b82f6,#1d4ed8) !important;
+    color:#fff !important;
+    box-shadow:0 1px 2px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.22) !important;
+    font-size:16px !important;
+    font-weight:900 !important;
+    text-align:center !important;
+    text-shadow:0 1px 1px rgba(0,0,0,.20) !important;
+    box-sizing:border-box !important;
+    touch-action:manipulation !important;
+  }
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    background:linear-gradient(to bottom,#8b5cf6,#6d28d9) !important;
+  }
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label:active,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label:active{
+    transform:translateY(1px) !important;
+    box-shadow:0 0 1px rgba(15,23,42,.22), inset 0 1px 2px rgba(0,0,0,.18) !important;
+  }
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label:disabled,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label:disabled{
+    background:linear-gradient(to bottom,#cbd5e1,#94a3b8) !important;
+    color:#f8fafc !important;
+    opacity:.72 !important;
+    box-shadow:none !important;
+  }
+}
+
+@media screen and (orientation:landscape) and (min-width:900px) and (max-width:1600px) and (max-height:700px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex-basis:44px !important;
+    width:44px !important;
+    min-width:44px !important;
+    max-width:44px !important;
+    height:28px !important;
+    min-height:28px !important;
+    line-height:28px !important;
+    font-size:15px !important;
+  }
+}
+</style>
+
+<style id="professional-staff-buttons-v16">
+/* Pulsanti dirigenti — finitura professionale per tablet 11".
+   Nessuna variazione all'altezza complessiva delle card. */
+@media screen and (orientation:landscape) and (min-width:900px) {
+  .main > .panel:nth-child(1) > .staff .staff-card,
+  .main > .panel:nth-child(3) > .staff .staff-card{
+    position:relative !important;
+    border:1px solid #b7c2d0 !important;
+    border-radius:7px !important;
+    background:#f8fafc !important;
+    box-shadow:0 1px 2px rgba(15,23,42,.14) !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row,
+  .main > .panel:nth-child(3) > .staff .staff-main-row{
+    min-height:0 !important;
+    padding:2px !important;
+    gap:4px !important;
+    box-sizing:border-box !important;
+    background:linear-gradient(to bottom,#ffffff,#f1f5f9) !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex:0 0 44px !important;
+    width:44px !important;
+    min-width:44px !important;
+    max-width:44px !important;
+    height:30px !important;
+    min-height:30px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:1px solid rgba(15,23,42,.25) !important;
+    border-radius:6px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    box-sizing:border-box !important;
+    color:#fff !important;
+    font-size:16px !important;
+    font-weight:900 !important;
+    line-height:1 !important;
+    letter-spacing:.2px !important;
+    text-shadow:0 1px 1px rgba(0,0,0,.22) !important;
+    box-shadow:0 1px 2px rgba(15,23,42,.22), inset 0 1px 0 rgba(255,255,255,.25) !important;
+    transition:transform .08s ease, filter .08s ease, box-shadow .08s ease !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label{
+    background:linear-gradient(to bottom,#3b82f6,#1d4ed8) !important;
+  }
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    background:linear-gradient(to bottom,#8b5cf6,#6d28d9) !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label:hover,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label:hover{
+    filter:brightness(1.06) !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label:active,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label:active{
+    transform:translateY(1px) scale(.98) !important;
+    box-shadow:0 0 1px rgba(15,23,42,.25), inset 0 2px 3px rgba(0,0,0,.18) !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label:disabled,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label:disabled{
+    background:linear-gradient(to bottom,#cbd5e1,#94a3b8) !important;
+    color:#f8fafc !important;
+    opacity:.78 !important;
+    box-shadow:none !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .staff-name-inline,
+  .main > .panel:nth-child(3) > .staff .staff-name-inline{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    height:30px !important;
+    line-height:30px !important;
+    padding:0 4px !important;
+    margin:0 !important;
+    color:#334155 !important;
+    font-size:8px !important;
+    font-weight:800 !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .discipline-row,
+  .main > .panel:nth-child(3) > .staff .discipline-row{
+    padding:2px 3px !important;
+    gap:2px !important;
+    background:#eef2f7 !important;
+  }
+
+  .main > .panel:nth-child(1) > .staff .discipline-cell,
+  .main > .panel:nth-child(3) > .staff .discipline-cell{
+    border:1px solid #d7dee8 !important;
+    border-radius:4px !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75) !important;
+    font-size:8px !important;
+    font-weight:900 !important;
+  }
+}
+
+@media screen and (orientation:landscape) and (min-width:900px) and (max-height:700px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex-basis:44px !important;
+    width:44px !important;
+    min-width:44px !important;
+    max-width:44px !important;
+    height:29px !important;
+    min-height:29px !important;
     font-size:15px !important;
   }
 }
