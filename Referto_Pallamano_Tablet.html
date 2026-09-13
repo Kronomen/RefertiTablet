@@ -7138,6 +7138,356 @@ body.referto-attivo #app > * {
   pointer-events:auto !important;
 }
 </style>
+
+<style id="event-toolbar-style">
+/* TASTI EVENTO - ispirazione EHF: evento prima, soggetto dopo */
+.event-toolbar{
+  flex:0 0 auto;
+  padding:3px 4px;
+  background:#f8fafc;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.event-toolbar-row{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:3px;
+}
+.event-toolbar-row + .event-toolbar-row{margin-top:3px}
+.event-toolbar button{
+  min-width:0;
+  min-height:38px;
+  border:1px solid #cbd5e1;
+  border-radius:6px;
+  padding:3px 4px;
+  font-size:clamp(9px,1.05vw,12px);
+  line-height:1.05;
+  font-weight:900;
+  touch-action:manipulation;
+  color:#0f172a;
+}
+.event-toolbar button.warning{background:#facc15;color:#111}
+.event-toolbar button.two{background:#ea580c;color:#fff}
+.event-toolbar button.disq{background:#dc2626;color:#fff}
+.event-toolbar button.tp{background:#64748b;color:#fff}
+.event-toolbar button.goal{background:#16a34a;color:#fff}
+.event-toolbar button.penalty-goal{background:#2563eb;color:#fff}
+.event-toolbar button.penalty-miss{background:#475569;color:#fff}
+.event-toolbar button.event-selected{
+  outline:3px solid #111827;
+  outline-offset:-3px;
+  filter:brightness(.88);
+  transform:scale(.985);
+}
+.event-toolbar .event-prompt{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  min-height:38px;
+  padding:3px 4px;
+  border:1px dashed #94a3b8;
+  border-radius:6px;
+  background:#fff;
+  color:#475569;
+  font-size:clamp(8px,.9vw,10px);
+  line-height:1.05;
+  font-weight:900;
+  text-align:center;
+}
+.event-toolbar.team-a-toolbar .event-prompt{color:var(--team-home,var(--a))}
+.event-toolbar.team-b-toolbar .event-prompt{color:var(--team-away,var(--b))}
+@media (orientation:portrait) and (max-width:900px){
+  .event-toolbar{padding:2px}
+  .event-toolbar-row{gap:2px}
+  .event-toolbar-row + .event-toolbar-row{margin-top:2px}
+  .event-toolbar button,.event-toolbar .event-prompt{
+    min-height:27px;
+    height:27px;
+    padding:1px 2px;
+    font-size:7px;
+    border-radius:4px;
+  }
+}
+</style>
+
+<style id="pending-event-row-style">.log-row.pending-event-row{background:#334155!important;color:#fff!important;border-left:4px solid #facc15!important}.log-row.pending-event-row .log-num,.log-row.pending-event-row .log-res{color:#facc15!important;font-weight:900}.log-row.pending-event-row .log-event{font-weight:900}</style>
+
+<style id="tablet11-layout-clean-final">
+/* =========================================================
+   TABLET 11" LANDSCAPE — LAYOUT PULITO
+   Struttura reale: SQUADRA A | REGISTRO | SQUADRA B
+   Obiettivo: niente spazio vuoto sopra i giocatori e registro
+   con righe abbastanza alte da essere leggibili al tocco.
+   ========================================================= */
+@media screen and (orientation:landscape) and (min-width:900px) and (max-width:1600px){
+  .main{
+    grid-template-columns:minmax(0,1.08fr) minmax(270px,.78fr) minmax(0,1.08fr) !important;
+    gap:4px !important;
+  }
+
+  /* ---------- PANNELLI SQUADRA ---------- */
+  .main > .panel:nth-child(1),
+  .main > .panel:nth-child(3){
+    display:flex !important;
+    flex-direction:column !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* Testata: compatta. */
+  .main > .panel:nth-child(1) > .panel-head,
+  .main > .panel:nth-child(3) > .panel-head{
+    flex:0 0 43px !important;
+    height:43px !important;
+    min-height:43px !important;
+    max-height:43px !important;
+    padding:2px 4px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+  .main > .panel:nth-child(1) .team-line,
+  .main > .panel:nth-child(3) .team-line{
+    height:24px !important;
+    min-height:24px !important;
+  }
+  .main > .panel:nth-child(1) .name-input,
+  .main > .panel:nth-child(3) .name-input{
+    height:24px !important;
+    min-height:24px !important;
+    padding:1px 5px !important;
+    font-size:13px !important;
+    box-sizing:border-box !important;
+  }
+  .main > .panel:nth-child(1) .timeout-btn,
+  .main > .panel:nth-child(3) .timeout-btn{
+    height:24px !important;
+    min-height:24px !important;
+    padding:1px 7px !important;
+    font-size:8px !important;
+  }
+  .main > .panel:nth-child(1) .team-counters,
+  .main > .panel:nth-child(3) .team-counters{
+    height:10px !important;
+    line-height:10px !important;
+    margin-top:1px !important;
+    font-size:7px !important;
+  }
+
+  /* ---------- EVENTI ---------- */
+  .main > .panel:nth-child(1) > .event-toolbar,
+  .main > .panel:nth-child(3) > .event-toolbar{
+    flex:0 0 58px !important;
+    width:100% !important;
+    height:58px !important;
+    min-height:58px !important;
+    max-height:58px !important;
+    padding:2px 3px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar .event-toolbar-row,
+  .main > .panel:nth-child(3) > .event-toolbar .event-toolbar-row{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    gap:3px !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar .event-toolbar-row + .event-toolbar-row,
+  .main > .panel:nth-child(3) > .event-toolbar .event-toolbar-row + .event-toolbar-row{
+    margin-top:2px !important;
+  }
+  .main > .panel:nth-child(1) > .event-toolbar button,
+  .main > .panel:nth-child(3) > .event-toolbar button,
+  .main > .panel:nth-child(1) > .event-toolbar .event-prompt,
+  .main > .panel:nth-child(3) > .event-toolbar .event-prompt{
+    height:26px !important;
+    min-height:26px !important;
+    max-height:26px !important;
+    padding:1px 3px !important;
+    border-radius:4px !important;
+    font-size:9px !important;
+    line-height:24px !important;
+    box-sizing:border-box !important;
+  }
+
+  /* ---------- DIDASCALIA ---------- */
+  .main > .panel:nth-child(1) > .players-caption,
+  .main > .panel:nth-child(3) > .players-caption{
+    flex:0 0 9px !important;
+    height:9px !important;
+    min-height:9px !important;
+    max-height:9px !important;
+    padding:0 !important;
+    line-height:9px !important;
+    font-size:6px !important;
+  }
+
+  /* ---------- GIOCATORI ----------
+     264px = circa 66px per riga, quindi molto più vicino alla
+     proporzione dei dirigenti e senza il vuoto sopra. */
+  .main > .panel:nth-child(1) > .players,
+  .main > .panel:nth-child(3) > .players{
+    flex:0 0 264px !important;
+    width:100% !important;
+    height:264px !important;
+    min-height:264px !important;
+    max-height:264px !important;
+    padding:2px !important;
+    gap:2px !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+    overflow:hidden !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-card,
+  .main > .panel:nth-child(3) > .players .player-card{
+    height:100% !important;
+    min-height:0 !important;
+    border-radius:4px !important;
+    box-sizing:border-box !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-top,
+  .main > .panel:nth-child(3) > .players .player-top{
+    height:21px !important;
+    min-height:21px !important;
+    flex:0 0 21px !important;
+    padding:0 2px !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-number,
+  .main > .panel:nth-child(3) > .players .player-number{
+    width:42px !important;
+    min-width:42px !important;
+    height:21px !important;
+    min-height:21px !important;
+    font-size:16px !important;
+    line-height:21px !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-goals,
+  .main > .panel:nth-child(3) > .players .player-goals{font-size:8px !important;line-height:21px !important;}
+  .main > .panel:nth-child(1) > .players .player-stats,
+  .main > .panel:nth-child(3) > .players .player-stats{
+    height:13px !important;
+    min-height:13px !important;
+    flex:0 0 13px !important;
+    gap:1px !important;
+    padding:1px !important;
+    font-size:7px !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-actions,
+  .main > .panel:nth-child(3) > .players .player-actions{
+    padding:1px !important;
+    gap:2px !important;
+  }
+  .main > .panel:nth-child(1) > .players .player-event-btn,
+  .main > .panel:nth-child(3) > .players .player-event-btn{
+    min-height:0 !important;
+    font-size:7px !important;
+    border-radius:3px !important;
+  }
+
+  /* ---------- DIRIGENTI ---------- */
+  .main > .panel:nth-child(1) > .staff-title,
+  .main > .panel:nth-child(3) > .staff-title{
+    flex:0 0 10px !important;
+    height:10px !important;
+    min-height:10px !important;
+    max-height:10px !important;
+    padding:0 !important;
+    line-height:10px !important;
+    font-size:6px !important;
+  }
+  .main > .panel:nth-child(1) > .staff,
+  .main > .panel:nth-child(3) > .staff{
+    flex:0 0 74px !important;
+    width:100% !important;
+    height:74px !important;
+    min-height:74px !important;
+    max-height:74px !important;
+    padding:1px 2px !important;
+    gap:2px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+  .main > .panel:nth-child(1) > .staff > .staff-card,
+  .main > .panel:nth-child(3) > .staff > .staff-card{
+    height:70px !important;
+    min-height:70px !important;
+    max-height:70px !important;
+    border-radius:4px !important;
+  }
+
+  /* ---------- REGISTRO ---------- */
+  .main > .panel:nth-child(2){
+    display:flex !important;
+    flex-direction:column !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+  .main > .panel:nth-child(2) > .log-head{
+    flex:0 0 35px !important;
+    height:35px !important;
+    min-height:35px !important;
+    max-height:35px !important;
+    padding:3px 5px !important;
+    box-sizing:border-box !important;
+  }
+  .main > .panel:nth-child(2) .log-title{
+    font-size:12px !important;
+    letter-spacing:.4px !important;
+  }
+  .main > .panel:nth-child(2) > .log-columns{
+    flex:0 0 20px !important;
+    height:20px !important;
+    min-height:20px !important;
+    max-height:20px !important;
+    padding:2px 3px !important;
+    grid-template-columns:44px 25px 30px minmax(0,1fr) 48px !important;
+    gap:2px !important;
+    font-size:7px !important;
+    box-sizing:border-box !important;
+  }
+  .main > .panel:nth-child(2) > .log{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  /* QUI è dove serve spazio: la riga dell'evento. */
+  .main > .panel:nth-child(2) .log-row{
+    min-height:32px !important;
+    height:32px !important;
+    grid-template-columns:44px 25px 30px minmax(0,1fr) 48px !important;
+    gap:2px !important;
+    padding:4px 3px !important;
+    box-sizing:border-box !important;
+    font-size:11px !important;
+    line-height:1.15 !important;
+    align-items:center !important;
+  }
+  .main > .panel:nth-child(2) .log-time,
+  .main > .panel:nth-child(2) .log-team,
+  .main > .panel:nth-child(2) .log-num,
+  .main > .panel:nth-child(2) .log-res{
+    font-size:10px !important;
+    line-height:1.15 !important;
+  }
+  .main > .panel:nth-child(2) .log-event{
+    min-width:0 !important;
+    font-size:11px !important;
+    line-height:1.15 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -7212,6 +7562,21 @@ body.referto-attivo #app > * {
         </div>
       </div>
 
+      <div class="event-toolbar team-a-toolbar" id="eventToolbarA">
+        <div class="event-toolbar-row">
+          <button type="button" class="warning" data-event-type="YELLOW" onclick="toolbarEvent('A','YELLOW')">WARNING</button>
+          <button type="button" class="two" data-event-type="TWO" onclick="toolbarEvent('A','TWO')">2 MIN.</button>
+          <button type="button" class="disq" data-event-type="RED" onclick="toolbarEvent('A','RED')">DISQ</button>
+          <button type="button" class="tp" data-event-type="TPENALTY" onclick="toolbarEvent('A','TPENALTY')">T.PENALTY</button>
+        </div>
+        <div class="event-toolbar-row">
+          <button type="button" class="goal" data-event-type="GOAL" onclick="toolbarEvent('A','GOAL')">GOAL</button>
+          <button type="button" class="penalty-goal" data-event-type="PENALTY_GOAL" onclick="toolbarEvent('A','PENALTY_GOAL')">7m GOAL</button>
+          <button type="button" class="penalty-miss" data-event-type="PENALTY_MISS" onclick="toolbarEvent('A','PENALTY_MISS')">7m MISS</button>
+          <div class="event-prompt" id="eventPromptA">SELEZIONA EVENTO</div>
+        </div>
+      </div>
+
       <div class="players-caption">N° MAGLIA · EVENTO</div>
       <div id="playersA" class="players"></div>
 
@@ -7244,6 +7609,21 @@ body.referto-attivo #app > * {
         <div class="team-counters">
           <span id="bTimeout">T.O. 0/3</span>
           <span id="bPenalty">RIGORI 0/0</span>
+        </div>
+      </div>
+
+      <div class="event-toolbar team-b-toolbar" id="eventToolbarB">
+        <div class="event-toolbar-row">
+          <button type="button" class="warning" data-event-type="YELLOW" onclick="toolbarEvent('B','YELLOW')">WARNING</button>
+          <button type="button" class="two" data-event-type="TWO" onclick="toolbarEvent('B','TWO')">2 MIN.</button>
+          <button type="button" class="disq" data-event-type="RED" onclick="toolbarEvent('B','RED')">DISQ</button>
+          <button type="button" class="tp" data-event-type="TPENALTY" onclick="toolbarEvent('B','TPENALTY')">T.PENALTY</button>
+        </div>
+        <div class="event-toolbar-row">
+          <button type="button" class="goal" data-event-type="GOAL" onclick="toolbarEvent('B','GOAL')">GOAL</button>
+          <button type="button" class="penalty-goal" data-event-type="PENALTY_GOAL" onclick="toolbarEvent('B','PENALTY_GOAL')">7m GOAL</button>
+          <button type="button" class="penalty-miss" data-event-type="PENALTY_MISS" onclick="toolbarEvent('B','PENALTY_MISS')">7m MISS</button>
+          <div class="event-prompt" id="eventPromptB">SELEZIONA EVENTO</div>
         </div>
       </div>
 
@@ -7363,6 +7743,14 @@ function apriManualeUso(){
         CRONOMETRO PALAZZETTO CONTINUATIVO
       </label>
       <div style="font-size:11px;color:#475569;margin-top:5px">Se non selezionato, il cronometro ufficiale riparte da 00:00 ad ogni tempo. Questa impostazione serve solo per il calcolo del cartellino dei 2'.</div>
+    </div>
+
+    <div style="margin-top:9px;padding:10px;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;text-align:left">
+      <label style="display:flex;align-items:center;gap:9px;font-weight:900;font-size:13px;cursor:pointer">
+        <input id="printCardsInput" type="checkbox" style="width:20px;height:20px;accent-color:#16a34a">
+        STAMPA CARTELLINI
+      </label>
+      <div style="font-size:11px;color:#475569;margin-top:5px">Se selezionato, il cartellino dell'esclusione da 2 minuti viene stampato direttamente, senza richiesta di conferma.</div>
     </div>
 
     <div style="margin-top:9px">
@@ -7601,6 +7989,7 @@ let state={
   halfDurationMinutes:30,matchMode:'STANDARD',rigoriStarted:false,
   // Configurazione del cronometro ufficiale del palazzetto (solo per i cartellini)
   cronometroContinuativo:false,
+  stampaCartellini:false,
   firstHalfScoreA:0,firstHalfScoreB:0,
   secondHalfScoreA:0,secondHalfScoreB:0,
   overtimeSeries:0,overtimeHalf:0,
@@ -7636,6 +8025,7 @@ let state={
   penalty:{A:0,B:0},
   penaltyScored:{A:0,B:0},
   activeSuspensions:[],
+  pendingEvent:null,
   events:[]
 };
 
@@ -7643,6 +8033,7 @@ let interval=null;
 let timeoutInterval=null;
 let selected=null;
 let selectedPenalty=null;
+let pendingEvent=null;
 let editingLogIndex=null;
 let editingLogTeam=null;
 let editingLogKind=null;
@@ -8357,6 +8748,12 @@ function applyRegistroFullRowColors(){
 }
 
 function render(){
+  // Ripristina l'eventuale selezione evento salvata nello stato.
+  if(!pendingEvent && state.pendingEvent) pendingEvent={...state.pendingEvent};
+  if(pendingEvent && (!state.events?.[pendingEvent.index] || !state.events[pendingEvent.index].pending)){
+    pendingEvent=null; state.pendingEvent=null;
+  }
+
   renderLogMiniTimer();
   ensureTeamColors();
   applyTeamColors(state.teamColors);
@@ -8446,6 +8843,7 @@ function render(){
   renderPlayers('B');
   renderStaff('A');
   renderStaff('B');
+  updateEventToolbarUI();
 
   // Il titolo dei dirigenti segue le lettere effettivamente configurate.
   ['A','B'].forEach(team=>{
@@ -8522,6 +8920,403 @@ function disciplineCountdownText(team,num){
   return lines.join('');
 }
 
+
+function eventDisplayLabel(type){
+  const labels={
+    YELLOW:'WARNING',
+    TWO:'2 MIN.',
+    RED:'DISQ',
+    TPENALTY:'T.PENALTY',
+    GOAL:'GOAL',
+    PENALTY_GOAL:'7m GOAL',
+    PENALTY_MISS:'7m MISS'
+  };
+  return labels[type] || type;
+}
+
+function eventLogText(type){
+  const labels={
+    YELLOW:'AMMONIZIONE',
+    TWO:"2'",
+    RED:'ESPULSIONE',
+    TPENALTY:'T.PENALTY',
+    GOAL:'GOAL',
+    PENALTY_GOAL:'RIGORE REALIZZATO',
+    PENALTY_MISS:'RIGORE ERRATO'
+  };
+  return labels[type] || type;
+}
+
+function clearPendingEvent(removeRow=true){
+  if(pendingEvent){
+    const idx=Number(pendingEvent.index);
+    if(removeRow && Array.isArray(state.events) && Number.isInteger(idx) && idx>=0 && idx<state.events.length){
+      state.events.splice(idx,1);
+    }
+  }
+  pendingEvent=null;
+  state.pendingEvent=null;
+  updateEventToolbarUI();
+}
+
+function updateEventToolbarUI(){
+  ['A','B'].forEach(team=>{
+    const toolbar=el('eventToolbar'+team);
+    const prompt=el('eventPrompt'+team);
+    if(!toolbar)return;
+
+    toolbar.querySelectorAll('button[data-event-type]').forEach(btn=>{
+      btn.classList.toggle(
+        'event-selected',
+        !!pendingEvent &&
+        pendingEvent.team===team &&
+        pendingEvent.type===btn.dataset.eventType
+      );
+    });
+
+    if(prompt){
+      if(pendingEvent && pendingEvent.team===team){
+        prompt.textContent=`EVENTO: ${eventDisplayLabel(pendingEvent.type)} · SELEZIONA GIOCATORE / DIRIGENTE`;
+      }else if(pendingEvent){
+        prompt.textContent=`COMPLETA EVENTO ${eventDisplayLabel(pendingEvent.type)} · ${pendingEvent.team}`;
+      }else{
+        prompt.textContent='SELEZIONA EVENTO';
+      }
+    }
+  });
+}
+
+function toolbarEvent(team,type){
+  team=String(team).toUpperCase();
+  type=String(type).toUpperCase();
+
+  // Un evento può essere inserito quando la gara è già iniziata,
+  // anche se il cronometro è momentaneamente fermo.
+  // Prima dello START non permettiamo registrazioni accidentali.
+  if(!state.matchStarted){
+    toast('AVVIA LA GARA PRIMA DI REGISTRARE UN EVENTO');
+    return false;
+  }
+
+  // Un solo evento in attesa alla volta: prima va associato al soggetto.
+  if(pendingEvent){
+    toast(`COMPLETA PRIMA: ${eventDisplayLabel(pendingEvent.type)}`);
+    return false;
+  }
+
+  snapshot();
+
+  // T.PENALTY è un evento di squadra e quindi si completa subito.
+  if(type==='TPENALTY'){
+    const now=currentTime();
+    state.events.push({
+      time:now,
+      team:team,
+      num:'',
+      type:'TPENALTY',
+      text:'T.PENALTY',
+      result:`${state.scoreA}-${state.scoreB}`,
+      pending:false
+    });
+    updateUndoButton();
+    render();
+    saveRecovery();
+    return true;
+  }
+
+  // REGISTRAZIONE PARZIALE IMMEDIATA NEL REGISTRO.
+  // La riga resta nello stesso indice fino alla scelta del giocatore/dirigente.
+  const now=currentTime();
+  const partial={
+    time:now,
+    team:team,
+    num:'—',
+    type:(type==='PENALTY_GOAL'||type==='PENALTY_MISS')?'PENALTY':type,
+    text:eventLogText(type),
+    result:'—',
+    pending:true,
+    pendingAction:type
+  };
+
+  state.events.push(partial);
+  pendingEvent={
+    index:state.events.length-1,
+    team:team,
+    type:type,
+    time:now
+  };
+  state.pendingEvent={...pendingEvent};
+
+  // Aggiorniamo subito toolbar + Registro, senza passare da popup.
+  updateEventToolbarUI();
+  render();
+  saveRecovery();
+  return true;
+}
+
+function selectEventSubject(kind,team,index){
+  team=String(team);
+  kind=String(kind);
+
+  if(!pendingEvent){
+    toast('SELEZIONA PRIMA L\'EVENTO');
+    return;
+  }
+
+  if(pendingEvent.team!==team){
+    toast(`EVENTO DELLA SQUADRA ${pendingEvent.team}: SELEZIONA UN SOGGETTO DELLA STESSA SQUADRA`);
+    return;
+  }
+
+  if(state.phase===7){
+    toast('DURANTE I RIGORI UTILIZZARE IL PULSANTE TIRA');
+    return;
+  }
+
+  completePendingEvent(kind,team,index);
+}
+
+function finishPendingEvent(num,type,text){
+  if(!pendingEvent)return false;
+  const idx=Number(pendingEvent.index);
+  const ev=state.events?.[idx];
+  if(!ev)return false;
+
+  ev.num=String(num??'').trim();
+  ev.type=type;
+  ev.text=text;
+  ev.result=`${state.scoreA}-${state.scoreB}`;
+  ev.pending=false;
+  delete ev.pendingAction;
+
+  pendingEvent=null;
+  state.pendingEvent=null;
+  updateEventToolbarUI();
+  return true;
+}
+
+function cancelPendingEvent(message=''){
+  if(!pendingEvent)return;
+  clearPendingEvent(true);
+  updateUndoButton();
+  render();
+  if(message)toast(message);
+}
+
+function completePendingEvent(kind,team,index){
+  const original=pendingEvent;
+  if(!original)return;
+
+  const type=original.type;
+  const isPlayer=kind==='PLAYER';
+
+  if(isPlayer){
+    const d=state.discipline[team]?.[index];
+    const num=state.numbers[team]?.[index];
+    if(!d || String(num??'').trim()===''){
+      toast('GIOCATORE NON DISPONIBILE');
+      return;
+    }
+
+    const identifier=String(num).trim();
+
+    if(d.red){
+      toast('GIOCATORE ESPULSO: NESSUNA AZIONE DISPONIBILE');
+      return;
+    }
+
+    if((type==='GOAL' || type==='PENALTY_GOAL' || type==='PENALTY_MISS') &&
+       isActiveSuspension(team,identifier)){
+      toast('2\' IN CORSO: GOAL E RIGORE NON CONSENTITI');
+      return;
+    }
+
+    if(type==='GOAL'){
+      d.goals++;
+      if(team==='A')state.scoreA++;
+      else state.scoreB++;
+      finishPendingEvent(identifier,'GOAL','GOAL');
+      render();
+      saveRecovery();
+      return;
+    }
+
+    if(type==='PENALTY_GOAL' || type==='PENALTY_MISS'){
+      state.penalty[team]=(state.penalty[team]||0)+1;
+
+      if(type==='PENALTY_GOAL'){
+        state.penaltyScored[team]=(state.penaltyScored[team]||0)+1;
+        d.goals++;
+        if(team==='A')state.scoreA++;
+        else state.scoreB++;
+        finishPendingEvent(identifier,'PENALTY','RIGORE REALIZZATO');
+      }else{
+        finishPendingEvent(identifier,'PENALTY','RIGORE ERRATO');
+      }
+
+      render();
+      saveRecovery();
+      return;
+    }
+
+    if(type==='YELLOW'){
+      const yellowCount=teamYellowCount(team);
+
+      if(Number(d.yellow||0)===0){
+        if(yellowCount>=3){
+          cancelPendingEvent('3 AMMONIZIONI RAGGIUNTE · ASSEGNARE 2\' O ESPULSIONE');
+          showThreeYellowWarning(team);
+          return;
+        }
+
+        d.yellow=1;
+        finishPendingEvent(identifier,'YELLOW','AMMONIZIONE');
+        render();
+        saveRecovery();
+
+        if(yellowCount+1===3)showThreeYellowWarning(team);
+        return;
+      }
+
+      // Seconda ammonizione: manteniamo il piccolo popup decisionale
+      // già presente nel vecchio referto; non è il popup di scelta evento.
+      pendingPlayerYellowDecision={team,index,num:identifier,pending:true};
+      el('staffBenchDecisionTitle').textContent='AMMONIZIONE GIOCATORE';
+      el('staffBenchDecisionText').textContent=
+        `${state.teams[team]} · giocatore n° ${identifier} è già ammonito. `+
+        `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE oppure ANNULLA.`;
+      el('staffBenchDecisionModal').classList.remove('team-a','team-b');
+      el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
+      el('staffBenchDecisionModal').style.display='flex';
+      return;
+    }
+
+    if(type==='TWO'){
+      if(Number(d.two||0)>=3){
+        toast('TERZO 2\' GIÀ REGISTRATO');
+        return;
+      }
+
+      d.two++;
+      if(d.two===3){
+        d.red=true;
+        finishPendingEvent(identifier,'TWO',"2'");
+        startSuspension(team,identifier);
+        addEvent(team,identifier,'RED',"ESCLUSIONE PER 3x2'");
+        stopForDisciplinary(team,identifier,"ESCLUSIONE PER 3x2'");
+      }else{
+        finishPendingEvent(identifier,'TWO',"2'");
+        startSuspension(team,identifier);
+        stopForDisciplinary(team,identifier,`${d.two}° 2'`);
+      }
+
+      render();
+      saveRecovery();
+      return;
+    }
+
+    if(type==='RED'){
+      d.red=true;
+      finishPendingEvent(identifier,'RED','ESPULSIONE DIRETTA');
+      startSuspension(team,identifier);
+      stopForDisciplinary(team,identifier,'ESPULSIONE DIRETTA');
+      render();
+      saveRecovery();
+      return;
+    }
+
+    return;
+  }
+
+  // DIRIGENTE
+  const d=state.staff[team]?.[index];
+  const letter=String(state.staffLetters?.[team]?.[index] ?? '').trim().toUpperCase();
+
+  if(!d || !letter){
+    toast('DIRIGENTE SENZA LETTERA');
+    return;
+  }
+
+  if(d.red){
+    toast('DIRIGENTE ESPULSO: NESSUNA AZIONE DISPONIBILE');
+    return;
+  }
+
+  if(type==='YELLOW'){
+    const totalYellow=teamYellowCount(team);
+    const benchYellow=staffBenchYellowCount(team);
+
+    if(benchYellow===0){
+      if(totalYellow>=3){
+        cancelPendingEvent('3 AMMONIZIONI RAGGIUNTE · ASSEGNARE 2\' O ESPULSIONE');
+        showThreeYellowWarning(team);
+        return;
+      }
+
+      d.yellow=1;
+      finishPendingEvent(letter,'YELLOW','AMMONIZIONE');
+      render();
+      saveRecovery();
+
+      if(totalYellow+1===3)showThreeYellowWarning(team);
+      return;
+    }
+
+    // Come nel vecchio referto, una nuova ammonizione della panchina
+    // richiede la decisione 2' / ESPULSIONE.
+    pendingStaffBenchDecision={team,index,letter,pending:true};
+    el('staffBenchDecisionTitle').textContent='AMMONIZIONE PANCHINA';
+    el('staffBenchDecisionText').textContent=
+      `${state.teams[team]} · questa è la ${benchYellow+1}ª ammonizione della panchina. `+
+      `L'ammonizione al dirigente ${letter} non viene registrata automaticamente. `+
+      `L'ARBITRO DEVE DECIDERE: 2' oppure ESPULSIONE.`;
+    el('staffBenchDecisionModal').classList.remove('team-a','team-b');
+    el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
+    el('staffBenchDecisionModal').style.display='flex';
+    return;
+  }
+
+  if(type==='TWO'){
+    if(Number(d.two||0)>=1){
+      d.red=true;
+      finishPendingEvent(letter,'RED','ESPULSIONE');
+      startSuspension(team,letter);
+      stopForDisciplinary(team,letter,'ESPULSIONE');
+    }else{
+      d.two=1;
+      finishPendingEvent(letter,'TWO',"2'");
+      startSuspension(team,letter);
+      stopForDisciplinary(team,letter,"2'");
+    }
+    render();
+    saveRecovery();
+    return;
+  }
+
+  if(type==='RED'){
+    d.red=true;
+    finishPendingEvent(letter,'RED','ESPULSIONE');
+    startSuspension(team,letter);
+    stopForDisciplinary(team,letter,'ESPULSIONE');
+    render();
+    saveRecovery();
+  }
+}
+
+function getPlayerSevenMeterStats(team,num){
+  const target=String(num??'').trim();
+  let shots=0, scored=0;
+  if(!target) return {shots,scored};
+  for(const e of (state.events||[])){
+    if(!e || e.team!==team || String(e.num??'').trim()!==target) continue;
+    if(e.type==='PENALTY'){
+      shots++;
+      if(String(e.text||'').toUpperCase().includes('REALIZZATO')) scored++;
+    }
+  }
+  return {shots,scored};
+}
+
 function renderPlayers(team){
   const box=el('players'+team);
   box.innerHTML='';
@@ -8589,6 +9384,7 @@ function renderPlayers(team){
         <span class="discipline-cell ${yellow?'yellow-active':''}">A</span>
         <span class="discipline-cell ${twoClass}">2' ${twoCount}/3</span>
         <span class="discipline-cell ${directRed?'red-active':''}">E</span>
+        <span class="discipline-cell seven-meter-cell">7m ${getPlayerSevenMeterStats(team,num).shots}/${getPlayerSevenMeterStats(team,num).scored}</span>
       </div>
 
       <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
@@ -8606,7 +9402,7 @@ function renderPlayers(team){
     if(hasNumber && !d.red && !excluded){
       card.classList.add('player-card-touch');
       card.addEventListener('click', function(){
-        openEventMenu('PLAYER', team, i);
+        selectEventSubject('PLAYER', team, i);
       });
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
@@ -8696,7 +9492,7 @@ function renderStaff(team){
     if(letter && !d.red && !excluded){
       card.classList.add('staff-card-touch');
       card.addEventListener('click', function(){
-        openEventMenu('STAFF', team, i);
+        selectEventSubject('STAFF', team, i);
       });
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
@@ -8819,13 +9615,14 @@ function renderLog(){
   box.innerHTML=[...events].reverse().map((e,rev)=>{
     const idx=events.length-1-rev;
     const phaseEvent=/^(?:INIZIO|FINE)\s+(?:1°|2°|3°|4°)\s+TEMPO(?:\s+SUPPLEMENTARE)?$/.test(String(e.text||e.event||'').trim());
-    const cls=(e.team==='A'?'log-a':(e.team==='B'?'log-b':''))+(phaseEvent?' system-phase-event':'');
+    const cls=(e.team==='A'?'log-a':(e.team==='B'?'log-b':''))+(phaseEvent?' system-phase-event':'')+(e.pending?' pending-event-row':'');
     let text=String(e.text||e.event||'').replace(/\b(?:giocatore|dirigente)\s*(?:n[°º.]?\s*)?\d+\s*[-:·]?\s*/ig,'').replace(/\bN[°º.]?\s*\d+\s*[-:·]?\s*/ig,'').trim();
-    const num=e.num&&e.num!=='—'?e.num:'';
-    const editable=e.type!=='SYSTEM';
+    const num=e.num&&e.num!=='—'?e.num:'—';
+    const result=e.result ? e.result : '—';
+    const editable=e.type!=='SYSTEM' && !e.pending;
     return `<div class="log-row ${cls}" ${editable?`onclick="editLogRow(${idx})"`:''}>`+
       `<div class="log-time">${e.time||''}</div><div class="log-team">${e.team||''}</div>`+
-      `<div class="log-num">${num}</div><div class="log-event">${text}</div><div class="log-res">${e.result||''}</div></div>`;
+      `<div class="log-num">${num}</div><div class="log-event">${text}</div><div class="log-res">${result}</div></div>`;
   }).join('');
   box.scrollTop=0;
 
@@ -9602,26 +10399,38 @@ function resolvePlayerYellowDecision(type){
   pendingPlayerYellowDecision=null;
   el('staffBenchDecisionModal').style.display='none';
 
-  if(!p || type==='CANCEL') return;
+  if(!p) return;
 
   const d=state.discipline[p.team][p.index];
   if(!d || d.red) return;
 
-  snapshot();
+  if(type==='CANCEL'){
+    cancelPendingEvent();
+    return;
+  }
 
   if(type==='TWO'){
     d.two++;
-    addEvent(p.team,p.num,'TWO',"2'");
+    if(d.two>=3)d.red=true;
+
+    finishPendingEvent(p.num,'TWO',"2'");
     startSuspension(p.team,p.num);
-    stopForDisciplinary(p.team,p.num,"2'");
+
+    if(d.two>=3){
+      addEvent(p.team,p.num,'RED',"ESCLUSIONE PER 3x2'");
+      stopForDisciplinary(p.team,p.num,"ESCLUSIONE PER 3x2'");
+    }else{
+      stopForDisciplinary(p.team,p.num,"2'");
+    }
   }else if(type==='RED'){
     d.red=true;
+    finishPendingEvent(p.num,'RED','ESPULSIONE DIRETTA');
     startSuspension(p.team,p.num);
-    addEvent(p.team,p.num,'RED','ESPULSIONE DIRETTA');
     stopForDisciplinary(p.team,p.num,'ESPULSIONE DIRETTA');
   }
 
   render();
+  saveRecovery();
 }
 
 function staffAction(team,index,type){
@@ -9716,48 +10525,53 @@ function closeStaffBenchDecision(){
 }
 
 function staffBenchDecision(type){
-  if(pendingPlayerYellowDecision){ resolvePlayerYellowDecision(type); return; }
+  if(pendingPlayerYellowDecision){
+    resolvePlayerYellowDecision(type);
+    return;
+  }
 
   if(!pendingStaffBenchDecision)return;
 
-  const {team,index,letter}=pendingStaffBenchDecision;
+  const p={...pendingStaffBenchDecision};
   pendingStaffBenchDecision=null;
   el('staffBenchDecisionModal').style.display='none';
-  if(type==='CANCEL') return;
 
-  const d=state.staff[team][index];
+  if(type==='CANCEL'){
+    cancelPendingEvent();
+    return;
+  }
+
+  const d=state.staff[p.team][p.index];
   if(!d || d.red)return;
 
-  snapshot();
-
-  // Questa decisione nasce da una nuova ammonizione del dirigente:
-  // la sua ammonizione conta nel totale squadra anche se l'arbitro la
-  // trasforma immediatamente in 2' oppure ESPULSIONE.
-  const yellowBefore=teamYellowCount(team);
+  // Se la decisione nasce dal tasto WARNING, l'ammonizione conta
+  // comunque nel totale squadra anche se trasformata in 2'/ESPULSIONE.
+  const yellowBefore=teamYellowCount(p.team);
 
   if(type==='TWO'){
     if(d.two>=1){
       d.red=true;
-      startSuspension(team,letter);
-      addEvent(team,letter,'RED','ESPULSIONE','');
-      stopForDisciplinary(team,letter,'ESPULSIONE');
+      finishPendingEvent(p.letter,'RED','ESPULSIONE');
+      startSuspension(p.team,p.letter);
+      stopForDisciplinary(p.team,p.letter,'ESPULSIONE');
     }else{
       d.two=1;
-      addEvent(team,letter,'TWO',"2'","");
-      startSuspension(team,letter);
-      stopForDisciplinary(team,letter,"2'");
+      finishPendingEvent(p.letter,'TWO',"2'");
+      startSuspension(p.team,p.letter);
+      stopForDisciplinary(p.team,p.letter,"2'");
     }
   }else if(type==='RED'){
     d.red=true;
-    startSuspension(team,letter);
-    addEvent(team,letter,'RED','ESPULSIONE','');
-    stopForDisciplinary(team,letter,'ESPULSIONE');
+    finishPendingEvent(p.letter,'RED','ESPULSIONE');
+    startSuspension(p.team,p.letter);
+    stopForDisciplinary(p.team,p.letter,'ESPULSIONE');
   }
 
   render();
+  saveRecovery();
 
-  if(yellowBefore+1===3){
-    showThreeYellowWarning(team);
+  if(p.pending && yellowBefore+1===3){
+    showThreeYellowWarning(p.team);
   }
 }
 
@@ -10761,6 +11575,28 @@ function confirmCardPrint(){
   closeCardPrint();
 }
 
+function stampaCartellinoDiretta(team,num,text){
+  const kind=(String(text||'').includes('ESPULS') || String(text||'').includes('ESCLUSIONE')) ? 'RED' : '2MIN';
+  const payload={
+    team:String(team),
+    teamName:state.teams[team],
+    num:String(num),
+    type:kind,
+    time:String(currentTime()),
+    phase:Number(state.phase)||1,
+    duration:Number((typeof getHalfSeconds==='function' ? getHalfSeconds()/60 : 30)),
+    cronometroContinuativo:state.cronometroContinuativo === true,
+    matchData:state
+  };
+  const encoded=encodeURIComponent(JSON.stringify(payload));
+  const w=window.open('Esclusione2Minuti.html?data='+encoded,'_blank');
+  if(!w){
+    // Se il browser blocca una nuova finestra, non apriamo alcun popup
+    // alternativo: la scelta STAMPA CARTELLINI resta comunque rispettata.
+    console.warn('Stampa cartellino bloccata dal browser');
+  }
+}
+
 function stopForDisciplinary(team,num,text){
   state.running=false;
   clearInterval(interval);
@@ -10778,6 +11614,15 @@ function stopForDisciplinary(team,num,text){
     duration:Number((typeof getHalfSeconds==='function' ? getHalfSeconds()/60 : 30))
   };
 
+  // STAMPA CARTELLINI: la stessa regola vale sia per i 2 minuti
+  // sia per l'espulsione diretta (cartellino rosso).
+  // Se selezionata, il cartellino viene stampato direttamente, senza richiesta.
+  // Se non selezionata, non viene effettuata alcuna stampa.
+  if(state.stampaCartellini===true && pendingCardPrint){
+    stampaCartellinoDiretta(team,num,text);
+    pendingCardPrint=null;
+  }
+
   el('disciplineTitle').textContent='PROVVEDIMENTO DISCIPLINARE';
   el('disciplineText').textContent=
     `${state.teams[team]} · ${num} · ${text}. Il cronometro è fermo.`;
@@ -10792,8 +11637,11 @@ function closeDiscipline(){
   if(state.timer>0 && state.phase!==7) el('timer').classList.add('blink');
   render();
 
-  // Il cronometro resta fermo: ora chiediamo se stampare il cartellino.
-  if(pendingCardPrint){
+  // Con STAMPA CARTELLINI attivo la stampa è già partita direttamente
+  // per 2' ed espulsione diretta. Se disattivo, nessuna richiesta.
+  // Manteniamo il popup solo per eventuali flussi legacy in cui il flag
+  // non è stato applicato al momento del provvedimento.
+  if(pendingCardPrint && state.stampaCartellini!==true && pendingCardPrint.type!=='2MIN'){
     const p=pendingCardPrint;
     el('cardPrintTitle').textContent =
       p.type==='RED' ? '🟥 CARTELLINO ESPULSIONE' : "🟧 CARTELLINO 2'";
@@ -11012,6 +11860,8 @@ function openEditTeams(){
   if(modeInput)modeInput.value=state.matchMode || 'STANDARD';
   const pc=el('palazzettoContinuousInput');
   if(pc)pc.checked=state.cronometroContinuativo===true;
+  const printCardsInput=el('printCardsInput');
+  if(printCardsInput)printCardsInput.checked=state.stampaCartellini===true;
   const msg=el('editNumberError');
   if(msg)msg.classList.remove('show');
   const rb=el('restoreBtn');
@@ -11203,6 +12053,7 @@ function saveEditTeams(){
   state.halfDurationMinutes=duration;
   state.matchMode=el('matchModeInput')?.value || 'STANDARD';
   state.cronometroContinuativo=!!el('palazzettoContinuousInput')?.checked;
+  state.stampaCartellini=!!el('printCardsInput')?.checked;
 
   // Le lettere sono esclusivamente A-B-C-D-E e non sono modificabili.
   // L'unica operazione consentita è lasciare vuoto il nome del dirigente.
@@ -11590,6 +12441,8 @@ function closeConfigAndStart(){
   // ☑ = cronometro palazzetto continuativo -> mini timer NASCOSTO
   const palazzettoContinuousInput=el('palazzettoContinuousInput');
   state.cronometroContinuativo=!!palazzettoContinuousInput?.checked;
+  const printCardsInput=el('printCardsInput');
+  state.stampaCartellini=!!printCardsInput?.checked;
 
   // IMPORTANTISSIMO: REFERTO deve usare la modalità scelta in CONFIGURAZIONE.
   // selectMatchMode() aggiorna l'input, ma non basta da solo perché REFERTO
@@ -11706,248 +12559,62 @@ document.addEventListener('keydown', function(e){
 </script>
 
 
-<script id="tablet-touch-event-handler">
+<!-- Gestione eventi touch: ora i giocatori/dirigenti completano l'evento già selezionato. -->
+<script id="event-register-direct-bind">
 (function(){
   function bind(){
-    const root=document.getElementById('playersA') || document;
-    // renderPlayers may recreate cards, so delegation must be on a stable ancestor.
-    const roots=[document.getElementById('playersA'),document.getElementById('playersB'),
-                 document.getElementById('staffA'),document.getElementById('staffB')]
-                .filter(Boolean);
-    roots.forEach(root=>{
-      if(root.dataset.eventTouchBound==='1') return;
-      const fire=function(ev){
-        const card=ev.target.closest?.('.player-card,.staff-card');
-        if(!card || !root.contains(card)) return;
-        if(ev.target.closest('button,input,select')) return;
-        if(typeof state==='undefined' || state.phase===7) return;
-        const team=card.dataset.playerTeam || card.dataset.team;
-        const index=Number(card.dataset.playerIndex ?? card.dataset.index);
-        if((team==='A'||team==='B') && Number.isInteger(index) &&
-           typeof openEventMenu==='function'){
+    ['A','B'].forEach(function(team){
+      var toolbar=document.getElementById('eventToolbar'+team);
+      if(!toolbar)return;
+      toolbar.querySelectorAll('button[data-event-type]').forEach(function(btn){
+        if(btn.dataset.directEventBound==='1')return;
+        btn.dataset.directEventBound='1';
+        btn.addEventListener('pointerdown',function(ev){
+          if(ev.pointerType==='mouse' && ev.button!==0)return;
           ev.preventDefault();
           ev.stopPropagation();
-          const isStaff=card.classList.contains('staff-card');
-          openEventMenu(isStaff?'STAFF':'PLAYER',team,index);
-        }
-      };
-      root.addEventListener('pointerup',fire,{passive:false});
-      root.addEventListener('click',fire,{passive:false});
-      root.dataset.eventTouchBound='1';
+          if(typeof window.toolbarEvent==='function') window.toolbarEvent(team,btn.dataset.eventType);
+        },{passive:false});
+      });
     });
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
   else bind();
-  new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
-
-
-<style id="players-container-unlocked-final">
-/* GIOCATORI: il contenitore non ha più un'altezza fissa.
-   Riceve lo spazio realmente disponibile dal pannello e lascia i
-   DIRIGENTI immediatamente sotto. */
-.main > .panel.team-a,
-.main > .panel.team-b{
-  display:flex !important;
-  flex-direction:column !important;
-  min-height:0 !important;
-  overflow:hidden !important;
-}
-.main > .panel.team-a .players,
-.main > .panel.team-b .players{
-  flex:1 1 auto !important;
-  width:100% !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  box-sizing:border-box !important;
+<style id="player-seven-meter-stats-v1">
+/* 4 indicatori compatti nella stessa riga: A | 2' | E | 7m T/R */
+.player-card > .discipline-row{
   display:grid !important;
   grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-  grid-template-rows:repeat(4,minmax(0,1fr)) !important;
+  gap:2px !important;
+  padding:2px 4px !important;
+  flex:0 0 24px !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  box-sizing:border-box !important;
+}
+.player-card > .discipline-row .discipline-cell{
+  min-width:0 !important;
+  padding:0 1px !important;
+  font-size:7px !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
   overflow:hidden !important;
+  text-overflow:clip !important;
 }
-.main > .panel.team-a .staff,
-.main > .panel.team-b .staff{
-  flex:0 0 auto !important;
+.player-card > .discipline-row .seven-meter-cell{
+  font-size:7px !important;
+  font-variant-numeric:tabular-nums !important;
 }
-@media screen and (max-height:700px){
-  .main > .panel.team-a .players,
-  .main > .panel.team-b .players{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-  }
-}
-</style>
-
-
-<style id="staff-size-final">
-/* DIRIGENTI: contenitore +2 mm circa; card dirigente +1 mm circa. */
-@media screen and (orientation:landscape) and (min-width:700px){
-  .main > .panel:first-child > .staff,
-  .main > .panel:last-child > .staff{
-    height:80px !important;
-    min-height:80px !important;
-    max-height:80px !important;
-  }
-  .main > .panel:first-child > .staff > .staff-card,
-  .main > .panel:last-child > .staff > .staff-card{
-    height:76px !important;
-    min-height:76px !important;
-    max-height:76px !important;
-  }
+/* I dirigenti restano con i 3 indicatori originali. */
+.staff-card > .discipline-row{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
 }
 </style>
 </body>
 </html>
-
-<style id="layout-final-clean">
-/* LAYOUT FINALE PANNELLI SQUADRA
-   Nessun contenitore separato per "ESCLUSIONI IN CORSO".
-   Il countdown dei 2' vive nella card del giocatore/dirigente.
-   La testata mantiene spazio sufficiente per nome squadra e TIME OUT.
-   La griglia giocatori riceve lo spazio verticale disponibile. */
-@media screen and (orientation:landscape) and (min-width:700px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    display:grid !important;
-    grid-template-rows:43px 10px 347px 10px 80px !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-  }
-
-  .main > .panel:first-child > .panel-head,
-  .main > .panel:last-child > .panel-head{
-    height:38px !important;
-    min-height:38px !important;
-    padding:2px 5px !important;
-    overflow:hidden !important;
-  }
-
-  .main > .panel:first-child > .panel-head .team-line,
-  .main > .panel:last-child > .panel-head .team-line{
-    height:24px !important;
-    min-height:24px !important;
-    align-items:center !important;
-  }
-
-  .main > .panel:first-child > .panel-head .name-input,
-  .main > .panel:last-child > .panel-head .name-input{
-    height:24px !important;
-    min-height:24px !important;
-    padding:0 5px !important;
-    line-height:23px !important;
-  }
-
-  .main > .panel:first-child > .panel-head .timeout-btn,
-  .main > .panel:last-child > .panel-head .timeout-btn{
-    height:24px !important;
-    min-height:24px !important;
-    padding:0 8px !important;
-    line-height:23px !important;
-  }
-
-  .main > .panel:first-child > .panel-head .team-counters,
-  .main > .panel:last-child > .panel-head .team-counters{
-    height:10px !important;
-    min-height:10px !important;
-    margin-top:1px !important;
-    line-height:9px !important;
-    font-size:8px !important;
-    gap:8px !important;
-  }
-
-  .main > .panel:first-child > .players-caption,
-  .main > .panel:last-child > .players-caption{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-    padding:0 !important;
-    font-size:7px !important;
-  }
-
-  .main > .panel:first-child > .players,
-  .main > .panel:last-child > .players{
-    height:100% !important;
-    min-height:0 !important;
-    max-height:none !important;
-    padding:3px !important;
-    gap:3px !important;
-    overflow:hidden !important;
-    align-self:stretch !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
-  }
-
-  .main > .panel:first-child > .staff-title,
-  .main > .panel:last-child > .staff-title{
-    height:10px !important;
-    min-height:10px !important;
-    line-height:10px !important;
-  }
-
-  .main > .panel:first-child > .staff,
-  .main > .panel:last-child > .staff{
-    height:72px !important;
-    min-height:72px !important;
-    max-height:72px !important;
-    padding:2px !important;
-    gap:2px !important;
-    overflow:hidden !important;
-  }
-}
-
-@media screen and (orientation:portrait) and (min-width:500px){
-  .main > .panel:first-child,
-  .main > .panel:last-child{
-    display:grid !important;
-    grid-template-rows:34px 9px minmax(0,1fr) 10px 72px !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-  }
-  .main > .panel:first-child > .panel-head,
-  .main > .panel:last-child > .panel-head{
-    height:34px !important;
-    min-height:34px !important;
-    padding:2px 4px !important;
-    overflow:hidden !important;
-  }
-  .main > .panel:first-child > .panel-head .team-line,
-  .main > .panel:last-child > .panel-head .team-line{
-    height:21px !important;
-    min-height:21px !important;
-  }
-  .main > .panel:first-child > .panel-head .name-input,
-  .main > .panel:last-child > .panel-head .name-input,
-  .main > .panel:first-child > .panel-head .timeout-btn,
-  .main > .panel:last-child > .panel-head .timeout-btn{
-    height:21px !important;
-    min-height:21px !important;
-    padding:0 5px !important;
-    line-height:20px !important;
-  }
-  .main > .panel:first-child > .panel-head .team-counters,
-  .main > .panel:last-child > .panel-head .team-counters{
-    height:9px !important;
-    min-height:9px !important;
-    margin-top:0 !important;
-    line-height:8px !important;
-    font-size:7px !important;
-  }
-  .main > .panel:first-child > .players,
-  .main > .panel:last-child > .players{
-    height:100% !important;
-    min-height:0 !important;
-    padding:2px !important;
-    gap:2px !important;
-    overflow:hidden !important;
-    align-self:stretch !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    grid-template-rows:repeat(4,minmax(0,1fr)) !important;
-  }
-}
-</style>
 
 <!-- POPUP STAMPA CARTELLINO 2' -->
 <div id="cardPrintModal">
@@ -11960,5 +12627,7 @@ document.addEventListener('keydown', function(e){
     </div>
   </div>
 </div>
+
+
 
 
