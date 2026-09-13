@@ -9491,7 +9491,7 @@ function completePendingEvent(kind,team,index){
       const yellowCount=teamYellowCount(team);
 
       if(Number(d.yellow||0)===0){
-        if(yellowCount>=3){
+        if(yellowCount>=MAX_TEAM_YELLOWS){
           cancelPendingEvent('3 AMMONIZIONI RAGGIUNTE · ASSEGNARE 2\' O ESPULSIONE');
           showThreeYellowWarning(team);
           return;
@@ -9572,35 +9572,36 @@ function completePendingEvent(kind,team,index){
 
   if(type==='YELLOW'){
     const totalYellow=teamYellowCount(team);
-    const benchYellow=staffBenchYellowCount(team);
+    const alreadyYellow=Number(d.yellow||0)>0;
 
-    if(benchYellow===0){
-      if(totalYellow>=3){
-        cancelPendingEvent('3 AMMONIZIONI RAGGIUNTE · ASSEGNARE 2\' O ESPULSIONE');
-        showThreeYellowWarning(team);
-        return;
-      }
-
-      d.yellow=1;
-      finishPendingEvent(letter,'YELLOW','AMMONIZIONE');
-      render();
-      saveRecovery();
-
-      if(totalYellow+1===3)showThreeYellowWarning(team);
+    // Ogni dirigente può avere una sola ammonizione.
+    // Se è già ammonito, il rigo provvisorio resta nel Registro finché
+    // l'arbitro non sceglie 2', ESPULSIONE DIRETTA oppure ANNULLA.
+    if(alreadyYellow){
+      pendingStaffBenchDecision={team,index,letter,pending:true};
+      el('staffBenchDecisionTitle').textContent='SECONDA AMMONIZIONE DIRIGENTE';
+      el('staffBenchDecisionText').textContent=
+        `${state.teams[team]} · dirigente ${letter} è già ammonito. `+
+        `Una seconda ammonizione non viene registrata come YELLOW. `+
+        `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE DIRETTA oppure ANNULLA.`;
+      el('staffBenchDecisionModal').classList.remove('team-a','team-b');
+      el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
+      el('staffBenchDecisionModal').style.display='flex';
       return;
     }
 
-    // Come nel vecchio referto, una nuova ammonizione della panchina
-    // richiede la decisione 2' / ESPULSIONE.
-    pendingStaffBenchDecision={team,index,letter,pending:true};
-    el('staffBenchDecisionTitle').textContent='AMMONIZIONE PANCHINA';
-    el('staffBenchDecisionText').textContent=
-      `${state.teams[team]} · questa è la ${benchYellow+1}ª ammonizione della panchina. `+
-      `L'ammonizione al dirigente ${letter} non viene registrata automaticamente. `+
-      `L'ARBITRO DEVE DECIDERE: 2' oppure ESPULSIONE.`;
-    el('staffBenchDecisionModal').classList.remove('team-a','team-b');
-    el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
-    el('staffBenchDecisionModal').style.display='flex';
+    if(totalYellow>=MAX_TEAM_YELLOWS){
+      cancelPendingEvent('3 AMMONIZIONI RAGGIUNTE · ASSEGNARE 2\' O ESPULSIONE');
+      showThreeYellowWarning(team);
+      return;
+    }
+
+    d.yellow=1;
+    finishPendingEvent(letter,'YELLOW','AMMONIZIONE');
+    render();
+    saveRecovery();
+
+    if(totalYellow+1===3)showThreeYellowWarning(team);
     return;
   }
 
@@ -9729,11 +9730,26 @@ function renderPlayers(team){
 
     if(hasNumber && !d.red && !excluded){
       card.classList.add('player-card-touch');
-      card.addEventListener('click', function(){
+      // Tocco rapido su QUALSIASI punto della card: non solo sul numero.
+      // pointerdown rende la selezione molto più immediata sui tablet.
+      let touchHandled=false;
+      const activatePlayer=(ev)=>{
+        if(ev && ev.target && ev.target.closest('.shootout-shoot-btn')) return;
+        touchHandled=true;
+        selectEventSubject('PLAYER', team, i);
+        setTimeout(()=>{touchHandled=false;},450);
+      };
+      card.addEventListener('pointerdown', activatePlayer, {passive:true});
+      card.addEventListener('click', function(ev){
+        if(ev.target && ev.target.closest('.shootout-shoot-btn')) return;
+        if(touchHandled) return;
         selectEventSubject('PLAYER', team, i);
       });
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
+      card.style.userSelect='none';
+      card.style.webkitUserSelect='none';
+      card.style.webkitTapHighlightColor='transparent';
     }
 
     box.appendChild(card);
@@ -9819,11 +9835,25 @@ function renderStaff(team){
 
     if(letter && !d.red && !excluded){
       card.classList.add('staff-card-touch');
-      card.addEventListener('click', function(){
+      // L'intera card dirigente è una grande area di tocco.
+      let touchHandled=false;
+      const activateStaff=(ev)=>{
+        if(ev && ev.target && ev.target.closest('.shootout-shoot-btn')) return;
+        touchHandled=true;
+        selectEventSubject('STAFF', team, i);
+        setTimeout(()=>{touchHandled=false;},450);
+      };
+      card.addEventListener('pointerdown', activateStaff, {passive:true});
+      card.addEventListener('click', function(ev){
+        if(ev.target && ev.target.closest('.shootout-shoot-btn')) return;
+        if(touchHandled) return;
         selectEventSubject('STAFF', team, i);
       });
       card.style.cursor='pointer';
       card.style.touchAction='manipulation';
+      card.style.userSelect='none';
+      card.style.webkitUserSelect='none';
+      card.style.webkitTapHighlightColor='transparent';
     }
 
     box.appendChild(card);
@@ -10565,7 +10595,7 @@ function playerAction(team,index,type){
 
     // Un giocatore può avere una sola vera ammonizione.
     if(Number(d.yellow||0)===0){
-      if(yellowCount>=3){
+      if(yellowCount>=MAX_TEAM_YELLOWS){
         undoStack.pop();
         toast('3 AMMONIZIONI RAGGIUNTE · L\'ARBITRO DEVE ASSEGNARE 2\' O ESPULSIONE');
         return;
@@ -10676,9 +10706,14 @@ function isPlayerYellowEvent(e,team){
   return !STAFF.includes(n);
 }
 
+const MAX_TEAM_YELLOWS=3;
+
 function teamYellowCount(team){
+  // Il limite è di 3 ammonizioni EFFETTIVE per squadra.
+  // Una seconda ammonizione dello stesso dirigente/giocatore non viene
+  // conteggiata come nuova YELLOW: passa dal popup arbitrale 2'/ESPULSIONE/ANNULLA.
   return (state.events||[]).filter(e =>
-    e && e.team===team && e.type==='YELLOW'
+    e && e.team===team && e.type==='YELLOW' && e.pending!==true
   ).length;
 }
 
@@ -10776,29 +10811,31 @@ function staffAction(team,index,type){
 
   if(type==='YELLOW'){
     const totalYellow=teamYellowCount(team);
-    const benchYellow=staffBenchYellowCount(team);
+    const alreadyYellow=Number(d.yellow||0)>0;
 
-    // La panchina può avere una sola ammonizione effettiva.
-    if(benchYellow===0){
-      if(totalYellow>=3){
-        toast('3 AMMONIZIONI RAGGIUNTE · L\'ARBITRO DEVE ASSEGNARE 2\' O ESPULSIONE');
-        return;
-      }
-
-      snapshot();
-      d.yellow=1;
-      addEvent(team,letter,'YELLOW','AMMONIZIONE');
-      render();
-
-      if(totalYellow+1===3){
-        showThreeYellowWarning(team);
-      }
+    // Ogni dirigente può ricevere una sola ammonizione.
+    // Una seconda pressione su WARNING per lo stesso dirigente
+    // NON registra una seconda YELLOW: apre il popup arbitrale.
+    if(alreadyYellow){
+      openStaffBenchDecision(team,index,letter,2);
       return;
     }
 
-    // Qualunque altro dirigente: niente seconda YELLOW.
-    // Compare sempre il popup 2' / ESPULSIONE / ANNULLA.
-    openStaffBenchDecision(team,index,letter,benchYellow+1);
+    // Raggiunte 3 ammonizioni complessive di squadra, non si registra
+    // una nuova ammonizione: l'arbitro assegna direttamente 2' o espulsione.
+    if(totalYellow>=MAX_TEAM_YELLOWS){
+      toast('3 AMMONIZIONI RAGGIUNTE · L\'ARBITRO DEVE ASSEGNARE 2\' O ESPULSIONE');
+      return;
+    }
+
+    snapshot();
+    d.yellow=1;
+    addEvent(team,letter,'YELLOW','AMMONIZIONE');
+    render();
+
+    if(totalYellow+1===3){
+      showThreeYellowWarning(team);
+    }
     return;
   }
 
@@ -10835,11 +10872,11 @@ let pendingStaffBenchDecision=null;
 function openStaffBenchDecision(team,index,letter,benchYellowNumber){
   pendingStaffBenchDecision={team,index,letter};
 
-  el('staffBenchDecisionTitle').textContent='AMMONIZIONE PANCHINA';
+  el('staffBenchDecisionTitle').textContent='SECONDA AMMONIZIONE DIRIGENTE';
   el('staffBenchDecisionText').textContent=
-    `${state.teams[team]} · questa è la ${benchYellowNumber}ª ammonizione della panchina. `+
-    `L'ammonizione al dirigente ${letter} non viene registrata automaticamente. `+
-    `L'ARBITRO DEVE DECIDERE: 2' oppure ESPULSIONE.`;
+    `${state.teams[team]} · dirigente ${letter} è già ammonito. `+
+    `Una seconda ammonizione non viene registrata come YELLOW. `+
+    `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE DIRETTA oppure ANNULLA.`;
 
   el('staffBenchDecisionModal').classList.remove('team-a','team-b');
   el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
