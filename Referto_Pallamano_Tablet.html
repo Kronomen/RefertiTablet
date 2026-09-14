@@ -12978,6 +12978,56 @@ document.addEventListener('keydown', function(e){
   grid-template-columns:repeat(3,minmax(0,1fr)) !important;
 }
 </style>
+
+<style id="staff-letter-tablet-proportion-v18">
+/* Tablet 11": il contenitore della lettera dirigente deve essere piu' alto e meno largo,
+   cosi' la lettera resta completamente visibile e centrata anche al tocco. */
+@media screen and (orientation:landscape) and (min-width:900px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex:0 0 48px !important;
+    width:48px !important;
+    min-width:48px !important;
+    max-width:48px !important;
+    height:38px !important;
+    min-height:38px !important;
+    max-height:38px !important;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    box-sizing:border-box !important;
+    line-height:1 !important;
+    font-size:18px !important;
+    font-weight:900 !important;
+  }
+}
+@media screen and (orientation:landscape) and (min-width:900px) and (max-height:700px){
+  .main > .panel:nth-child(1) > .staff .staff-main-row > .staff-label,
+  .main > .panel:nth-child(3) > .staff .staff-main-row > .staff-label{
+    flex-basis:46px !important;
+    width:46px !important;
+    min-width:46px !important;
+    max-width:46px !important;
+    height:36px !important;
+    min-height:36px !important;
+    max-height:36px !important;
+    font-size:17px !important;
+  }
+}
+@media screen and (orientation:portrait){
+  .staff-card > .staff-main-row > .staff-label.staff-touch,
+  .staff-card > .staff-main-row > .staff-label{
+    height:38px !important;
+    min-height:38px !important;
+    max-height:38px !important;
+    width:48px !important;
+    min-width:48px !important;
+    max-width:48px !important;
+  }
+}
+</style>
+
 </body>
 </html>
 
