@@ -13247,3 +13247,128 @@ document.addEventListener('keydown', function(e){
   }
 }
 </style>
+
+<style id="config-tablet-11in-final">
+/* CONFIGURAZIONE TABLET 10-11": tutta la configurazione deve stare nello schermo.
+   Mantiene la grafica esistente, ma sfrutta la larghezza e riduce solo gli ingombri verticali. */
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal{
+  width:min(900px,96vw) !important;
+  max-width:96vw !important;
+  max-height:94vh !important;
+  box-sizing:border-box !important;
+  padding:9px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal h3{
+  margin:2px 0 2px !important;
+  font-size:18px !important;
+  line-height:1.05 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > p{
+  margin:2px 0 5px !important;
+  font-size:9px !important;
+  line-height:1.15 !important;
+}
+
+body:not(.referto-attivo) #editTeamsModal .edit-teams-grid{
+  gap:6px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box{
+  padding:5px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-name{
+  height:27px !important;
+  padding:3px 5px !important;
+  font-size:13px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-section-title{
+  margin-top:4px !important;
+  margin-bottom:2px !important;
+  font-size:8px !important;
+  line-height:1 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-players-grid,
+body:not(.referto-attivo) #editTeamsModal .edit-staff-grid{
+  gap:2px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-player-input,
+body:not(.referto-attivo) #editTeamsModal .edit-staff-input{
+  height:25px !important;
+  min-height:25px !important;
+  padding:2px !important;
+  font-size:11px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-staff-row{
+  grid-template-columns:30px minmax(0,1fr) !important;
+  gap:2px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-staff-fixed{
+  height:25px !important;
+  font-size:12px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-number-error-msg{
+  margin:3px 0 !important;
+  padding:4px !important;
+  font-size:9px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-duration-box{
+  margin-top:5px !important;
+  padding:5px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-duration-box input{
+  width:58px !important;
+  height:27px !important;
+  font-size:15px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-grid{
+  gap:4px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card{
+  padding:5px !important;
+  border-width:1px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card strong{
+  font-size:9px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card span{
+  margin-top:2px !important;
+  font-size:8px !important;
+  line-height:1.15 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"]{
+  margin-top:5px !important;
+  padding:5px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] label{
+  gap:6px !important;
+  font-size:10px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] label input{
+  width:17px !important;
+  height:17px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] div{
+  margin-top:2px !important;
+  font-size:8px !important;
+  line-height:1.15 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-restore{
+  margin-top:4px !important;
+  gap:4px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-restore button,
+body:not(.referto-attivo) #editTeamsModal .edit-teams-actions button{
+  min-height:29px !important;
+  padding:4px 6px !important;
+  font-size:10px !important;
+}
+
+/* In landscape tablet usiamo le due squadre affiancate; in verticale resta il layout originale a colonna. */
+@media screen and (min-width:700px) and (orientation:landscape){
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-grid{
+    grid-template-columns:1fr 1fr !important;
+  }
+}
+</style>
