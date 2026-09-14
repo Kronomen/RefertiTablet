@@ -6545,6 +6545,39 @@ tr.team-b td,
 }
 </style>
 
+<style id="individual-and-team-countdown-final-v1">
+/* Il countdown 2' deve essere visibile SIA nella card della squadra
+   (sotto T.O./RIGORI) SIA nella singola card del giocatore/dirigente. */
+.player-card > .discipline-status.countdown,
+.staff-card > .discipline-status.countdown{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  min-width:0 !important;
+  width:auto !important;
+  height:17px !important;
+  min-height:17px !important;
+  max-height:17px !important;
+  margin:0 3px 1px !important;
+  padding:0 3px !important;
+  box-sizing:border-box !important;
+  font-size:8px !important;
+  line-height:17px !important;
+  font-weight:900 !important;
+  font-variant-numeric:tabular-nums !important;
+  overflow:hidden !important;
+}
+.player-card > .discipline-status.countdown .countdown-line,
+.staff-card > .discipline-status.countdown .countdown-line{
+  display:inline-block !important;
+  height:auto !important;
+  line-height:17px !important;
+  white-space:nowrap !important;
+  font-size:8px !important;
+}
+</style>
 
 <style id="registro-title-center-v1">
 /* Titolo REGISTRO GARE centrato */
@@ -7575,15 +7608,22 @@ body.referto-attivo #app > * {
     height:26px !important;
     min-height:26px !important;
     max-height:26px !important;
-    padding:1px 4px !important;
+    padding:1px 3px !important;
     border:1px solid #94a3b8 !important;
     border-style:dashed !important;
     border-radius:5px !important;
     background:linear-gradient(to bottom,#ffffff,#f1f5f9) !important;
     box-shadow:inset 0 1px 2px rgba(15,23,42,.06) !important;
-    font-size:8px !important;
+    font-size:6.5px !important;
     font-weight:900 !important;
-    line-height:23px !important;
+    line-height:7px !important;
+    letter-spacing:-.12px !important;
+    white-space:normal !important;
+    overflow:hidden !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+    text-align:center !important;
+    box-sizing:border-box !important;
   }
 
   /* LETTERE DIRIGENTI: pulsante più netto e professionale, senza
@@ -7888,6 +7928,7 @@ body.referto-attivo #app > * {
           <span id="aTimeout">T.O. 0/3</span>
           <span id="aPenalty">RIGORI 0/0</span>
         </div>
+        <div id="teamDisciplineCountdownA" class="team-discipline-countdowns" aria-live="polite"></div>
       </div>
 
       <div class="event-toolbar team-a-toolbar" id="eventToolbarA">
@@ -7938,6 +7979,7 @@ body.referto-attivo #app > * {
           <span id="bTimeout">T.O. 0/3</span>
           <span id="bPenalty">RIGORI 0/0</span>
         </div>
+        <div id="teamDisciplineCountdownB" class="team-discipline-countdowns" aria-live="polite"></div>
       </div>
 
       <div class="event-toolbar team-b-toolbar" id="eventToolbarB">
@@ -9185,6 +9227,8 @@ function render(){
 
   renderLog();
   renderCounters();
+  renderTeamDisciplineCountdowns('A');
+  renderTeamDisciplineCountdowns('B');
   updateUndoButton();
 
   // MODIFICA SQUADRE è disponibile solo prima dell'avvio del cronometro.
@@ -9573,16 +9617,17 @@ function completePendingEvent(kind,team,index){
   if(type==='YELLOW'){
     const totalYellow=teamYellowCount(team);
     const alreadyYellow=Number(d.yellow||0)>0;
+    const benchAlreadyYellow=(state.staff[team]||[]).some(x=>Number(x?.yellow||0)>0);
 
-    // Ogni dirigente può avere una sola ammonizione.
-    // Se è già ammonito, il rigo provvisorio resta nel Registro finché
-    // l'arbitro non sceglie 2', ESPULSIONE DIRETTA oppure ANNULLA.
-    if(alreadyYellow){
+    // La 2ª ammonizione della PANCHINA può essere assegnata a un qualsiasi
+    // altro dirigente: non si registra una seconda YELLOW, ma si apre il
+    // popup arbitrale 2' / ESPULSIONE DIRETTA / ANNULLA.
+    if(alreadyYellow || benchAlreadyYellow){
       pendingStaffBenchDecision={team,index,letter,pending:true};
       el('staffBenchDecisionTitle').textContent='SECONDA AMMONIZIONE DIRIGENTE';
       el('staffBenchDecisionText').textContent=
-        `${state.teams[team]} · dirigente ${letter} è già ammonito. `+
-        `Una seconda ammonizione non viene registrata come YELLOW. `+
+        `${state.teams[team]} · la panchina ha già un dirigente ammonito. `+
+        `La 2ª ammonizione non viene registrata come YELLOW. `+
         `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE DIRETTA oppure ANNULLA.`;
       el('staffBenchDecisionModal').classList.remove('team-a','team-b');
       el('staffBenchDecisionModal').classList.add(team==='A'?'team-a':'team-b');
@@ -9691,13 +9736,15 @@ function renderPlayers(team){
     // Anche l'espulsione diretta deve mostrare il countdown dei 2'
     // nella riga sottostante. Il simbolo E resta rosso.
     const countdown=disciplineCountdownText(team,num);
+    // Il countdown 2' non viene più mostrato nella card del giocatore:
+    // viene centralizzato nella card della squadra, sotto T.O. e RIGORI.
     const statusText=
-      countdown || (excluded ? 'ESCLUSO' :
-      directRed ? 'ESPULSO' : '');
+      excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '';
 
     const statusClass=
-      countdown ? 'countdown' :
       statusText ? (excluded?'excluded':'expelled') : 'empty';
+    const hasCountdown=!!countdown;
 
     card.innerHTML=`
       <div class="player-top">
@@ -9716,8 +9763,8 @@ function renderPlayers(team){
         <span class="discipline-cell seven-meter-cell">7m ${getPlayerSevenMeterStats(team,num).shots}/${getPlayerSevenMeterStats(team,num).scored}</span>
       </div>
 
-      <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
-      ${(countdown && (excluded || directRed)) ? `<div class="discipline-extra-status">${excluded ? 'ESCLUSO' : 'ESPULSO'}</div>` : ''}
+      <div class="discipline-status ${hasCountdown?'countdown':statusClass}">${hasCountdown ? countdown : (statusText||'&nbsp;')}</div>
+      ${hasCountdown && statusText ? `<div class="discipline-extra-status">${statusText}</div>` : ''}
 
       ${state.phase===7 && state.shootout?.started ? `
         <button type="button"
@@ -9787,13 +9834,15 @@ function renderStaff(team){
 
     // Anche l'espulsione diretta del dirigente deve mostrare il countdown.
     const countdown=disciplineCountdownText(team,letter);
+    // Il countdown 2' viene mostrato nella card della squadra, non dentro
+    // la singola card del dirigente.
     const statusText=
-      countdown || (excluded ? 'ESCLUSO' :
-      directRed ? 'ESPULSO' : '');
+      excluded ? 'ESCLUSO' :
+      directRed ? 'ESPULSO' : '';
 
     const statusClass=
-      countdown ? 'countdown' :
       statusText ? (excluded?'excluded':'expelled') : 'empty';
+    const hasCountdown=!!countdown;
 
     const card=document.createElement('div');
     card.className='staff-card';
@@ -9829,8 +9878,8 @@ function renderStaff(team){
         <span class="discipline-cell ${directRed?'red-active':''}">E</span>
       </div>
 
-      <div class="discipline-status ${statusClass}">${statusText||'&nbsp;'}</div>
-      ${(countdown && (excluded || directRed)) ? `<div class="discipline-extra-status">${excluded ? 'ESCLUSO' : 'ESPULSO'}</div>` : ''}
+      <div class="discipline-status ${hasCountdown?'countdown':statusClass}">${hasCountdown ? countdown : (statusText||'&nbsp;')}</div>
+      ${hasCountdown && statusText ? `<div class="discipline-extra-status">${statusText}</div>` : ''}
     `;
 
     if(letter && !d.red && !excluded){
@@ -9892,6 +9941,51 @@ function syncTimeoutCounters(){
     state.timeoutsSecondHalf[t]=u.second;
     state.timeouts[t]=u.first+u.second;
   });
+}
+
+function renderTeamDisciplineCountdowns(team){
+  const box=el(team==='A' ? 'teamDisciplineCountdownA' : 'teamDisciplineCountdownB');
+  if(!box)return;
+
+  const now=Number(state.timer||0);
+  const list=(Array.isArray(state.activeSuspensions)?state.activeSuspensions:[])
+    .filter(x=>x && x.team===team && Number(x.endGameTime||0)>now)
+    .sort((a,b)=>{
+      const ao=Number(a.queueOrder||0), bo=Number(b.queueOrder||0);
+      if(ao!==bo)return ao-bo;
+      return Number(a.endGameTime||0)-Number(b.endGameTime||0);
+    });
+
+  if(!list.length){
+    box.innerHTML='';
+    box.style.display='none';
+    return;
+  }
+
+  const playerNumbers=(state.numbers?.[team]||[]).map(x=>String(x??'').trim()).filter(Boolean);
+  const staffLetters=(state.staffLetters?.[team]||STAFF).map(x=>String(x??'').trim().toUpperCase()).filter(Boolean);
+
+  const isPlayerId=id=>playerNumbers.includes(id);
+  const labelFor=id=>isPlayerId(id) ? `N° ${id}` : id;
+
+  box.innerHTML=list.map((s,idx)=>{
+    const start=Number.isFinite(Number(s.startGameTime))
+      ? Number(s.startGameTime)
+      : Number(s.endGameTime||0)-120;
+    const end=Number(s.endGameTime||start+120);
+    const left=Math.max(0,end-now);
+    const mm=String(Math.floor(left/60)).padStart(2,'0');
+    const ss=String(Math.floor(left%60)).padStart(2,'0');
+    const id=String(s.num??'').trim();
+    const label=labelFor(id);
+    const queued=now<start;
+    return `<span class="team-countdown-item${queued?' queued':''}" title="${label}">
+      <span class="team-countdown-id">${label}</span>
+      <span class="team-countdown-time">${mm}:${ss}</span>
+    </span>`;
+  }).join('');
+
+  box.style.display='flex';
 }
 
 function renderCounters(){
@@ -10812,11 +10906,13 @@ function staffAction(team,index,type){
   if(type==='YELLOW'){
     const totalYellow=teamYellowCount(team);
     const alreadyYellow=Number(d.yellow||0)>0;
+    const benchAlreadyYellow=(state.staff[team]||[]).some(x=>Number(x?.yellow||0)>0);
 
-    // Ogni dirigente può ricevere una sola ammonizione.
-    // Una seconda pressione su WARNING per lo stesso dirigente
-    // NON registra una seconda YELLOW: apre il popup arbitrale.
-    if(alreadyYellow){
+    // Per i dirigenti la 2ª ammonizione è riferita alla PANCHINA, non
+    // al singolo dirigente: se un qualsiasi altro dirigente della stessa
+    // squadra riceve WARNING dopo che un dirigente è già ammonito,
+    // si apre il popup arbitrale 2' / ESPULSIONE DIRETTA / ANNULLA.
+    if(alreadyYellow || benchAlreadyYellow){
       openStaffBenchDecision(team,index,letter,2);
       return;
     }
@@ -10874,8 +10970,8 @@ function openStaffBenchDecision(team,index,letter,benchYellowNumber){
 
   el('staffBenchDecisionTitle').textContent='SECONDA AMMONIZIONE DIRIGENTE';
   el('staffBenchDecisionText').textContent=
-    `${state.teams[team]} · dirigente ${letter} è già ammonito. `+
-    `Una seconda ammonizione non viene registrata come YELLOW. `+
+    `${state.teams[team]} · la panchina ha già un dirigente ammonito. `+
+    `La 2ª ammonizione non viene registrata come YELLOW. `+
     `L'ARBITRO DEVE DECIDERE: 2', ESPULSIONE DIRETTA oppure ANNULLA.`;
 
   el('staffBenchDecisionModal').classList.remove('team-a','team-b');
@@ -12002,17 +12098,12 @@ function closeDiscipline(){
   if(state.timer>0 && state.phase!==7) el('timer').classList.add('blink');
   render();
 
-  // Con STAMPA CARTELLINI attivo la stampa è già partita direttamente
-  // per 2' ed espulsione diretta. Se disattivo, nessuna richiesta.
-  // Manteniamo il popup solo per eventuali flussi legacy in cui il flag
-  // non è stato applicato al momento del provvedimento.
-  if(pendingCardPrint && state.stampaCartellini!==true && pendingCardPrint.type!=='2MIN'){
-    const p=pendingCardPrint;
-    el('cardPrintTitle').textContent =
-      p.type==='RED' ? '🟥 CARTELLINO ESPULSIONE' : "🟧 CARTELLINO 2'";
-    el('cardPrintText').textContent =
-      `${state.teams[p.team]} · N° ${p.num} · ${p.time} — Stampare il cartellino?`;
-    el('cardPrintModal').style.display='flex';
+  // STAMPA CARTELLINI segue un'unica regola per tutti i provvedimenti:
+  // 2', 3° 2' (esclusione) ed espulsione diretta.
+  // Se la spunta NON è attiva, non deve comparire alcun popup di stampa.
+  // Se è attiva, la stampa è già stata avviata direttamente da stopForDisciplinary().
+  if(pendingCardPrint){
+    pendingCardPrint=null;
   }
 }
 
@@ -13028,6 +13119,71 @@ document.addEventListener('keydown', function(e){
 }
 </style>
 
+<style id="team-header-countdown-v1">
+/* Countdown 2' centralizzato nella card della squadra, subito sotto T.O. e RIGORI. */
+.panel-head .team-discipline-countdowns{
+  display:none;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  margin:2px 0 0;
+  padding:2px 3px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+}
+.panel-head .team-discipline-countdowns::-webkit-scrollbar{display:none}
+.team-countdown-item{
+  flex:0 0 auto;
+  min-width:58px;
+  height:18px;
+  padding:1px 5px;
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border-radius:4px;
+  background:#dc2626;
+  color:#fff;
+  font-size:8px;
+  font-weight:900;
+  line-height:1;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.team-countdown-item.queued{background:#f97316}
+.team-countdown-id{font-weight:900}
+.team-countdown-time{font-weight:900;letter-spacing:.2px}
+
+@media screen and (orientation:landscape) and (min-width:900px){
+  .panel-head .team-discipline-countdowns{
+    gap:4px;
+    margin-top:2px;
+    padding:2px 4px;
+  }
+  .team-countdown-item{
+    min-width:64px;
+    height:19px;
+    font-size:8px;
+  }
+}
+
+@media screen and (max-width:700px){
+  .team-countdown-item{
+    min-width:54px;
+    height:17px;
+    padding:1px 4px;
+    gap:3px;
+    font-size:7px;
+  }
+}
+</style>
 </body>
 </html>
 
@@ -13046,3 +13202,48 @@ document.addEventListener('keydown', function(e){
 
 
 
+
+<style id="countdown-horizontal-tablet-v1">
+/* Più countdown 2' sulla stessa card: sempre affiancati orizzontalmente. */
+.player-card > .discipline-status.countdown,
+.staff-card > .discipline-status.countdown{
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  justify-content:stretch !important;
+  gap:2px !important;
+  padding:0 2px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+
+.player-card > .discipline-status.countdown .countdown-line,
+.staff-card > .discipline-status.countdown .countdown-line{
+  display:flex !important;
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  width:auto !important;
+  height:100% !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  font-size:8px !important;
+  font-variant-numeric:tabular-nums !important;
+}
+
+/* Su card molto strette, il testo resta leggibile senza andare a capo. */
+@media (max-width:700px){
+  .player-card > .discipline-status.countdown,
+  .staff-card > .discipline-status.countdown{
+    gap:1px !important;
+    padding:0 1px !important;
+  }
+  .player-card > .discipline-status.countdown .countdown-line,
+  .staff-card > .discipline-status.countdown .countdown-line{
+    font-size:7px !important;
+  }
+}
+</style>
