@@ -13414,6 +13414,53 @@ document.addEventListener('keydown', function(e){
   }
 }
 </style>
+
+<style id="staff-team-color-authoritative-final">
+/* COLORE DIRIGENTI — deve seguire sempre il colore configurato per la squadra. */
+.panel.team-a .staff-card{
+  border-color:color-mix(in srgb,var(--team-home,#2563eb) 45%,#cbd5e1) !important;
+}
+.panel.team-b .staff-card{
+  border-color:color-mix(in srgb,var(--team-away,#7c3aed) 45%,#cbd5e1) !important;
+}
+
+.panel.team-a .staff-main-row > .staff-label,
+.panel.team-a .staff-label{
+  background:var(--team-home,#2563eb) !important;
+  background-color:var(--team-home,#2563eb) !important;
+  border-color:var(--team-home,#2563eb) !important;
+  color:#fff !important;
+}
+.panel.team-b .staff-main-row > .staff-label,
+.panel.team-b .staff-label{
+  background:var(--team-away,#7c3aed) !important;
+  background-color:var(--team-away,#7c3aed) !important;
+  border-color:var(--team-away,#7c3aed) !important;
+  color:#fff !important;
+}
+
+.panel.team-a .staff-event-btn{
+  background:var(--team-home,#2563eb) !important;
+  background-color:var(--team-home,#2563eb) !important;
+  border-color:var(--team-home,#2563eb) !important;
+  color:#fff !important;
+}
+.panel.team-b .staff-event-btn{
+  background:var(--team-away,#7c3aed) !important;
+  background-color:var(--team-away,#7c3aed) !important;
+  border-color:var(--team-away,#7c3aed) !important;
+  color:#fff !important;
+}
+
+/* Lo stato disabilitato resta neutro: il dirigente non è selezionabile. */
+.panel.team-a .staff-main-row > .staff-label:disabled,
+.panel.team-b .staff-main-row > .staff-label:disabled{
+  background:#94a3b8 !important;
+  background-color:#94a3b8 !important;
+  border-color:#94a3b8 !important;
+  color:#f8fafc !important;
+}
+</style>
 </body>
 </html>
 
@@ -13603,3 +13650,448 @@ body:not(.referto-attivo) #editTeamsModal .edit-teams-actions button{
 }
 </style>
 
+
+
+<style id="configurazione-compatto-professionale">
+/* CONFIGURAZIONE: popup sempre raggiungibile anche su schermi bassi */
+body:not(.referto-attivo) #editTeamsModal{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding:8px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal{
+  width:min(820px,94vw)!important;
+  max-width:820px!important;
+  max-height:calc(100dvh - 16px)!important;
+  margin:0 auto!important;
+  padding:13px!important;
+  border-radius:12px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  box-sizing:border-box!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.42)!important;
+  border:1px solid rgba(148,163,184,.75)!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal>h3{
+  margin:0 0 3px!important;font-size:19px!important;line-height:1.1!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal>p{
+  margin:0 0 8px!important;font-size:9px!important;line-height:1.2!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-grid{
+  gap:8px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box{
+  padding:6px!important;border-radius:8px!important;
+  background:linear-gradient(180deg,#fff 0%,#f8fafc 100%)!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-name{
+  height:31px!important;padding:4px 6px!important;font-size:14px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-section{
+  margin-top:5px!important;padding:4px 5px!important;border-radius:6px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-title{
+  margin-bottom:4px!important;font-size:7px!important;
+}
+/* Palette colori: quadrati piccoli, come nella configurazione precedente */
+body:not(.referto-attivo) #editTeamsModal .team-color-palette{
+  display:flex!important;flex-wrap:nowrap!important;justify-content:center!important;
+  align-items:center!important;gap:5px!important;width:100%!important;
+  min-height:30px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-swatch{
+  flex:0 0 28px!important;width:28px!important;height:28px!important;
+  min-width:28px!important;min-height:28px!important;
+  max-width:28px!important;max-height:28px!important;
+  aspect-ratio:auto!important;border-radius:5px!important;
+  border-width:2px!important;box-shadow:0 1px 3px rgba(0,0,0,.18)!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-swatch.selected{
+  outline:2px solid #0f172a!important;outline-offset:2px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-section-title{
+  margin-top:5px!important;margin-bottom:3px!important;font-size:8px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-player-input{
+  height:27px!important;padding:2px!important;font-size:11px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-staff-letter{
+  height:27px!important;font-size:11px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-duration-box{
+  margin-top:7px!important;padding:6px!important;border-radius:8px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-duration-box input{
+  width:60px!important;height:29px!important;font-size:15px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-grid{gap:5px!important}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card{
+  padding:6px!important;border-radius:7px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card strong{font-size:10px!important}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card span{
+  margin-top:2px!important;font-size:8px!important;line-height:1.18!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-restore{
+  margin-top:7px!important;gap:5px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-restore>button{
+  height:31px!important;min-height:31px!important;padding:2px 5px!important;
+  font-size:8px!important;border-radius:6px!important;
+}
+@media(max-width:600px){
+  body:not(.referto-attivo) #editTeamsModal{padding:5px!important}
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-modal{
+    width:calc(100vw - 10px)!important;max-width:none!important;
+    max-height:calc(100dvh - 10px)!important;padding:9px!important;
+  }
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-grid{
+    grid-template-columns:1fr!important;gap:6px!important;
+  }
+  body:not(.referto-attivo) #editTeamsModal .team-color-swatch{
+    flex-basis:27px!important;width:27px!important;height:27px!important;
+    min-width:27px!important;min-height:27px!important;
+    max-width:27px!important;max-height:27px!important;
+  }
+}
+</style>
+
+
+<style id="configurazione-finale-700-professionale">
+/* Configurazione gara — versione stretta e più professionale */
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal{
+  width:min(700px,92vw)!important;
+  max-width:700px!important;
+  padding:11px!important;
+  border-radius:10px!important;
+  border:1px solid #b8c4d4!important;
+  box-shadow:0 16px 42px rgba(15,23,42,.34)!important;
+  background:#f6f8fb!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal>h3{
+  color:#172033!important;
+  font-size:20px!important;
+  letter-spacing:.25px!important;
+  margin-bottom:2px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal>p{
+  color:#64748b!important;
+  font-size:8.5px!important;
+  font-weight:600!important;
+  letter-spacing:.1px!important;
+  margin-bottom:7px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-grid{
+  gap:7px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box{
+  padding:5px!important;
+  border:1px solid #cbd5e1!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.06)!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-name{
+  height:30px!important;
+  border-color:#cbd5e1!important;
+  border-radius:6px!important;
+  font-size:13px!important;
+  font-weight:900!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-section{
+  margin-top:4px!important;
+  padding:4px!important;
+  border-color:#d5dde8!important;
+  background:#f8fafc!important;
+}
+body:not(.referto-attivo) #editTeamsModal .team-color-title,
+body:not(.referto-attivo) #editTeamsModal .edit-section-title{
+  color:#475569!important;
+  font-weight:900!important;
+  letter-spacing:.35px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-duration-box{
+  margin-top:6px!important;
+  padding:6px!important;
+  border:1px solid #cbd5e1!important;
+  border-radius:8px!important;
+  background:#edf4fb!important;
+  box-shadow:0 2px 7px rgba(15,23,42,.04)!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card{
+  background:#fff!important;
+  border-color:#cbd5e1!important;
+  transition:none!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card.selected,
+body:not(.referto-attivo) #editTeamsModal .edit-mode-card.active{
+  border-color:#2563eb!important;
+  box-shadow:inset 0 0 0 1px #2563eb!important;
+  background:#eff6ff!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"]{
+  border:1px solid #cbd5e1!important;
+  border-radius:8px!important;
+  background:#f8fafc!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-actions button,
+body:not(.referto-attivo) #editTeamsModal .edit-restore>button{
+  border-radius:6px!important;
+  font-weight:900!important;
+  letter-spacing:.15px!important;
+}
+@media(max-width:600px){
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-modal{
+    width:calc(100vw - 10px)!important;
+    max-width:none!important;
+  }
+}
+</style>
+
+<style id="player-number-buttons-near-square">
+/* NUMERI GIOCATORI — più compatti e quasi quadrati */
+body:not(.referto-attivo) #editTeamsModal .edit-players-grid{
+  grid-template-columns:repeat(4, 54px)!important;
+  justify-content:space-between!important;
+  gap:4px!important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-player-input{
+  width:54px!important;
+  min-width:54px!important;
+  max-width:54px!important;
+  height:34px!important;
+  min-height:34px!important;
+  max-height:34px!important;
+  padding:2px 1px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  border-radius:6px!important;
+}
+@media(max-width:600px){
+  body:not(.referto-attivo) #editTeamsModal .edit-players-grid{
+    grid-template-columns:repeat(4, 48px)!important;
+    justify-content:space-between!important;
+  }
+  body:not(.referto-attivo) #editTeamsModal .edit-player-input{
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    height:32px!important;
+    min-height:32px!important;
+    max-height:32px!important;
+  }
+}
+</style>
+
+<style id="config-keypad-dirigenti-bottom-final">
+/* Tasti giocatori e dirigenti: proporzione più compatta, quasi quadrata */
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .players-grid,
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-grid,
+body:not(.referto-attivo) #editTeamsModal .players-grid,
+body:not(.referto-attivo) #editTeamsModal .staff-grid{
+  gap:3px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .players-grid button,
+body:not(.referto-attivo) #editTeamsModal .players-grid button{
+  min-width:0 !important;
+  width:100% !important;
+  height:29px !important;
+  min-height:29px !important;
+  padding:3px 2px !important;
+  font-size:11px !important;
+  border-radius:5px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-grid,
+body:not(.referto-attivo) #editTeamsModal .staff-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-grid button,
+body:not(.referto-attivo) #editTeamsModal .staff-grid button{
+  min-width:0 !important;
+  width:100% !important;
+  height:29px !important;
+  min-height:29px !important;
+  padding:3px 2px !important;
+  font-size:11px !important;
+  border-radius:5px !important;
+}
+/* Le due opzioni di configurazione restano sulla stessa riga */
+body:not(.referto-attivo) #editTeamsModal .edit-options-row{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-options-row > *{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+}
+</style>
+
+<style id="config-bottom-compact-final">
+/* DIRIGENTI: stessi tasti compatti dei giocatori */
+body:not(.referto-attivo) #editTeamsModal .edit-staff-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:3px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-staff-grid button{
+  width:100% !important;
+  min-width:0 !important;
+  height:29px !important;
+  min-height:29px !important;
+  padding:3px 2px !important;
+  border-radius:5px !important;
+  font-size:11px !important;
+}
+
+/* Le due spunte condividono la stessa riga */
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#palazzettoContinuousInput),
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#printCardsInput){
+  display:inline-block !important;
+  vertical-align:top !important;
+  width:calc(50% - 4px) !important;
+  box-sizing:border-box !important;
+  margin-top:7px !important;
+  padding:7px !important;
+}
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#palazzettoContinuousInput){
+  margin-right:6px !important;
+}
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#palazzettoContinuousInput) label,
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#printCardsInput) label{
+  gap:6px !important;
+  font-size:10px !important;
+  white-space:nowrap !important;
+}
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#palazzettoContinuousInput) label input,
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#printCardsInput) label input{
+  width:17px !important;
+  height:17px !important;
+  flex:0 0 17px !important;
+}
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#palazzettoContinuousInput) div,
+body:not(.referto-attivo) #editTeamsModal > .edit-teams-modal > div:has(#printCardsInput) div{
+  margin-top:2px !important;
+  font-size:7px !important;
+  line-height:1.15 !important;
+}
+
+/* Pulsanti inferiori: più compatti e con proporzioni uniformi */
+body:not(.referto-attivo) #editTeamsModal .edit-restore{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:5px !important;
+  margin-top:7px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-restore button{
+  width:100% !important;
+  min-width:0 !important;
+  height:31px !important;
+  min-height:31px !important;
+  padding:4px 3px !important;
+  border-radius:6px !important;
+  font-size:9px !important;
+  font-weight:900 !important;
+  white-space:nowrap !important;
+}
+</style>
+
+<style id="config-final-tight-staff-checkboxes">
+/* Dirigenti: tastierino più compatto, coerente con i numeri giocatori */
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-grid,
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .edit-staff-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+  gap:3px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-grid button,
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .edit-staff-grid button,
+body:not(.referto-attivo) #editTeamsModal .edit-team-box .staff-label{
+  min-width:0 !important;
+  width:100% !important;
+  height:28px !important;
+  min-height:28px !important;
+  padding:2px 3px !important;
+  border-radius:5px !important;
+  font-size:12px !important;
+  box-sizing:border-box !important;
+}
+/* Le due impostazioni in un'unica riga orizzontale */
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"]{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:nowrap !important;
+  padding:6px 8px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] > label{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  margin:0 !important;
+  white-space:nowrap !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] > label input{
+  flex:0 0 auto !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] > div{
+  width:100% !important;
+  flex-basis:100% !important;
+  margin-top:1px !important;
+}
+@media (max-width:650px){
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"]{
+    gap:5px !important;
+  }
+  body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div[style*="background:#f8fafc"] > label{
+    font-size:9px !important;
+  }
+}
+</style>
+
+<style id="config-checkboxes-horizontal-definitive">
+/* CONFIGURAZIONE — le due impostazioni sono realmente affiancate */
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#palazzettoContinuousInput),
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#printCardsInput){
+  float:left !important;
+  display:block !important;
+  width:calc(50% - 5px) !important;
+  box-sizing:border-box !important;
+  margin-top:7px !important;
+  margin-bottom:0 !important;
+  padding:6px 8px !important;
+  min-height:58px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#palazzettoContinuousInput){
+  margin-right:10px !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#palazzettoContinuousInput) label,
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#printCardsInput) label{
+  display:flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  white-space:nowrap !important;
+  font-size:9px !important;
+  line-height:1.1 !important;
+  margin:0 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#palazzettoContinuousInput) label input,
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#printCardsInput) label input{
+  flex:0 0 16px !important;
+  width:16px !important;
+  height:16px !important;
+  margin:0 !important;
+}
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#palazzettoContinuousInput) > div,
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#printCardsInput) > div{
+  margin-top:2px !important;
+  font-size:7px !important;
+  line-height:1.1 !important;
+}
+/* La sezione successiva torna sotto entrambe le schede */
+body:not(.referto-attivo) #editTeamsModal .edit-teams-modal > div:has(#matchModeInput){
+  clear:both !important;
+}
+</style>
